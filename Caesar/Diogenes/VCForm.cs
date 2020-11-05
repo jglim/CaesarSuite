@@ -14,7 +14,6 @@ namespace Diogenes
 {
     public partial class VCForm : Form
     {
-        CaesarContainer Container;
         ECUVariant ECUVariant;
         VCDomain VariantCodingDomain;
         string ECUName;
@@ -22,33 +21,50 @@ namespace Diogenes
         string VCDomainName;
         public byte[] VCValue;
 
-        public VCForm(CaesarContainer container, string ecuName, string variantName, string vcDomain, byte[] existingCodingValue)
+        DiagService ReadService;
+        DiagService WriteService;
+
+        public VCForm(CaesarContainer container, string ecuName, string variantName, string vcDomain, ECUConnection connection)
         {
             InitializeComponent();
 
             ECUName = ecuName;
             VariantName = variantName;
             VCDomainName = vcDomain;
-            VCValue = existingCodingValue;
 
             ECUVariant = container.GetECUVariantByName(variantName);
             VariantCodingDomain = ECUVariant.GetVCDomainByName(VCDomainName);
 
-            if (existingCodingValue.Length != VariantCodingDomain.vcdDumpSize) 
+            ReadService = ECUVariant.GetDiagServiceByName(VariantCodingDomain.vcdReadService);
+            WriteService = ECUVariant.GetDiagServiceByName(VariantCodingDomain.vcdWriteService);
+            if ((ReadService is null) || (WriteService is null)) 
             {
-                Console.WriteLine("Existing variant coding data is unavailable, please check for connectivity to the target ECU.");
-                // try to read out a default if it is available
-                VCValue = new byte[VariantCodingDomain.vcdDumpSize];
-                foreach (Tuple<string, byte[]> row in VariantCodingDomain.DefaultData) 
+                Console.WriteLine("VC Dialog: Unable to proceed - could not find referenced diagnostic services");
+                this.Close();
+            }
+
+            VCValue = new byte[VariantCodingDomain.vcdDumpSize];
+            foreach (Tuple<string, byte[]> row in VariantCodingDomain.DefaultData)
+            {
+                if (row.Item1.ToLower() == "default" && (row.Item2.Length == VariantCodingDomain.vcdDumpSize))
                 {
-                    if (row.Item1.ToLower() == "default" && (row.Item2.Length == VariantCodingDomain.vcdDumpSize)) 
-                    {
-                        VCValue = row.Item2;
-                        Console.WriteLine("Default variant coding data has been found and loaded");
-                        break;
-                    }
+                    VCValue = row.Item2;
+                    Console.WriteLine("Default variant coding data has been found and loaded");
+                    break;
                 }
             }
+
+            if (connection.State == ECUConnection.ConnectionState.EcuContacted)
+            {
+                Console.WriteLine($"Requesting variant coding read: {ReadService.qualifierName} : ({BitUtility.BytesToHex(ReadService.RequestBytes)})");
+            }
+            else
+            {
+                Console.WriteLine("Please check for connectivity to the target ECU (could not read variant coding data)");
+                MessageBox.Show("Variant Coding dialog will operate as a simulation using default values.", "Unable to read ECU variant coding data", MessageBoxButtons.OK);
+                btnApply.Enabled = false;
+            }
+
             IntepretVC();
             PresentVC();
         }
@@ -127,12 +143,20 @@ namespace Diogenes
 
         private void btnApply_Click(object sender, EventArgs e)
         {
+            if (!BitUtility.CheckHexValid(txtCodingString.Text)) 
+            {
+                MessageBox.Show("Hex data could not be parsed. Please check if there are any invalid values", "Write Variant Coding");
+                return;
+            }
+
             VCValue = BitUtility.BytesFromHex(txtCodingString.Text);
             ReinterpretVC();
             PresentVC();
 
             if (MessageBox.Show("The SCN (Software Calibration Number) will be reset for some ECUs when the variant coding is modified. Continue?", "SCN Warning", MessageBoxButtons.YesNo) == DialogResult.Yes) 
             {
+                Console.WriteLine($"Write: {BitUtility.BytesToHex(WriteService.RequestBytes)}");
+
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -140,6 +164,12 @@ namespace Diogenes
 
         private void btnReinterpret_Click(object sender, EventArgs e)
         {
+            if (!BitUtility.CheckHexValid(txtCodingString.Text))
+            {
+                MessageBox.Show("Hex data could not be parsed. Please check if there are any invalid values", "Reinterpret Variant Coding");
+                return;
+            }
+
             ReinterpretVC();
         }
 
@@ -170,7 +200,7 @@ namespace Diogenes
                     return;
                 }
 
-                int contextMenuLimit = 50;
+                int contextMenuLimit = 100;
 
                 contextMenuStrip1.Items.Clear();
                 ToolStripMenuItem tsHeader = new ToolStripMenuItem();

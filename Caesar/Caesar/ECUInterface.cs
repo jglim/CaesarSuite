@@ -12,9 +12,9 @@ namespace Caesar
         public long BaseAddress;
 
 
-        public string interfaceName;
-        public int interfaceUnk1;
-        public int interfaceUnk2;
+        public string interfaceNameQualifier;
+        public int interfaceName_T;
+        public int interfaceDescription_T;
         public string interfaceVersionString;
         public int interfaceVersion;
         public int interfaceNoOfStrings;
@@ -26,13 +26,14 @@ namespace Caesar
         public ECUInterface(BinaryReader reader, long baseAddress)
         {
             BaseAddress = baseAddress;
+            reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
 
             // we can now properly operate on the interface block
             ulong interfaceBitflags = reader.ReadUInt32();
 
-            interfaceName = CaesarReader.ReadBitflagStringWithReader(ref interfaceBitflags, reader, BaseAddress);
-            interfaceUnk1 = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
-            interfaceUnk2 = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
+            interfaceNameQualifier = CaesarReader.ReadBitflagStringWithReader(ref interfaceBitflags, reader, BaseAddress);
+            interfaceName_T = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
+            interfaceDescription_T = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
             interfaceVersionString = CaesarReader.ReadBitflagStringWithReader(ref interfaceBitflags, reader, BaseAddress);
             interfaceVersion = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
             interfaceNoOfStrings = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
@@ -59,9 +60,9 @@ namespace Caesar
 
         public void PrintDebug() 
         {
-            Console.WriteLine($"{nameof(interfaceName)} : {interfaceName}");
-            Console.WriteLine($"{nameof(interfaceUnk1)} : {interfaceUnk1}");
-            Console.WriteLine($"{nameof(interfaceUnk2)} : {interfaceUnk2}");
+            Console.WriteLine($"{nameof(interfaceNameQualifier)} : {interfaceNameQualifier}");
+            Console.WriteLine($"{nameof(interfaceName_T)} : {interfaceName_T}");
+            Console.WriteLine($"{nameof(interfaceDescription_T)} : {interfaceDescription_T}");
             Console.WriteLine($"{nameof(interfaceVersionString)} : {interfaceVersionString}");
             Console.WriteLine($"{nameof(interfaceVersion)} : {interfaceVersion}");
             Console.WriteLine($"{nameof(interfaceNoOfStrings)} : {interfaceNoOfStrings}");

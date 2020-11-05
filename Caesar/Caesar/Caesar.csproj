@@ -51,12 +51,16 @@
     <Compile Include="CaesarReader.cs" />
     <Compile Include="CaesarStructure.cs" />
     <Compile Include="CFFHeader.cs" />
+    <Compile Include="ComParameter.cs" />
     <Compile Include="CTFHeader.cs" />
     <Compile Include="CTFLanguage.cs" />
+    <Compile Include="DiagPreparation.cs" />
+    <Compile Include="DiagService.cs" />
     <Compile Include="ECU.cs" />
     <Compile Include="ECUInterface.cs" />
     <Compile Include="ECUInterfaceSubtype.cs" />
     <Compile Include="ECUVariant.cs" />
+    <Compile Include="ECUVariantPattern.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StubHeader.cs" />

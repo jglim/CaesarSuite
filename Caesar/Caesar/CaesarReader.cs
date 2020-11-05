@@ -35,12 +35,12 @@ namespace Caesar
         {
             if (CheckAndAdvanceBitflag(ref bitFlags))
             {
-                // read the string's offset relative to our current block
-                int stringOffset = reader.ReadInt32();
+                // read the dump's offset relative to our current block
+                int dumpOffset = reader.ReadInt32();
                 // save our reading cursor
                 long readerPosition = reader.BaseStream.Position;
                 // seek to the specified offset, then read out the dump
-                reader.BaseStream.Seek(stringOffset + virtualBase, SeekOrigin.Begin);
+                reader.BaseStream.Seek(dumpOffset + virtualBase, SeekOrigin.Begin);
                 byte[] result = reader.ReadBytes(dumpSize);
                 // restore our reading cursor
                 reader.BaseStream.Seek(readerPosition, SeekOrigin.Begin);
@@ -48,9 +48,14 @@ namespace Caesar
             }
             else
             {
-                // Console.WriteLine("Bitflag was off for string");
                 return new byte[] { };
             }
+        }
+
+        public static string ReadBitflagDumpWithReaderAsString(ref ulong bitFlags, BinaryReader reader, int dumpSize, long virtualBase = 0)
+        {
+            byte[] stringBytes = ReadBitflagDumpWithReader(ref bitFlags, reader, dumpSize, virtualBase);
+            return Encoding.ASCII.GetString(stringBytes); // lazy: no encoding is specified
         }
 
         public static string ReadStringFromBinaryReader(BinaryReader reader, Encoding encoding)

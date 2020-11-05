@@ -216,5 +216,19 @@ namespace Caesar
             Console.WriteLine();
 
         }
+
+        public static bool CheckHexValid(string inHex) 
+        {
+            string cleanedText = inHex.Replace(" ", "").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace("-", "").ToUpper();
+            if (cleanedText.Length % 2 != 0)
+            {
+                return false;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(cleanedText, @"\A\b[0-9a-fA-F]+\b\Z"))
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

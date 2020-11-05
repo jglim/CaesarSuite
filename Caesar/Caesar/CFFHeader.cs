@@ -16,8 +16,8 @@ namespace Caesar
         public int nCtfHeaderRpos;
         public int sizeOfStringPool;
         public int unk2RelativeOffset;
-        public int instanceCount2;
-        public int instanceCount1;
+        public int FormEntries;
+        public int FormEntrySize;
         public string cbfVersionString;
         public string gpdVersionString;
         public string diogenesXmlString;
@@ -41,8 +41,8 @@ namespace Caesar
             nCtfHeaderRpos = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
             sizeOfStringPool = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
             unk2RelativeOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
-            instanceCount2 = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
-            instanceCount1 = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
+            FormEntries = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
+            FormEntrySize = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
 
             cbfVersionString = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, reader, BaseAddress);
             gpdVersionString = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, reader, BaseAddress);
@@ -58,8 +58,8 @@ namespace Caesar
             Console.WriteLine($"{nameof(nCtfHeaderRpos)} : 0x{nCtfHeaderRpos:X}");
             Console.WriteLine($"{nameof(sizeOfStringPool)} : {sizeOfStringPool} 0x{sizeOfStringPool:X}");
             Console.WriteLine($"{nameof(unk2RelativeOffset)} : {unk2RelativeOffset} 0x{unk2RelativeOffset:X}");
-            Console.WriteLine($"{nameof(instanceCount2)} : {instanceCount2}");
-            Console.WriteLine($"{nameof(instanceCount1)} : {instanceCount1}");
+            Console.WriteLine($"{nameof(FormEntries)} : {FormEntries}");
+            Console.WriteLine($"{nameof(FormEntrySize)} : {FormEntrySize}");
             Console.WriteLine($"{nameof(cbfVersionString)} : {cbfVersionString}");
             Console.WriteLine($"{nameof(gpdVersionString)} : {gpdVersionString}");
         }

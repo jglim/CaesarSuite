@@ -18,12 +18,23 @@ namespace Caesar
 
             //byte[] cbfBytes = File.ReadAllBytes("MED40.CBF");
             //byte[] cbfBytes = File.ReadAllBytes("LRSM222.CBF");
+            //byte[] cbfBytes = File.ReadAllBytes("CRD3S2.CBF");
+            //byte[] cbfBytes = File.ReadAllBytes("IC222.CBF");
             byte[] cbfBytes = File.ReadAllBytes("VGSNAG2.CBF");
+
+            using (System.Security.Cryptography.SHA1 hashInstance = System.Security.Cryptography.SHA1.Create())
+            {
+                Console.WriteLine($"SHA1: {BitUtility.BytesToHex(hashInstance.ComputeHash(cbfBytes))}");
+            }
+
 
             CaesarContainer container = new CaesarContainer(cbfBytes);
             //TryDecodeVC(container);
             // DebugPrint(container);
-            DebugFindVCDExtras(container);
+            // DebugFindVCDExtras(container);
+            // container.CaesarCFFHeader.PrintDebug();
+            // DebugFindEcuVariantIdentifier(container);
+            //DebugFindDiag(container);
             Console.WriteLine("Done, press any key to exit");
             Console.ReadKey();
 
@@ -93,6 +104,105 @@ namespace Caesar
                         domain.PrintDebug();
                     }
                 }
+            }
+        }
+        private static void DebugFindDiag(CaesarContainer container)
+        {
+
+            foreach (ECU ecu in container.CaesarECUs)
+            {
+                foreach (DiagService diag in ecu.GlobalDiagServices) 
+                {
+                    if (diag.qualifierName == "WVC_HEX_Variantencodierung_Write")
+                    {
+                        Console.WriteLine($"D: {diag.qualifierName} : {BitUtility.BytesToHex(diag.RequestBytes)} ({diag.DataClass_ServiceType})");
+                        diag.PrintDebug();
+
+                        foreach (DiagPreparation prep in diag.Preparations) 
+                        {
+                            Console.WriteLine("\n---prep---");
+                            prep.PrintDebug();
+                        }
+                    }
+                }
+            }
+        }
+        private static void DebugFindEcuVariantIdentifier(CaesarContainer container)
+        {
+            // 
+            // container.CaesarCFFHeader.PrintDebug();
+            foreach (ECU ecu in container.CaesarECUs)
+            {
+                /*
+                foreach (ECUInterface iface in ecu.ECUInterfaces)
+                {
+                    iface.PrintDebug();
+                }
+
+                foreach (ECUInterfaceSubtype iface in ecu.ECUInterfaceSubtypes)
+                {
+                    iface.PrintDebug();
+                }
+                foreach (ECUVariant variant in ecu.ECUVariants) 
+                {
+
+                }
+                */
+                foreach (ECUVariant variant in ecu.ECUVariants) 
+                {
+                    if (variant.variantName == "VC8_Update_6_CAM" || true)
+                    {
+                        // variant.DiagServices.ForEach(x => Console.WriteLine(x.qualifierName));
+                        // DT_RVC_HEX_Variantencodierung ?
+                        /*
+WVC_Implizite_Variantenkodierung_Write
+RVC_Implizite_Variantenkodierung_Read
+DL_WVC_HEX_Variantencodierung
+DNU_Level10_Key_Send
+DNU_Level9_Seed_Request
+DNU_Request_Seed_Reprogramming_Request
+DNU_Request_Seed_Variantcoding_Request
+DNU_Send_Key_Reprogramming_Send
+DNU_Send_Key_Variantcoding_Send
+DJ_Zugriffsberechtigung
+DJ_Zugriffsberechtigung_Abgleich
+                         */
+                        /*
+                        >>MED40 seed request : 27 0B (DNU_Request_Seed_Variantcoding_Request)
+                        MED40>> 67 0B XX XX XX XX XX
+                        >>MED40 accesslevel change request: 27 0C XX XX XX XX   (DNU_Send_Key_Variantcoding_Send)
+                        MED40>> 67 0C (OK), 7F XX XX (negative response)
+
+
+                        DiagServices does not have any 7F prefixes (NegResponse) or 67 prefixes (REQ)
+                         */
+
+
+                        // vgs: DL_Notlaufvariante_PT_SHW has blocks that have more than 1byte
+                        //Console.WriteLine("\n--------------------\n");
+                        DiagService vread = variant.GetDiagServiceByName("DL_Notlaufvariante_PT_SHW");
+                        if (vread is null) 
+                        {
+                            continue;
+                        }
+                        //Console.WriteLine($"{vread.qualifierName} : command: {BitUtility.BytesToHex(vread.RequestBytes)}");
+                        //vread.PrintDebug();
+
+                        foreach (DiagPreparation prep in vread.Preparations) 
+                        {
+                            //prep.PrintDebug();
+                        }
+                        //vread.Preparations.ForEach(x => Console.WriteLine($"{x.qualifier} : DumpSize: {x.DumpSize}"));
+
+                    }
+                }
+            }
+        }
+        private static void DebugParseDiagjobs(CaesarContainer container)
+        {
+            foreach (ECU ecu in container.CaesarECUs)
+            {
+                
             }
         }
 

@@ -123,19 +123,22 @@ namespace Caesar
             }
 
             int caesarStringTableOffset = CaesarCFFHeader.cffHeaderSize + 0x410 + 4;
-            int afterStringTableOffset = caesarStringTableOffset + CaesarCFFHeader.sizeOfStringPool;
+            int formEntryTable = caesarStringTableOffset + CaesarCFFHeader.sizeOfStringPool;
                 
             //Console.WriteLine($"{nameof(caesarStringTableOffset)} : 0x{caesarStringTableOffset:X}");
             //Console.WriteLine($"{nameof(afterStringTableOffset)} : 0x{afterStringTableOffset:X}");
 
             /*
-            if (CaesarCFFHeader.instanceCount2 > 0) 
+            if (CaesarCFFHeader.FormEntries > 0)
             {
-                Console.WriteLine($"after string table block is present: {nameof(afterStringTableOffset)} : 0x{afterStringTableOffset:X}\n\n");
+                int formOffsetTable = CaesarCFFHeader.unk2RelativeOffset + formEntryTable;
+                int formOffsetTableSize = CaesarCFFHeader.FormEntrySize * CaesarCFFHeader.FormEntries;
+                Console.WriteLine($"after string table block (*.fm) is present: {nameof(formEntryTable)} : 0x{formEntryTable:X}\n\n");
+                Console.WriteLine($"{nameof(formOffsetTable)} : 0x{formOffsetTable:X}\n\n");
+                Console.WriteLine($"{nameof(formOffsetTableSize)} : 0x{formOffsetTableSize:X}\n\n");
             }
             */
-            //int unk2FileOffset = CaesarCFFHeader.unk2RelativeOffset + afterStringTableOffset;
-            //int instanceMulBlockSz = CaesarCFFHeader.instanceCount1 * CaesarCFFHeader.instanceCount2;
+            
         }
 
     }

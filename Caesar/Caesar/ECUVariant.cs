@@ -15,48 +15,40 @@ namespace Caesar
         public string variantIdkStr1;
         public string variantIdkStr2;
         public int variantIdk1;
-        public int variantSubsectionA;
-        public int variantIdk3;
+        public int ecuMatchingPatternCount;
+        public int ecuMatchingPatternOffset;
         public int variantSubsectionB;
-        public int variantIdk5;
-        public int variantSubsectionC;
-        public int variantIdk7;
+        public int variantSubsectionB_Offset;
+        public int comparamsCount_C;
+        public int comparamsOffset_C;
         public int variantSubsectionD;
-        public int variantIdk9;
-        public int variantSubsectionE;
-        public int variantIdk11;
+        public int variantSubsectionD_Offset;
+        public int variantSubsectionE_DiagSvc;
+        public int variantSubsectionE_Offset_DiagSvc;
         public int variantSubsectionF;
-        public int variantIdk13;
+        public int variantSubsectionF_Offset;
         public int variantSubsectionG;
-        public int variantIdk15;
+        public int variantSubsectionG_Offset;
         public int variantSubsectionH;
-        public int variantIdk17;
-        public int variantVCodingEntryCount;
-        public int variantVCodingEntriesOffset;
+        public int variantSubsectionH_Offset;
+        public int variantVCodingDomainsCount;
+        public int variantVCodingDomainsOffset;
         public string negativeResponseName;
         public int variantIdkByte;
         public List<int> variantCodingDomainOffsets = new List<int>();
+        public List<int> diagSvcOffsets = new List<int>();
 
         public List<VCDomain> VCDomains = new List<VCDomain>();
+        public List<DiagService> DiagServices = new List<DiagService>();
+        public List<ECUVariantPattern> VariantPatterns = new List<ECUVariantPattern>();
+
+        public long BaseAddress;
 
         public ECUVariant(BinaryReader reader, ECU parentEcu, CTFLanguage language, long baseAddress, int blockSize)
         {
-            /*
-            // going to assume there's more in variant pool?
-            byte[] variantPool = ecu.ReadVariantPool(reader);
-            //Console.WriteLine($"Variant Pool: \n{BitUtility.BytesToHex(variantPool)}");
+            // int __usercall DIIFindVariantByECUID@<eax>(ECU_VARIANT *a1@<ebx>, _DWORD *a2, int a3, __int16 a4, int a5)
 
-            long variantBlockOffset;
-            int variantBlockSize;
-            using (BinaryReader variantPoolReader = new BinaryReader(new MemoryStream(variantPool)))
-            {
-                variantBlockOffset = variantPoolReader.ReadUInt32();
-                variantBlockSize = variantPoolReader.ReadInt32();
-            }
-            reader.BaseStream.Seek(ecu.ecuvariant_fileoffset_1 + variantBlockOffset, SeekOrigin.Begin);
-            byte[] variantBytes = reader.ReadBytes(variantBlockSize);
-            */
-
+            BaseAddress = baseAddress;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             byte[] variantBytes = reader.ReadBytes(blockSize);
 
@@ -70,38 +62,104 @@ namespace Caesar
                 variantLongName_T = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader, -1);
                 variantIdkStr1 = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
                 variantIdkStr2 = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
+
                 variantIdk1 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 1 
-                variantSubsectionA = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 2 
-                variantIdk3 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 3 
+                ecuMatchingPatternCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 2 
+                ecuMatchingPatternOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 3 
                 variantSubsectionB = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 4 
-                variantIdk5 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 5 
-                variantSubsectionC = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 6 
-                variantIdk7 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 7 
+                variantSubsectionB_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 5 
+                comparamsCount_C = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 6 
+                comparamsOffset_C = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader); // 7 
                 variantSubsectionD = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 8 
-                variantIdk9 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 9 
-                variantSubsectionE = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 10 
-                variantIdk11 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 11 
+                variantSubsectionD_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 9 
+                variantSubsectionE_DiagSvc = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 10 
+                variantSubsectionE_Offset_DiagSvc = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 11 
                 variantSubsectionF = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 12 
-                variantIdk13 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 13 
+                variantSubsectionF_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 13 
                 variantSubsectionG = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 14 
-                variantIdk15 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 15 
+                variantSubsectionG_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 15 
                 variantSubsectionH = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 16 
-                variantIdk17 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 17 
-                variantVCodingEntryCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 18 
-                variantVCodingEntriesOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 19 
+                variantSubsectionH_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 17 
+
+                variantVCodingDomainsCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 18 
+                variantVCodingDomainsOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 19 
+
                 negativeResponseName = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
                 variantIdkByte = CaesarReader.ReadBitflagInt8(ref bitFlags, variantReader);  // 20 byte
 
                 variantCodingDomainOffsets = new List<int>();
-                variantReader.BaseStream.Seek(variantVCodingEntriesOffset, SeekOrigin.Begin);
-                for (int variantCodingIndex = 0; variantCodingIndex < variantVCodingEntryCount; variantCodingIndex++)
+                variantReader.BaseStream.Seek(variantVCodingDomainsOffset, SeekOrigin.Begin);
+                for (int variantCodingIndex = 0; variantCodingIndex < variantVCodingDomainsCount; variantCodingIndex++)
                 {
                     variantCodingDomainOffsets.Add(variantReader.ReadInt32());
                 }
+
+                diagSvcOffsets = new List<int>();
+                variantReader.BaseStream.Seek(variantSubsectionE_Offset_DiagSvc, SeekOrigin.Begin);
+                for (int diagIndex = 0; diagIndex < variantSubsectionE_DiagSvc; diagIndex++)
+                {
+                    diagSvcOffsets.Add(variantReader.ReadInt32());
+                }
+
+
             }
 
-            // PrintDebug();
+            //PrintDebug();
             CreateVCDomains(reader, parentEcu, language);
+            CreateDiagServices(reader, parentEcu, language);
+            CreateVariantPatterns(reader);
+            CreateComParameters(reader, parentEcu);
+        }
+
+        public void CreateComParameters(BinaryReader reader, ECU parentEcu) 
+        {
+            // this is unusual as it doesn't use the usual caesar-style bitflag reads
+            // for reasons unknown the comparam is attached to the basevariant
+            long comparamBaseAddress = BaseAddress + comparamsOffset_C;
+            reader.BaseStream.Seek(comparamBaseAddress, SeekOrigin.Begin);
+            List<long> comparameterOffsets = new List<long>();
+            for (int comIndex = 0; comIndex < comparamsCount_C; comIndex++) 
+            {
+                comparameterOffsets.Add(reader.ReadInt32() + comparamBaseAddress);
+            }
+
+
+            if (parentEcu.ECUInterfaces.Count == 0)
+            {
+                throw new Exception("Invalid communication parameter : no parent interface");
+            }
+            ECUInterface parentEcuInterface = parentEcu.ECUInterfaces[0];
+
+
+            foreach (long comparamOffset in comparameterOffsets) 
+            {
+                ComParameter param = new ComParameter(reader, comparamOffset, parentEcuInterface);
+                if (param.subinterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
+                {
+                    throw new Exception("ComParam: tried to assign to nonexistent interface");
+                }
+                else
+                {
+                    parentEcu.ECUInterfaceSubtypes[param.subinterfaceIndex].CommunicationParameters.Add(param);
+                }
+            }
+        }
+
+        public void CreateVariantPatterns(BinaryReader reader) 
+        {
+            long tableOffset = BaseAddress + ecuMatchingPatternOffset;
+            reader.BaseStream.Seek(tableOffset, SeekOrigin.Begin);
+
+            VariantPatterns.Clear();
+            for (int patternIndex = 0; patternIndex < ecuMatchingPatternCount; patternIndex++) 
+            {
+                reader.BaseStream.Seek(tableOffset + (patternIndex * 4), SeekOrigin.Begin);
+                int patternOffset = reader.ReadInt32();
+                long patternAddress = patternOffset + tableOffset;
+
+                ECUVariantPattern pattern = new ECUVariantPattern(reader, patternAddress);
+                VariantPatterns.Add(pattern);
+            }
         }
 
         public VCDomain GetVCDomainByName(string name)
@@ -111,6 +169,17 @@ namespace Caesar
                 if (domain.vcdName == name)
                 {
                     return domain;
+                }
+            }
+            return null;
+        }
+        public DiagService GetDiagServiceByName(string name)
+        {
+            foreach (DiagService diag in DiagServices)
+            {
+                if (diag.qualifierName == name)
+                {
+                    return diag;
                 }
             }
             return null;
@@ -125,79 +194,64 @@ namespace Caesar
             return result.ToArray();
         }
 
-
-        private void CreateVCDomains(BinaryReader reader, ECU parentEcu, CTFLanguage language) 
+        private void CreateVCDomains(BinaryReader reader, ECU parentEcu, CTFLanguage language)
         {
             VCDomains = new List<VCDomain>();
             foreach (int variantCodingDomainEntry in variantCodingDomainOffsets)
             {
                 VCDomain vcDomain = new VCDomain(reader, parentEcu, language, variantCodingDomainEntry);
                 VCDomains.Add(vcDomain);
-                /*
-                byte[] variantCodingPool = parentEcu.ReadVarcodingPool(reader);
-                using (BinaryReader poolReader = new BinaryReader(new MemoryStream(variantCodingPool)))
+            }
+        }
+        private void CreateDiagServices(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        {
+            // unlike variant domains, storing references to the parent objects in the ecu is preferable since this is relatively larger
+            DiagServices = new List<DiagService>();
+            foreach (int diagIndex in diagSvcOffsets)
+            {
+                foreach (DiagService diagSvc in parentEcu.GlobalDiagServices)
                 {
-                    poolReader.BaseStream.Seek(variantCodingDomainEntry * parentEcu.varcoding_tableEntrySize, SeekOrigin.Begin);
-                    int entryOffset = poolReader.ReadInt32();
-                    int entrySize = poolReader.ReadInt32();
-                    uint entryCrc = poolReader.ReadUInt32();
-                    long vcdBlockAddress = entryOffset + parentEcu.varcoding_fileoffset_5;
-
-                    Console.WriteLine($"VCD Entry @ 0x{entryOffset:X} with size 0x{entrySize:X} and CRC {entryCrc:X8}, abs addr {vcdBlockAddress:X8}");
-
-                    long baseAddress = vcdBlockAddress;
-                    reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
-                    ulong bitflags = reader.ReadUInt16();
-                    string vcdName = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-                    int vcdName_T = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-                    int vcdNameLong_T = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-                    string vcdReadService = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-                    string vcdWriteService = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-                    int vcdFragmentCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                    int vcdFragmentTableOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader) + (int)baseAddress; // demoting long (warning)
-                    int vcdDump = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                    int vcdDefaultStringCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                    int vcdIdkOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                    int vcdIdk1 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
-
-                    Console.WriteLine($"VCD Name: {vcdName}");
-                    Console.WriteLine($"{nameof(vcdName_T)} : {vcdName_T}");
-                    Console.WriteLine($"{nameof(vcdNameLong_T)} : {vcdNameLong_T}");
-                    Console.WriteLine($"{nameof(vcdReadService)} : {vcdReadService}");
-                    Console.WriteLine($"{nameof(vcdWriteService)} : {vcdWriteService}");
-
-                    Console.WriteLine($"{nameof(vcdFragmentCount)} : {vcdFragmentCount}");
-                    Console.WriteLine($"{nameof(vcdFragmentTableOffset)} : 0x{vcdFragmentTableOffset:X}");
-                    Console.WriteLine($"{nameof(vcdDump)} : {vcdDump}");
-                    Console.WriteLine($"{nameof(vcdDefaultStringCount)} : {vcdDefaultStringCount}");
-                    Console.WriteLine($"{nameof(vcdIdkOffset)} : {vcdIdkOffset}");
-                    Console.WriteLine($"{nameof(vcdIdk1)} : {vcdIdk1}");
-
-                    for (int fragmentIndex = 0; fragmentIndex < vcdFragmentCount; fragmentIndex++)
+                    if (diagSvc.PoolIndex == diagIndex) 
                     {
-                        VCFragment fragment = new VCFragment(reader, vcdFragmentTableOffset, fragmentIndex, language);
+                        DiagServices.Add(diagSvc);
                     }
                 }
-                */
             }
+
         }
 
         public void PrintDebug() 
         {
-
+            Console.WriteLine($"---------------- {BaseAddress:X} ----------------");
             Console.WriteLine($"{nameof(variantName)} : {variantName}");
             Console.WriteLine($"{nameof(variantName_T)} : {variantName_T}");
             Console.WriteLine($"{nameof(variantLongName_T)} : {variantLongName_T}");
             Console.WriteLine($"{nameof(variantIdkStr1)} : {variantIdkStr1}");
             Console.WriteLine($"{nameof(variantIdkStr2)} : {variantIdkStr2}");
-            Console.WriteLine($"{nameof(variantVCodingEntryCount)} : {variantVCodingEntryCount}");
-            Console.WriteLine($"{nameof(variantVCodingEntriesOffset)} : {variantVCodingEntriesOffset}");
+            Console.WriteLine($"{nameof(variantVCodingDomainsCount)} : {variantVCodingDomainsCount}");
+            Console.WriteLine($"{nameof(variantVCodingDomainsOffset)} : {variantVCodingDomainsOffset}");
             Console.WriteLine($"{nameof(negativeResponseName)} : {negativeResponseName}");
 
-            foreach (int offset in variantCodingDomainOffsets)
-            {
-                Console.WriteLine($"VCD Offset: {offset:X8}");
-            }
+            Console.WriteLine($"{nameof(variantIdk1)} : {variantIdk1}");
+            Console.WriteLine($"{nameof(ecuMatchingPatternCount)} : {ecuMatchingPatternCount}");
+            Console.WriteLine($"{nameof(ecuMatchingPatternOffset)} : {ecuMatchingPatternOffset}");
+            Console.WriteLine($"{nameof(variantSubsectionB)} : {variantSubsectionB}");
+            Console.WriteLine($"{nameof(variantSubsectionB_Offset)} : {variantSubsectionB_Offset}");
+            Console.WriteLine($"{nameof(comparamsCount_C)} : {comparamsCount_C}");
+            Console.WriteLine($"{nameof(comparamsOffset_C)} : {comparamsOffset_C}");
+            Console.WriteLine($"{nameof(variantSubsectionD)} : {variantSubsectionD}");
+            Console.WriteLine($"{nameof(variantSubsectionD_Offset)} : {variantSubsectionD_Offset}");
+            Console.WriteLine($"{nameof(variantSubsectionE_DiagSvc)} : {variantSubsectionE_DiagSvc}");
+            Console.WriteLine($"{nameof(variantSubsectionE_Offset_DiagSvc)} : {variantSubsectionE_Offset_DiagSvc}");
+            Console.WriteLine($"{nameof(variantSubsectionF)} : {variantSubsectionF}");
+            Console.WriteLine($"{nameof(variantSubsectionF_Offset)} : {variantSubsectionF_Offset}");
+            Console.WriteLine($"{nameof(variantSubsectionG)} : {variantSubsectionG}");
+            Console.WriteLine($"{nameof(variantSubsectionG_Offset)} : {variantSubsectionG_Offset}");
+            Console.WriteLine($"{nameof(variantSubsectionH)} : {variantSubsectionH}");
+            Console.WriteLine($"{nameof(variantSubsectionH_Offset)} : {variantSubsectionH_Offset}");
+            Console.WriteLine($"{nameof(variantVCodingDomainsCount)} : {variantVCodingDomainsCount}");
+            Console.WriteLine($"{nameof(variantVCodingDomainsOffset)} : {variantVCodingDomainsOffset}");
+
         }
     }
 }

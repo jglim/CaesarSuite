@@ -10,6 +10,40 @@ namespace Caesar
 {
     public class ECUInterfaceSubtype
     {
+        public enum ParamName 
+        {
+            CP_BAUDRATE,
+            CP_GLOBAL_REQUEST_CANIDENTIFIER,
+            CP_FUNCTIONAL_REQUEST_CANIDENTIFIER,
+            CP_REQUEST_CANIDENTIFIER,
+            CP_RESPONSE_CANIDENTIFIER,
+            CP_PARTNUMBERID,
+            CP_PARTBLOCK,
+            CP_HWVERSIONID,
+            CP_SWVERSIONID,
+            CP_SWVERSIONBLOCK,
+            CP_SUPPLIERID,
+            CP_SWSUPPLIERBLOCK,
+            CP_ADDRESSMODE,
+            CP_ADDRESSEXTENSION,
+            CP_ROE_RESPONSE_CANIDENTIFIER,
+            CP_USE_TIMING_RECEIVED_FROM_ECU,
+            CP_STMIN_SUG,
+            CP_BLOCKSIZE_SUG,
+            CP_P2_TIMEOUT,
+            CP_S3_TP_PHYS_TIMER,
+            CP_S3_TP_FUNC_TIMER,
+            CP_BR_SUG,
+            CP_CAN_TRANSMIT,
+            CP_BS_MAX,
+            CP_CS_MAX,
+            CPI_ROUTINECOUNTER,
+            CP_REQREPCOUNT,
+            // looks like outliers?
+            CP_P2_EXT_TIMEOUT_7F_78,
+            CP_P2_EXT_TIMEOUT_7F_21,
+        }
+
         public string ctName;
         public int InterfaceName_T;
         public int InterfaceLongName_T;
@@ -26,11 +60,15 @@ namespace Caesar
         public int ctUnk10; // might be signed
 
         public long BaseAddress;
+        public int Index;
 
-        public ECUInterfaceSubtype(BinaryReader reader, long baseAddress) 
+        public List<ComParameter> CommunicationParameters = new List<ComParameter>();
+
+        public ECUInterfaceSubtype(BinaryReader reader, long baseAddress, int index)
         {
+            Index = index;
             BaseAddress = baseAddress;
-
+            reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             // we can now properly operate on the interface block
             ulong ctBitflags = reader.ReadUInt32();
 
@@ -52,8 +90,32 @@ namespace Caesar
             // PrintDebug();
         }
 
-        public void PrintDebug() 
+        public ComParameter GetComParameterByName(string paramName) 
         {
+            return CommunicationParameters.Find(x => x.ParamName == paramName);
+        }
+        public int GetComParameterValue(ParamName name)
+        {
+            return GetComParameterByName(name.ToString()).comValue;
+        }
+        public bool GetComParameterValue(ParamName name, out int result)
+        {
+            ComParameter param = GetComParameterByName(name.ToString());
+            if (param is null)
+            {
+                result = 0;
+                return false;
+            }
+            else 
+            {
+                result = param.comValue;
+                return true;
+            }
+        }
+
+        public void PrintDebug()
+        {
+            Console.WriteLine($"iface subtype: @ 0x{BaseAddress:X}");
             Console.WriteLine($"{nameof(InterfaceName_T)} : {InterfaceName_T}");
             Console.WriteLine($"{nameof(InterfaceLongName_T)} : {InterfaceLongName_T}");
             Console.WriteLine($"{nameof(ctUnk3)} : {ctUnk3}");

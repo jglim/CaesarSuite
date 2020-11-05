@@ -41,16 +41,22 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tvMain = new System.Windows.Forms.TreeView();
-            this.txtLog = new System.Windows.Forms.TextBox();
-            this.eCUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.setSecurityLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.debugJ2534ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.j2534InterfacesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultJ2534InterfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eCUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setSecurityLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tvMain = new System.Windows.Forms.TreeView();
+            this.txtLog = new System.Windows.Forms.TextBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtJ2534Input = new System.Windows.Forms.TextBox();
+            this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbResourcePlaceholder)).BeginInit();
             this.SuspendLayout();
             // 
@@ -67,8 +73,8 @@
             // lblConnectionType
             // 
             this.lblConnectionType.Name = "lblConnectionType";
-            this.lblConnectionType.Size = new System.Drawing.Size(64, 17);
-            this.lblConnectionType.Text = "Simulation";
+            this.lblConnectionType.Size = new System.Drawing.Size(201, 17);
+            this.lblConnectionType.Text = "No interface selected (Disconnected)";
             // 
             // menuStrip1
             // 
@@ -151,28 +157,28 @@
             this.connectionToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
             this.connectionToolStripMenuItem.Text = "Connection";
             // 
-            // tvMain
+            // debugJ2534ToolStripMenuItem
             // 
-            this.tvMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tvMain.Location = new System.Drawing.Point(0, 27);
-            this.tvMain.Name = "tvMain";
-            this.tvMain.Size = new System.Drawing.Size(1123, 514);
-            this.tvMain.TabIndex = 2;
-            this.tvMain.DoubleClick += new System.EventHandler(this.tvMain_DoubleClick);
+            this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
+            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
+            this.debugJ2534ToolStripMenuItem.Visible = false;
+            this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
             // 
-            // txtLog
+            // j2534InterfacesToolStripMenuItem
             // 
-            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtLog.Location = new System.Drawing.Point(0, 541);
-            this.txtLog.Multiline = true;
-            this.txtLog.Name = "txtLog";
-            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(1123, 162);
-            this.txtLog.TabIndex = 3;
+            this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.defaultJ2534InterfaceToolStripMenuItem});
+            this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
+            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
+            this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
+            // 
+            // defaultJ2534InterfaceToolStripMenuItem
+            // 
+            this.defaultJ2534InterfaceToolStripMenuItem.Name = "defaultJ2534InterfaceToolStripMenuItem";
+            this.defaultJ2534InterfaceToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.defaultJ2534InterfaceToolStripMenuItem.Text = "Default J2534 Interface";
             // 
             // eCUToolStripMenuItem
             // 
@@ -185,52 +191,82 @@
             // setSecurityLevelToolStripMenuItem
             // 
             this.setSecurityLevelToolStripMenuItem.Name = "setSecurityLevelToolStripMenuItem";
-            this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.setSecurityLevelToolStripMenuItem.Text = "Set Security Level";
             this.setSecurityLevelToolStripMenuItem.Click += new System.EventHandler(this.setSecurityLevelToolStripMenuItem_Click);
+            // 
+            // tvMain
+            // 
+            this.tvMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tvMain.Location = new System.Drawing.Point(3, 3);
+            this.tvMain.Name = "tvMain";
+            this.tvMain.Size = new System.Drawing.Size(1117, 480);
+            this.tvMain.TabIndex = 2;
+            this.tvMain.DoubleClick += new System.EventHandler(this.tvMain_DoubleClick);
+            // 
+            // txtLog
+            // 
+            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLog.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtLog.Location = new System.Drawing.Point(3, 3);
+            this.txtLog.Multiline = true;
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtLog.Size = new System.Drawing.Size(1117, 160);
+            this.txtLog.TabIndex = 3;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tvMain);
+            this.splitContainer1.Panel1.Controls.Add(this.pbResourcePlaceholder);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.txtJ2534Input);
+            this.splitContainer1.Panel2.Controls.Add(this.txtLog);
+            this.splitContainer1.Size = new System.Drawing.Size(1123, 682);
+            this.splitContainer1.SplitterDistance = 486;
+            this.splitContainer1.TabIndex = 5;
+            // 
+            // txtJ2534Input
+            // 
+            this.txtJ2534Input.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJ2534Input.Enabled = false;
+            this.txtJ2534Input.Location = new System.Drawing.Point(3, 169);
+            this.txtJ2534Input.Name = "txtJ2534Input";
+            this.txtJ2534Input.Size = new System.Drawing.Size(1117, 20);
+            this.txtJ2534Input.TabIndex = 4;
+            this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
             // 
             // pbResourcePlaceholder
             // 
             this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.blank;
-            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1061, 39);
+            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.key;
+            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
             this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
             this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
             this.pbResourcePlaceholder.TabIndex = 4;
             this.pbResourcePlaceholder.TabStop = false;
             this.pbResourcePlaceholder.Visible = false;
             // 
-            // debugJ2534ToolStripMenuItem
-            // 
-            this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
-            this.debugJ2534ToolStripMenuItem.Visible = false;
-            this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
-            // 
-            // j2534InterfacesToolStripMenuItem
-            // 
-            this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.defaultJ2534InterfaceToolStripMenuItem});
-            this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
-            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
-            this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
-            // 
-            // defaultJ2534InterfaceToolStripMenuItem
-            // 
-            this.defaultJ2534InterfaceToolStripMenuItem.Name = "defaultJ2534InterfaceToolStripMenuItem";
-            this.defaultJ2534InterfaceToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.defaultJ2534InterfaceToolStripMenuItem.Text = "Default J2534 Interface";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1123, 728);
-            this.Controls.Add(this.pbResourcePlaceholder);
-            this.Controls.Add(this.txtLog);
-            this.Controls.Add(this.tvMain);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -242,6 +278,11 @@
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbResourcePlaceholder)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -270,6 +311,8 @@
         private System.Windows.Forms.ToolStripMenuItem debugJ2534ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem j2534InterfacesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defaultJ2534InterfaceToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TextBox txtJ2534Input;
     }
 }
 
