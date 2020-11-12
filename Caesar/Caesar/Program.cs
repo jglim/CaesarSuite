@@ -10,17 +10,17 @@ namespace Caesar
 {
     class Program
     {
-
+        // During normal operation, this class is completely ignored
         // The project can be temporarily switched from class library to console application to run as a standalone binary
         static void Main(string[] args)
         {
             Console.WriteLine("Caesar (running as console application)");
 
-            //byte[] cbfBytes = File.ReadAllBytes("MED40.CBF");
+            byte[] cbfBytes = File.ReadAllBytes("MED40.CBF");
             //byte[] cbfBytes = File.ReadAllBytes("LRSM222.CBF");
             //byte[] cbfBytes = File.ReadAllBytes("CRD3S2.CBF");
             //byte[] cbfBytes = File.ReadAllBytes("IC222.CBF");
-            byte[] cbfBytes = File.ReadAllBytes("VGSNAG2.CBF");
+            //byte[] cbfBytes = File.ReadAllBytes("VGSNAG2.CBF");
 
             using (System.Security.Cryptography.SHA1 hashInstance = System.Security.Cryptography.SHA1.Create())
             {
@@ -34,7 +34,8 @@ namespace Caesar
             // DebugFindVCDExtras(container);
             // container.CaesarCFFHeader.PrintDebug();
             // DebugFindEcuVariantIdentifier(container);
-            //DebugFindDiag(container);
+            // DebugFindDiag(container);
+            // container.CaesarECUs[0].PrintDebug();
             Console.WriteLine("Done, press any key to exit");
             Console.ReadKey();
 
@@ -64,8 +65,8 @@ namespace Caesar
             foreach (VCFragment fragment in vcdomain.VCFragments) 
             {
                 VCSubfragment subfragment = fragment.GetSubfragmentConfiguration(vc);
-                string name = subfragment is null ? "(null)" : subfragment.subfragmentNameResolved;
-                Console.WriteLine($"DVC: {fragment.fragmentName} : {name}");
+                string name = subfragment is null ? "(null)" : subfragment.NameCTFResolved;
+                Console.WriteLine($"DVC: {fragment.Qualifier} : {name}");
             }
 
             Console.WriteLine(BitUtility.BytesToDecimalString(vc));
@@ -73,7 +74,7 @@ namespace Caesar
 
             foreach (VCFragment fragment in vcdomain.VCFragments) 
             {
-                if (fragment.fragmentName == "Vmax") 
+                if (fragment.Qualifier == "Vmax") 
                 {
                     byte[] newVc = fragment.SetSubfragmentConfiguration(vc, "_160 km/h / BR906 140 km/h");
                     Console.WriteLine(BitUtility.BytesToHex(newVc));
@@ -90,17 +91,17 @@ namespace Caesar
             {
                 foreach (ECUVariant variant in ecu.ECUVariants)
                 {
-                    if (variant.variantName != "VGS2_8101")
+                    if (variant.Qualifier != "VGS2_8101")
                     {
                         continue;
                     }
                     foreach (VCDomain domain in variant.VCDomains)
                     {
-                        if (domain.vcdName != "VCD_SCN_Variantencodierung_VGS_72")
+                        if (domain.Qualifier != "VCD_SCN_Variantencodierung_VGS_72")
                         {
                             continue;
                         }
-                        Console.WriteLine($"Domain: {domain.vcdName}");
+                        Console.WriteLine($"Domain: {domain.Qualifier}");
                         domain.PrintDebug();
                     }
                 }
@@ -111,20 +112,46 @@ namespace Caesar
 
             foreach (ECU ecu in container.CaesarECUs)
             {
-                foreach (DiagService diag in ecu.GlobalDiagServices) 
+                ECUVariant variant = ecu.ECUVariants.Find(x => x.Qualifier == "VC8_Update_6_CAM");
+                if (variant != null)
                 {
-                    if (diag.qualifierName == "WVC_HEX_Variantencodierung_Write")
+                    foreach (DiagService diag in variant.DiagServices)
                     {
-                        Console.WriteLine($"D: {diag.qualifierName} : {BitUtility.BytesToHex(diag.RequestBytes)} ({diag.DataClass_ServiceType})");
-                        diag.PrintDebug();
-
-                        foreach (DiagPreparation prep in diag.Preparations) 
+                        // SES_Extended_P2_CAN_ECU_max_1_physical
+                        // DNU_Send_Key_Variantcoding_Send
+                        if (diag.Qualifier == "WVC_Exhaust_Regulation_Or_Type_Approval_Number_Write")
+                        //if (diag.DataClass_ServiceType == (int)DiagService.ServiceType.Session)
                         {
-                            Console.WriteLine("\n---prep---");
-                            prep.PrintDebug();
+                            Console.WriteLine($"D: {diag.Qualifier} : {BitUtility.BytesToHex(diag.RequestBytes)} ({diag.DataClass_ServiceType})");
+                            diag.PrintDebug();
+
+                            /*
+                            foreach (ComParameter cp in diag.DiagComParameters)
+                            {
+                                Console.WriteLine("\n---comparam---");
+                                cp.PrintDebug();
+                            }
+                            comparams: CP_REQUESTTYPE for both subinterfaces (what is this used for?)
+                             */
+
+                            foreach (DiagPreparation prep in diag.InputPreparations)
+                            {
+                                Console.WriteLine("\n---in prep---");
+                                prep.PrintDebug();
+                            }
+                            foreach (List<DiagPreparation> prepList in diag.OutputPresentations)
+                            {
+                                foreach (DiagPreparation prep in prepList)
+                                {
+                                    Console.WriteLine("\n---out pres---");
+                                    prep.PrintDebug();
+                                }
+                            }
                         }
                     }
                 }
+                Console.WriteLine("------- ecu debug -----------");
+                ecu.PrintDebug();
             }
         }
         private static void DebugFindEcuVariantIdentifier(CaesarContainer container)
@@ -150,7 +177,7 @@ namespace Caesar
                 */
                 foreach (ECUVariant variant in ecu.ECUVariants) 
                 {
-                    if (variant.variantName == "VC8_Update_6_CAM" || true)
+                    if (variant.Qualifier == "VC8_Update_6_CAM" || true)
                     {
                         // variant.DiagServices.ForEach(x => Console.WriteLine(x.qualifierName));
                         // DT_RVC_HEX_Variantencodierung ?
@@ -188,7 +215,7 @@ DJ_Zugriffsberechtigung_Abgleich
                         //Console.WriteLine($"{vread.qualifierName} : command: {BitUtility.BytesToHex(vread.RequestBytes)}");
                         //vread.PrintDebug();
 
-                        foreach (DiagPreparation prep in vread.Preparations) 
+                        foreach (DiagPreparation prep in vread.InputPreparations) 
                         {
                             //prep.PrintDebug();
                         }
@@ -211,30 +238,30 @@ DJ_Zugriffsberechtigung_Abgleich
 
             foreach (ECU ecu in container.CaesarECUs)
             {
-                Console.WriteLine($"ECU Name: {ecu.ecuName}");
+                Console.WriteLine($"ECU Name: {ecu.Qualifier}");
                 foreach (ECUVariant variant in ecu.ECUVariants)
                 {
-                    if (variant.variantName != "VGS3_8402")
+                    if (variant.Qualifier != "VGS3_8402")
                     {
                         //continue;
                     }
 
                     if (true)
                     {
-                        Console.WriteLine($"ECU Variant: {variant.variantName}");
+                        Console.WriteLine($"ECU Variant: {variant.Qualifier}");
                         Console.WriteLine($"------------------------------------------");
                         foreach (VCDomain domain in variant.VCDomains)
                         {
-                            if (domain.vcdName != "VCD_Entwicklung_Variantencodierung_VGS_73")
+                            if (domain.Qualifier != "VCD_Entwicklung_Variantencodierung_VGS_73")
                             {
                                 //continue;
                             }
-                            Console.WriteLine($"Domain: {domain.vcdName}");
+                            Console.WriteLine($"Domain: {domain.Qualifier}");
                             //domain.PrintDebug();
                             Console.WriteLine($"Domain debug end");
                             foreach (VCFragment fragment in domain.VCFragments)
                             {
-                                if (fragment.fragmentName != "fbl8_variante_ver_fls_asc1_k")
+                                if (fragment.Qualifier != "fbl8_variante_ver_fls_asc1_k")
                                 {
                                     //continue;
                                 }

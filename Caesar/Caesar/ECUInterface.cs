@@ -9,19 +9,18 @@ namespace Caesar
 {
     public class ECUInterface
     {
-        public long BaseAddress;
-
-
-        public string interfaceNameQualifier;
-        public int interfaceName_T;
-        public int interfaceDescription_T;
-        public string interfaceVersionString;
-        public int interfaceVersion;
-        public int interfaceNoOfStrings;
-        public int interfaceStringTableOffset_fromInterfaceBlock;
-        public int interfaceUnk6;
+        public string Qualifier;
+        public int Name_CTF;
+        public int Description_CTF;
+        public string VersionString;
+        public int Version;
+        public int ComParamCount;
+        public int ComParamListOffset;
+        public int Unk6;
 
         public List<string> comParameters = new List<string>();
+
+        public long BaseAddress;
 
         public ECUInterface(BinaryReader reader, long baseAddress)
         {
@@ -31,43 +30,41 @@ namespace Caesar
             // we can now properly operate on the interface block
             ulong interfaceBitflags = reader.ReadUInt32();
 
-            interfaceNameQualifier = CaesarReader.ReadBitflagStringWithReader(ref interfaceBitflags, reader, BaseAddress);
-            interfaceName_T = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
-            interfaceDescription_T = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
-            interfaceVersionString = CaesarReader.ReadBitflagStringWithReader(ref interfaceBitflags, reader, BaseAddress);
-            interfaceVersion = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
-            interfaceNoOfStrings = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
-            interfaceStringTableOffset_fromInterfaceBlock = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
-            interfaceUnk6 = CaesarReader.ReadBitflagInt16(ref interfaceBitflags, reader);
+            Qualifier = CaesarReader.ReadBitflagStringWithReader(ref interfaceBitflags, reader, BaseAddress);
+            Name_CTF = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
+            Description_CTF = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader, -1);
+            VersionString = CaesarReader.ReadBitflagStringWithReader(ref interfaceBitflags, reader, BaseAddress);
+            Version = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
+            ComParamCount = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
+            ComParamListOffset = CaesarReader.ReadBitflagInt32(ref interfaceBitflags, reader);
+            Unk6 = CaesarReader.ReadBitflagInt16(ref interfaceBitflags, reader);
 
 
-            long interfaceStringTableOffset_fromDefinitionBlock = interfaceStringTableOffset_fromInterfaceBlock + BaseAddress;
+            long comparamFileOffset = ComParamListOffset + BaseAddress;
             // Console.WriteLine($"interface string table offset from definition block : {interfaceStringTableOffset_fromDefinitionBlock:X}");
 
-            for (int interfaceStringIndex = 0; interfaceStringIndex < interfaceNoOfStrings; interfaceStringIndex++)
+            for (int interfaceStringIndex = 0; interfaceStringIndex < ComParamCount; interfaceStringIndex++)
             {
                 // seek to string pointer
-                reader.BaseStream.Seek(interfaceStringTableOffset_fromDefinitionBlock + (interfaceStringIndex * 4), SeekOrigin.Begin);
+                reader.BaseStream.Seek(comparamFileOffset + (interfaceStringIndex * 4), SeekOrigin.Begin);
                 // from pointer, seek to string
-                int interfaceStringReadoutPtr = reader.ReadInt32();
-                reader.BaseStream.Seek(interfaceStringTableOffset_fromDefinitionBlock + interfaceStringReadoutPtr, SeekOrigin.Begin);
+                long interfaceStringReadoutPtr = reader.ReadInt32() + comparamFileOffset;
+                reader.BaseStream.Seek(interfaceStringReadoutPtr, SeekOrigin.Begin);
                 string comParameter = CaesarReader.ReadStringFromBinaryReader(reader, Encoding.ASCII);
                 comParameters.Add(comParameter);
             }
-
-            // PrintDebug();
         }
 
         public void PrintDebug() 
         {
-            Console.WriteLine($"{nameof(interfaceNameQualifier)} : {interfaceNameQualifier}");
-            Console.WriteLine($"{nameof(interfaceName_T)} : {interfaceName_T}");
-            Console.WriteLine($"{nameof(interfaceDescription_T)} : {interfaceDescription_T}");
-            Console.WriteLine($"{nameof(interfaceVersionString)} : {interfaceVersionString}");
-            Console.WriteLine($"{nameof(interfaceVersion)} : {interfaceVersion}");
-            Console.WriteLine($"{nameof(interfaceNoOfStrings)} : {interfaceNoOfStrings}");
-            Console.WriteLine($"{nameof(interfaceStringTableOffset_fromInterfaceBlock)} : 0x{interfaceStringTableOffset_fromInterfaceBlock:X}");
-            Console.WriteLine($"{nameof(interfaceUnk6)} : {interfaceUnk6}");
+            Console.WriteLine($"{nameof(Qualifier)} : {Qualifier}");
+            Console.WriteLine($"{nameof(Name_CTF)} : {Name_CTF}");
+            Console.WriteLine($"{nameof(Description_CTF)} : {Description_CTF}");
+            Console.WriteLine($"{nameof(VersionString)} : {VersionString}");
+            Console.WriteLine($"{nameof(Version)} : {Version}");
+            Console.WriteLine($"{nameof(ComParamCount)} : {ComParamCount}");
+            Console.WriteLine($"{nameof(ComParamListOffset)} : 0x{ComParamListOffset:X}");
+            Console.WriteLine($"{nameof(Unk6)} : {Unk6}");
 
             foreach (string comParameter in comParameters)
             {

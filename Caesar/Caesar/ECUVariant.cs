@@ -9,38 +9,41 @@ namespace Caesar
 {
     public class ECUVariant
     {
-        public string variantName;
-        public int variantName_T;
-        public int variantLongName_T;
-        public string variantIdkStr1;
-        public string variantIdkStr2;
-        public int variantIdk1;
-        public int ecuMatchingPatternCount;
-        public int ecuMatchingPatternOffset;
-        public int variantSubsectionB;
-        public int variantSubsectionB_Offset;
-        public int comparamsCount_C;
-        public int comparamsOffset_C;
-        public int variantSubsectionD;
-        public int variantSubsectionD_Offset;
-        public int variantSubsectionE_DiagSvc;
-        public int variantSubsectionE_Offset_DiagSvc;
-        public int variantSubsectionF;
-        public int variantSubsectionF_Offset;
-        public int variantSubsectionG;
-        public int variantSubsectionG_Offset;
-        public int variantSubsectionH;
-        public int variantSubsectionH_Offset;
-        public int variantVCodingDomainsCount;
-        public int variantVCodingDomainsOffset;
-        public string negativeResponseName;
-        public int variantIdkByte;
-        public List<int> variantCodingDomainOffsets = new List<int>();
-        public List<int> diagSvcOffsets = new List<int>();
+        public string Qualifier;
+        public int Name_CTF;
+        public int Description_CTF;
+        public string UnkStr1;
+        public string UnkStr2;
+        public int Unk1;
+        
+        public int MatchingPatternCount; // A
+        public int MatchingPatternOffset;
+        public int SubsectionB_Count; // B
+        public int SubsectionB_Offset;
+        public int ComParamsCount; // C
+        public int ComParamsOffset;
+        public int SubsectionD_Count; // D
+        public int SubsectionD_Offset;
+        public int DiagServicesCount; // E
+        public int DiagServicesOffset;
+        public int SubsectionF_Count; // F
+        public int SubsectionF_Offset;
+        public int SubsectionG_Count; // G
+        public int SubsectionG_Offset;
+        public int SubsectionH_Count; // H
+        public int SubsectionH_Offset;
+        public int VCDomainsCount; // I
+        public int VCDomainsOffset;
+
+        public string NegativeResponseName;
+        public int UnkByte;
+
+        public List<int> VCDomainPoolOffsets = new List<int>();
+        public List<int> DiagServicesPoolOffsets = new List<int>();
 
         public List<VCDomain> VCDomains = new List<VCDomain>();
-        public List<DiagService> DiagServices = new List<DiagService>();
         public List<ECUVariantPattern> VariantPatterns = new List<ECUVariantPattern>();
+        public DiagService[] DiagServices = new DiagService[] { };
 
         public long BaseAddress;
 
@@ -57,54 +60,53 @@ namespace Caesar
                 ulong bitFlags = variantReader.ReadUInt32();
                 int skip = variantReader.ReadInt32();
 
-                variantName = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
-                variantName_T = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader, -1);
-                variantLongName_T = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader, -1);
-                variantIdkStr1 = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
-                variantIdkStr2 = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
+                Qualifier = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
+                Name_CTF = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader, -1);
+                Description_CTF = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader, -1);
+                UnkStr1 = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
+                UnkStr2 = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
 
-                variantIdk1 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 1 
-                ecuMatchingPatternCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 2 
-                ecuMatchingPatternOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 3 
-                variantSubsectionB = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 4 
-                variantSubsectionB_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 5 
-                comparamsCount_C = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 6 
-                comparamsOffset_C = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader); // 7 
-                variantSubsectionD = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 8 
-                variantSubsectionD_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 9 
-                variantSubsectionE_DiagSvc = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 10 
-                variantSubsectionE_Offset_DiagSvc = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 11 
-                variantSubsectionF = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 12 
-                variantSubsectionF_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 13 
-                variantSubsectionG = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 14 
-                variantSubsectionG_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 15 
-                variantSubsectionH = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 16 
-                variantSubsectionH_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 17 
+                Unk1 = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 1 
+                MatchingPatternCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 2 
+                MatchingPatternOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 3 
+                SubsectionB_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 4 
+                SubsectionB_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 5 
+                ComParamsCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 6 
+                ComParamsOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader); // 7 
+                SubsectionD_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 8 
+                SubsectionD_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 9 
+                DiagServicesCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 10 
+                DiagServicesOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 11 
+                SubsectionF_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 12 
+                SubsectionF_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 13 
+                SubsectionG_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 14 
+                SubsectionG_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 15 
+                SubsectionH_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 16 
+                SubsectionH_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 17 
 
-                variantVCodingDomainsCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 18 
-                variantVCodingDomainsOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 19 
+                VCDomainsCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 18 
+                VCDomainsOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 19 
 
-                negativeResponseName = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
-                variantIdkByte = CaesarReader.ReadBitflagInt8(ref bitFlags, variantReader);  // 20 byte
+                NegativeResponseName = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
+                UnkByte = CaesarReader.ReadBitflagInt8(ref bitFlags, variantReader);  // 20 byte
 
-                variantCodingDomainOffsets = new List<int>();
-                variantReader.BaseStream.Seek(variantVCodingDomainsOffset, SeekOrigin.Begin);
-                for (int variantCodingIndex = 0; variantCodingIndex < variantVCodingDomainsCount; variantCodingIndex++)
+                VCDomainPoolOffsets = new List<int>();
+                variantReader.BaseStream.Seek(VCDomainsOffset, SeekOrigin.Begin);
+                for (int variantCodingIndex = 0; variantCodingIndex < VCDomainsCount; variantCodingIndex++)
                 {
-                    variantCodingDomainOffsets.Add(variantReader.ReadInt32());
+                    VCDomainPoolOffsets.Add(variantReader.ReadInt32());
                 }
 
-                diagSvcOffsets = new List<int>();
-                variantReader.BaseStream.Seek(variantSubsectionE_Offset_DiagSvc, SeekOrigin.Begin);
-                for (int diagIndex = 0; diagIndex < variantSubsectionE_DiagSvc; diagIndex++)
+                DiagServicesPoolOffsets = new List<int>();
+                variantReader.BaseStream.Seek(DiagServicesOffset, SeekOrigin.Begin);
+                for (int diagIndex = 0; diagIndex < DiagServicesCount; diagIndex++)
                 {
-                    diagSvcOffsets.Add(variantReader.ReadInt32());
+                    DiagServicesPoolOffsets.Add(variantReader.ReadInt32());
                 }
 
 
             }
 
-            //PrintDebug();
             CreateVCDomains(reader, parentEcu, language);
             CreateDiagServices(reader, parentEcu, language);
             CreateVariantPatterns(reader);
@@ -115,14 +117,13 @@ namespace Caesar
         {
             // this is unusual as it doesn't use the usual caesar-style bitflag reads
             // for reasons unknown the comparam is attached to the basevariant
-            long comparamBaseAddress = BaseAddress + comparamsOffset_C;
+            long comparamBaseAddress = BaseAddress + ComParamsOffset;
             reader.BaseStream.Seek(comparamBaseAddress, SeekOrigin.Begin);
             List<long> comparameterOffsets = new List<long>();
-            for (int comIndex = 0; comIndex < comparamsCount_C; comIndex++) 
+            for (int comIndex = 0; comIndex < ComParamsCount; comIndex++) 
             {
                 comparameterOffsets.Add(reader.ReadInt32() + comparamBaseAddress);
             }
-
 
             if (parentEcu.ECUInterfaces.Count == 0)
             {
@@ -134,24 +135,24 @@ namespace Caesar
             foreach (long comparamOffset in comparameterOffsets) 
             {
                 ComParameter param = new ComParameter(reader, comparamOffset, parentEcuInterface);
-                if (param.subinterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
+                if (param.SubinterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
                 {
                     throw new Exception("ComParam: tried to assign to nonexistent interface");
                 }
                 else
                 {
-                    parentEcu.ECUInterfaceSubtypes[param.subinterfaceIndex].CommunicationParameters.Add(param);
+                    parentEcu.ECUInterfaceSubtypes[param.SubinterfaceIndex].CommunicationParameters.Add(param);
                 }
             }
         }
 
         public void CreateVariantPatterns(BinaryReader reader) 
         {
-            long tableOffset = BaseAddress + ecuMatchingPatternOffset;
+            long tableOffset = BaseAddress + MatchingPatternOffset;
             reader.BaseStream.Seek(tableOffset, SeekOrigin.Begin);
 
             VariantPatterns.Clear();
-            for (int patternIndex = 0; patternIndex < ecuMatchingPatternCount; patternIndex++) 
+            for (int patternIndex = 0; patternIndex < MatchingPatternCount; patternIndex++) 
             {
                 reader.BaseStream.Seek(tableOffset + (patternIndex * 4), SeekOrigin.Begin);
                 int patternOffset = reader.ReadInt32();
@@ -166,7 +167,7 @@ namespace Caesar
         {
             foreach (VCDomain domain in VCDomains)
             {
-                if (domain.vcdName == name)
+                if (domain.Qualifier == name)
                 {
                     return domain;
                 }
@@ -177,7 +178,7 @@ namespace Caesar
         {
             foreach (DiagService diag in DiagServices)
             {
-                if (diag.qualifierName == name)
+                if (diag.Qualifier == name)
                 {
                     return diag;
                 }
@@ -189,7 +190,7 @@ namespace Caesar
             List<string> result = new List<string>();
             foreach (VCDomain domain in VCDomains)
             {
-                result.Add(domain.vcdName);
+                result.Add(domain.Qualifier);
             }
             return result.ToArray();
         }
@@ -197,7 +198,7 @@ namespace Caesar
         private void CreateVCDomains(BinaryReader reader, ECU parentEcu, CTFLanguage language)
         {
             VCDomains = new List<VCDomain>();
-            foreach (int variantCodingDomainEntry in variantCodingDomainOffsets)
+            foreach (int variantCodingDomainEntry in VCDomainPoolOffsets)
             {
                 VCDomain vcDomain = new VCDomain(reader, parentEcu, language, variantCodingDomainEntry);
                 VCDomains.Add(vcDomain);
@@ -206,51 +207,54 @@ namespace Caesar
         private void CreateDiagServices(BinaryReader reader, ECU parentEcu, CTFLanguage language)
         {
             // unlike variant domains, storing references to the parent objects in the ecu is preferable since this is relatively larger
-            DiagServices = new List<DiagService>();
-            foreach (int diagIndex in diagSvcOffsets)
+            //DiagServices = new List<DiagService>();
+            
+            // computationally expensive, 40ish % runtime is spent here
+            DiagServices = new DiagService[DiagServicesPoolOffsets.Count];
+
+            foreach (DiagService diagSvc in parentEcu.GlobalDiagServices)
             {
-                foreach (DiagService diagSvc in parentEcu.GlobalDiagServices)
+                for (int i = 0; i < DiagServicesPoolOffsets.Count; i++)
                 {
-                    if (diagSvc.PoolIndex == diagIndex) 
+                    if (diagSvc.PoolIndex == DiagServicesPoolOffsets[i])
                     {
-                        DiagServices.Add(diagSvc);
+                        DiagServices[i] = diagSvc;
                     }
                 }
             }
-
         }
 
         public void PrintDebug() 
         {
             Console.WriteLine($"---------------- {BaseAddress:X} ----------------");
-            Console.WriteLine($"{nameof(variantName)} : {variantName}");
-            Console.WriteLine($"{nameof(variantName_T)} : {variantName_T}");
-            Console.WriteLine($"{nameof(variantLongName_T)} : {variantLongName_T}");
-            Console.WriteLine($"{nameof(variantIdkStr1)} : {variantIdkStr1}");
-            Console.WriteLine($"{nameof(variantIdkStr2)} : {variantIdkStr2}");
-            Console.WriteLine($"{nameof(variantVCodingDomainsCount)} : {variantVCodingDomainsCount}");
-            Console.WriteLine($"{nameof(variantVCodingDomainsOffset)} : {variantVCodingDomainsOffset}");
-            Console.WriteLine($"{nameof(negativeResponseName)} : {negativeResponseName}");
+            Console.WriteLine($"{nameof(Qualifier)} : {Qualifier}");
+            Console.WriteLine($"{nameof(Name_CTF)} : {Name_CTF}");
+            Console.WriteLine($"{nameof(Description_CTF)} : {Description_CTF}");
+            Console.WriteLine($"{nameof(UnkStr1)} : {UnkStr1}");
+            Console.WriteLine($"{nameof(UnkStr2)} : {UnkStr2}");
+            Console.WriteLine($"{nameof(VCDomainsCount)} : {VCDomainsCount}");
+            Console.WriteLine($"{nameof(VCDomainsOffset)} : {VCDomainsOffset}");
+            Console.WriteLine($"{nameof(NegativeResponseName)} : {NegativeResponseName}");
 
-            Console.WriteLine($"{nameof(variantIdk1)} : {variantIdk1}");
-            Console.WriteLine($"{nameof(ecuMatchingPatternCount)} : {ecuMatchingPatternCount}");
-            Console.WriteLine($"{nameof(ecuMatchingPatternOffset)} : {ecuMatchingPatternOffset}");
-            Console.WriteLine($"{nameof(variantSubsectionB)} : {variantSubsectionB}");
-            Console.WriteLine($"{nameof(variantSubsectionB_Offset)} : {variantSubsectionB_Offset}");
-            Console.WriteLine($"{nameof(comparamsCount_C)} : {comparamsCount_C}");
-            Console.WriteLine($"{nameof(comparamsOffset_C)} : {comparamsOffset_C}");
-            Console.WriteLine($"{nameof(variantSubsectionD)} : {variantSubsectionD}");
-            Console.WriteLine($"{nameof(variantSubsectionD_Offset)} : {variantSubsectionD_Offset}");
-            Console.WriteLine($"{nameof(variantSubsectionE_DiagSvc)} : {variantSubsectionE_DiagSvc}");
-            Console.WriteLine($"{nameof(variantSubsectionE_Offset_DiagSvc)} : {variantSubsectionE_Offset_DiagSvc}");
-            Console.WriteLine($"{nameof(variantSubsectionF)} : {variantSubsectionF}");
-            Console.WriteLine($"{nameof(variantSubsectionF_Offset)} : {variantSubsectionF_Offset}");
-            Console.WriteLine($"{nameof(variantSubsectionG)} : {variantSubsectionG}");
-            Console.WriteLine($"{nameof(variantSubsectionG_Offset)} : {variantSubsectionG_Offset}");
-            Console.WriteLine($"{nameof(variantSubsectionH)} : {variantSubsectionH}");
-            Console.WriteLine($"{nameof(variantSubsectionH_Offset)} : {variantSubsectionH_Offset}");
-            Console.WriteLine($"{nameof(variantVCodingDomainsCount)} : {variantVCodingDomainsCount}");
-            Console.WriteLine($"{nameof(variantVCodingDomainsOffset)} : {variantVCodingDomainsOffset}");
+            Console.WriteLine($"{nameof(Unk1)} : {Unk1}");
+            Console.WriteLine($"{nameof(MatchingPatternCount)} : {MatchingPatternCount}");
+            Console.WriteLine($"{nameof(MatchingPatternOffset)} : {MatchingPatternOffset}");
+            Console.WriteLine($"{nameof(SubsectionB_Count)} : {SubsectionB_Count}");
+            Console.WriteLine($"{nameof(SubsectionB_Offset)} : {SubsectionB_Offset}");
+            Console.WriteLine($"{nameof(ComParamsCount)} : {ComParamsCount}");
+            Console.WriteLine($"{nameof(ComParamsOffset)} : {ComParamsOffset}");
+            Console.WriteLine($"{nameof(SubsectionD_Count)} : {SubsectionD_Count}");
+            Console.WriteLine($"{nameof(SubsectionD_Offset)} : {SubsectionD_Offset}");
+            Console.WriteLine($"{nameof(DiagServicesCount)} : {DiagServicesCount}");
+            Console.WriteLine($"{nameof(DiagServicesOffset)} : {DiagServicesOffset}");
+            Console.WriteLine($"{nameof(SubsectionF_Count)} : {SubsectionF_Count}");
+            Console.WriteLine($"{nameof(SubsectionF_Offset)} : {SubsectionF_Offset}");
+            Console.WriteLine($"{nameof(SubsectionG_Count)} : {SubsectionG_Count}");
+            Console.WriteLine($"{nameof(SubsectionG_Offset)} : {SubsectionG_Offset}");
+            Console.WriteLine($"{nameof(SubsectionH_Count)} : {SubsectionH_Count}");
+            Console.WriteLine($"{nameof(SubsectionH_Offset)} : {SubsectionH_Offset}");
+            Console.WriteLine($"{nameof(VCDomainsCount)} : {VCDomainsCount}");
+            Console.WriteLine($"{nameof(VCDomainsOffset)} : {VCDomainsOffset}");
 
         }
     }

@@ -35,18 +35,18 @@ namespace Diogenes
             ECUVariant = container.GetECUVariantByName(variantName);
             VariantCodingDomain = ECUVariant.GetVCDomainByName(VCDomainName);
 
-            ReadService = ECUVariant.GetDiagServiceByName(VariantCodingDomain.vcdReadService);
-            WriteService = ECUVariant.GetDiagServiceByName(VariantCodingDomain.vcdWriteService);
-            if ((ReadService is null) || (WriteService is null)) 
+            ReadService = ECUVariant.GetDiagServiceByName(VariantCodingDomain.ReadServiceName);
+            WriteService = ECUVariant.GetDiagServiceByName(VariantCodingDomain.WriteServiceName);
+            if ((ReadService is null) || (WriteService is null))
             {
                 Console.WriteLine("VC Dialog: Unable to proceed - could not find referenced diagnostic services");
                 this.Close();
             }
 
-            VCValue = new byte[VariantCodingDomain.vcdDumpSize];
+            VCValue = new byte[VariantCodingDomain.DumpSize];
             foreach (Tuple<string, byte[]> row in VariantCodingDomain.DefaultData)
             {
-                if (row.Item1.ToLower() == "default" && (row.Item2.Length == VariantCodingDomain.vcdDumpSize))
+                if (row.Item1.ToLower() == "default" && (row.Item2.Length == VariantCodingDomain.DumpSize))
                 {
                     VCValue = row.Item2;
                     Console.WriteLine("Default variant coding data has been found and loaded");
@@ -56,7 +56,7 @@ namespace Diogenes
 
             if (connection.State == ECUConnection.ConnectionState.EcuContacted)
             {
-                Console.WriteLine($"Requesting variant coding read: {ReadService.qualifierName} : ({BitUtility.BytesToHex(ReadService.RequestBytes)})");
+                Console.WriteLine($"Requesting variant coding read: {ReadService.Qualifier} : ({BitUtility.BytesToHex(ReadService.RequestBytes)})");
             }
             else
             {
@@ -65,8 +65,21 @@ namespace Diogenes
                 btnApply.Enabled = false;
             }
 
+            VCSanityCheck();
             IntepretVC();
             PresentVC();
+        }
+
+        private void VCSanityCheck() 
+        {
+            VariantCodingDomain.VCFragments.ForEach(x => Console.WriteLine($"Fragment: {x.Qualifier}, R:{x.ReadAccessLevel} W:{x.WriteAccessLevel}"));
+            Console.WriteLine($"ReadSvc level {ReadService.ClientAccessLevel}/{ReadService.SecurityAccessLevel}, WriteSvc level {WriteService.ClientAccessLevel}/{WriteService.SecurityAccessLevel}");
+
+            Console.WriteLine($"ReadService: {ReadService.Qualifier} : {BitUtility.BytesToHex(ReadService.RequestBytes)} ({ReadService.RequestBytes.Length * 8})");
+            ReadService.InputPreparations.ForEach(x => Console.WriteLine($"{x.Qualifier} @ {x.BitPosition}, size: {x.SizeInBits}"));
+
+            Console.WriteLine($"WriteService: {WriteService.Qualifier} : {BitUtility.BytesToHex(WriteService.RequestBytes)} ({WriteService.RequestBytes.Length * 8})");
+            WriteService.InputPreparations.ForEach(x => Console.WriteLine($"{x.Qualifier} @ {x.BitPosition}, size: {x.SizeInBits}"));
         }
 
         private void PresentVC() 
@@ -106,7 +119,7 @@ namespace Diogenes
                 // DataRow row = dt.Rows.Add(new object[] { currentFragment.fragmentName, new string[] {"hi", "bye" } });
                 VCSubfragment subfragment = currentFragment.GetSubfragmentConfiguration(VCValue);
 
-                dt.Rows.Add(new string[] { currentFragment.fragmentName, subfragment is null ? "(warning: no matching subfragment)" : subfragment.subfragmentNameResolved });
+                dt.Rows.Add(new string[] { currentFragment.Qualifier, subfragment is null ? "(warning: no matching subfragment)" : subfragment.NameCTFResolved });
             }
 
             dgvMain.DataSource = dt;
@@ -194,7 +207,7 @@ namespace Diogenes
             {
                 string fragmentName = dgvMain.SelectedRows[0].Cells[0].Value.ToString();
                 string fragmentValue = dgvMain.SelectedRows[0].Cells[1].Value.ToString();
-                VCFragment fragment = VariantCodingDomain.VCFragments.Find(x => x.fragmentName == fragmentName);
+                VCFragment fragment = VariantCodingDomain.VCFragments.Find(x => x.Qualifier == fragmentName);
                 if (fragment is null)
                 {
                     return;
@@ -216,7 +229,7 @@ namespace Diogenes
                 foreach (VCSubfragment subfragment in fragment.Subfragments) 
                 {
                     ToolStripMenuItem tsItem = new ToolStripMenuItem();
-                    tsItem.Text = subfragment.subfragmentNameResolved;
+                    tsItem.Text = subfragment.NameCTFResolved;
                     tsItem.Tag = fragmentName;
                     tsItem.Click += VCContextMenu_Click;
                     if (fragmentValue == tsItem.Text) 
@@ -240,13 +253,13 @@ namespace Diogenes
             string fragmentName = senderItem.Tag.ToString();
             string fragmentValue = senderItem.Text;
 
-            VCFragment fragment = VariantCodingDomain.VCFragments.Find(x => x.fragmentName == fragmentName);
+            VCFragment fragment = VariantCodingDomain.VCFragments.Find(x => x.Qualifier == fragmentName);
             if (fragment is null) 
             {
                 Console.WriteLine("Coding context menu: couldn't find a matching fragment");
                 return;
             }
-            VCSubfragment subfragment = fragment.Subfragments.Find(x => x.subfragmentNameResolved == fragmentValue);
+            VCSubfragment subfragment = fragment.Subfragments.Find(x => x.NameCTFResolved == fragmentValue);
             if (subfragment is null)
             {
                 Console.WriteLine("Coding context menu: couldn't find a matching subfragment");

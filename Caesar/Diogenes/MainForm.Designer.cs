@@ -49,8 +49,8 @@
             this.tvMain = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
+            this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -239,6 +239,17 @@
             this.splitContainer1.SplitterDistance = 486;
             this.splitContainer1.TabIndex = 5;
             // 
+            // pbResourcePlaceholder
+            // 
+            this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.page_white_edit;
+            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
+            this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
+            this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
+            this.pbResourcePlaceholder.TabIndex = 4;
+            this.pbResourcePlaceholder.TabStop = false;
+            this.pbResourcePlaceholder.Visible = false;
+            // 
             // txtJ2534Input
             // 
             this.txtJ2534Input.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -249,17 +260,6 @@
             this.txtJ2534Input.Size = new System.Drawing.Size(1117, 20);
             this.txtJ2534Input.TabIndex = 4;
             this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
-            // 
-            // pbResourcePlaceholder
-            // 
-            this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.key;
-            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
-            this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
-            this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
-            this.pbResourcePlaceholder.TabIndex = 4;
-            this.pbResourcePlaceholder.TabStop = false;
-            this.pbResourcePlaceholder.Visible = false;
             // 
             // MainForm
             // 

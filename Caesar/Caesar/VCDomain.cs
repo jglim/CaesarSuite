@@ -10,17 +10,17 @@ namespace Caesar
     public class VCDomain
     {
 
-        public string vcdName;
-        public int vcdName_T;
-        public int vcdNameLong_T;
-        public string vcdReadService;
-        public string vcdWriteService;
-        public int vcdFragmentCount;
-        public int vcdFragmentTableOffset;
-        public int vcdDumpSize;
-        public int vcdDefaultStringCount;
-        public int vcdStringTableOffset;
-        public int vcdIdk1;
+        public string Qualifier;
+        public int Name_CTF;
+        public int Description_CTF;
+        public string ReadServiceName;
+        public string WriteServiceName;
+        public int FragmentCount;
+        public int FragmentTableOffset;
+        public int DumpSize;
+        public int DefaultStringCount;
+        public int StringTableOffset;
+        public int Unk1;
 
         public List<VCFragment> VCFragments = new List<VCFragment>();
         public ECU ParentECU;
@@ -34,11 +34,11 @@ namespace Caesar
             byte[] variantCodingPool = parentEcu.ReadVarcodingPool(reader);
             using (BinaryReader poolReader = new BinaryReader(new MemoryStream(variantCodingPool)))
             {
-                poolReader.BaseStream.Seek(variantCodingDomainEntry * parentEcu.varcoding_tableEntrySize, SeekOrigin.Begin);
+                poolReader.BaseStream.Seek(variantCodingDomainEntry * parentEcu.VcDomain_EntrySize, SeekOrigin.Begin);
                 int entryOffset = poolReader.ReadInt32();
                 int entrySize = poolReader.ReadInt32();
                 uint entryCrc = poolReader.ReadUInt32();
-                long vcdBlockAddress = entryOffset + parentEcu.varcoding_fileoffset_5;
+                long vcdBlockAddress = entryOffset + parentEcu.VcDomain_BlockOffset;
 
                 // Console.WriteLine($"VCD Entry @ 0x{entryOffset:X} with size 0x{entrySize:X} and CRC {entryCrc:X8}, abs addr {vcdBlockAddress:X8}");
 
@@ -46,34 +46,34 @@ namespace Caesar
                 reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
                 ulong bitflags = reader.ReadUInt16();
 
-                vcdName = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-                vcdName_T = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-                vcdNameLong_T = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-                vcdReadService = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-                vcdWriteService = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-                vcdFragmentCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                vcdFragmentTableOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader) + (int)baseAddress; // demoting long (warning)
-                vcdDumpSize = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                vcdDefaultStringCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                vcdStringTableOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-                vcdIdk1 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
+                Qualifier = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
+                Name_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
+                Description_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
+                ReadServiceName = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
+                WriteServiceName = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
+                FragmentCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+                FragmentTableOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader) + (int)baseAddress; // demoting long (warning)
+                DumpSize = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+                DefaultStringCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+                StringTableOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+                Unk1 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
 
                 // PrintDebug();
 
                 VCFragments = new List<VCFragment>();
-                for (int fragmentIndex = 0; fragmentIndex < vcdFragmentCount; fragmentIndex++)
+                for (int fragmentIndex = 0; fragmentIndex < FragmentCount; fragmentIndex++)
                 {
-                    VCFragment fragment = new VCFragment(reader, this, vcdFragmentTableOffset, fragmentIndex, language);
+                    VCFragment fragment = new VCFragment(reader, this, FragmentTableOffset, fragmentIndex, language);
                     VCFragments.Add(fragment);
                 }
                 // ValidateFragmentCoverage();
 
-                if (vcdDefaultStringCount > 0) 
+                if (DefaultStringCount > 0) 
                 {
                     DefaultData = new List<Tuple<string, byte[]>>();
-                    long stringTableBaseAddress = vcdStringTableOffset + baseAddress;
+                    long stringTableBaseAddress = StringTableOffset + baseAddress;
                     // this could almost be a class of its own but there isn't a distinct name to it
-                    for (int stringTableIndex = 0; stringTableIndex < vcdDefaultStringCount; stringTableIndex++) 
+                    for (int stringTableIndex = 0; stringTableIndex < DefaultStringCount; stringTableIndex++) 
                     {
                         reader.BaseStream.Seek(stringTableBaseAddress + (4 * stringTableIndex), SeekOrigin.Begin);
                         int offset = reader.ReadInt32();
@@ -110,13 +110,13 @@ namespace Caesar
         {
             // apparently gaps are okay, there isn't a 100% way to find out if parsing errors have snuck through
             int bitCursor = 0;
-            int expectedLengthInBits = vcdDumpSize * 8;
+            int expectedLengthInBits = DumpSize * 8;
             List<VCFragment> fragments = new List<VCFragment>(VCFragments);
             List<int> bitGapPositions = new List<int>();
 
             while (fragments.Count > 0)
             {
-                VCFragment result = fragments.Find(x => x.fragmentByteBitPos == bitCursor);
+                VCFragment result = fragments.Find(x => x.ByteBitPos == bitCursor);
                 if (result is null)
                 {
                     bitGapPositions.Add(bitCursor);
@@ -128,34 +128,27 @@ namespace Caesar
                 }
                 else 
                 {
-                    bitCursor += result.fragmentBitLength;
+                    bitCursor += result.BitLength;
                     fragments.Remove(result);
                 }
             }
-            /*
-            foreach (VCFragment fragment in VCFragments)
-            {
-                Console.WriteLine($"OK: {fragment.fragmentName}");
-            }
-            Console.WriteLine($"Bit End: {bitCursor}, expected end: {expectedLengthInBits}, gap count {bitGapPositions.Count}");
-            */
         }
 
         public void PrintDebug() 
         {
 
-            Console.WriteLine($"VCD Name: {vcdName}");
-            Console.WriteLine($"{nameof(vcdName_T)} : {vcdName_T}");
-            Console.WriteLine($"{nameof(vcdNameLong_T)} : {vcdNameLong_T}");
-            Console.WriteLine($"{nameof(vcdReadService)} : {vcdReadService}");
-            Console.WriteLine($"{nameof(vcdWriteService)} : {vcdWriteService}");
+            Console.WriteLine($"VCD Name: {Qualifier}");
+            Console.WriteLine($"{nameof(Name_CTF)} : {Name_CTF}");
+            Console.WriteLine($"{nameof(Description_CTF)} : {Description_CTF}");
+            Console.WriteLine($"{nameof(ReadServiceName)} : {ReadServiceName}");
+            Console.WriteLine($"{nameof(WriteServiceName)} : {WriteServiceName}");
 
-            Console.WriteLine($"{nameof(vcdFragmentCount)} : {vcdFragmentCount}");
-            Console.WriteLine($"{nameof(vcdFragmentTableOffset)} : 0x{vcdFragmentTableOffset:X}");
-            Console.WriteLine($"{nameof(vcdDumpSize)} : {vcdDumpSize}");
-            Console.WriteLine($"{nameof(vcdDefaultStringCount)} : {vcdDefaultStringCount}");
-            Console.WriteLine($"{nameof(vcdStringTableOffset)} : {vcdStringTableOffset}");
-            Console.WriteLine($"{nameof(vcdIdk1)} : {vcdIdk1}");
+            Console.WriteLine($"{nameof(FragmentCount)} : {FragmentCount}");
+            Console.WriteLine($"{nameof(FragmentTableOffset)} : 0x{FragmentTableOffset:X}");
+            Console.WriteLine($"{nameof(DumpSize)} : {DumpSize}");
+            Console.WriteLine($"{nameof(DefaultStringCount)} : {DefaultStringCount}");
+            Console.WriteLine($"{nameof(StringTableOffset)} : {StringTableOffset}");
+            Console.WriteLine($"{nameof(Unk1)} : {Unk1}");
 
         }
     }

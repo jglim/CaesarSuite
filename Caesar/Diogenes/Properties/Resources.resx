@@ -145,6 +145,9 @@
   <data name="bullet_go" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bullet_go.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="application_xp_terminal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\application_xp_terminal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="box" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\box.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -180,5 +183,8 @@
   </data>
   <data name="key" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\key.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="page_white_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\page_white_edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

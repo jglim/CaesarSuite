@@ -45,13 +45,16 @@ namespace Diogenes
         [DllImport("kernel32.dll")]
         public static extern bool FreeLibrary(IntPtr hModule);
 
-
-        // Required for textbox placeholder string
+        public const int TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
+        public const int TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
+        public const int TVS_EX_DOUBLEBUFFER = 0x0004;
         public const int EM_SETCUEBANNER = 0x1501;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
         private static List<string> LibraryExports = new List<string>();
 

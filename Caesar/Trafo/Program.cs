@@ -49,19 +49,19 @@ namespace Trafo
                             var subfragmentList = new List<object>();
                             foreach (VCSubfragment subfragment in fragment.Subfragments) 
                             {
-                                var subfragmentRow = new { SubfragmentName = subfragment.subfragmentNameResolved, HexData = BitUtility.BytesToHex(subfragment.subfragmentDump) };
+                                var subfragmentRow = new { SubfragmentName = subfragment.NameCTFResolved, HexData = BitUtility.BytesToHex(subfragment.Dump) };
                                 subfragmentList.Add(subfragmentRow);
                             }
-                            var fragmentRow = new { FragmentName = fragment.fragmentName, BitPosition = fragment.fragmentByteBitPos, BitSize = fragment.fragmentBitLength, Subfragments = subfragmentList };
+                            var fragmentRow = new { FragmentName = fragment.Qualifier, BitPosition = fragment.ByteBitPos, BitSize = fragment.BitLength, Subfragments = subfragmentList };
                             fragmentList.Add(fragmentRow);
                         }
-                        var domainRow = new { DomainName = domain.vcdName, ByteSize = domain.vcdDumpSize, ReadService = domain.vcdReadService, WriteService = domain.vcdWriteService, VarcodingFragments = fragmentList };
+                        var domainRow = new { DomainName = domain.Qualifier, ByteSize = domain.DumpSize, ReadService = domain.ReadServiceName, WriteService = domain.WriteServiceName, VarcodingFragments = fragmentList };
                         domainList.Add(domainRow);
                     }
-                    var variantRow = new { VariantName = variant.variantName, VarcodingDomains = domainList };
+                    var variantRow = new { VariantName = variant.Qualifier, VarcodingDomains = domainList };
                     variantList.Add(variantRow);
                 }
-                var ecuRow = new { ECUName = ecu.ecuName, ECUDescription = ecu.ECUDescriptionTranslated, ECUVariants = variantList };
+                var ecuRow = new { ECUName = ecu.Qualifier, ECUDescription = ecu.ECUDescriptionTranslated, ECUVariants = variantList };
                 ecuList.Add(ecuRow);
             }
 

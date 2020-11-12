@@ -19,16 +19,6 @@ namespace Diogenes
     {
         private ECUConnection Connection;
 
-        private const int TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
-        private const int TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
-        private const int TVS_EX_DOUBLEBUFFER = 0x0004;
-        public const int EM_SETCUEBANNER = 0x1501;
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
-
 
         public MainForm()
         {
@@ -41,7 +31,7 @@ namespace Diogenes
         {
             RedirectConsole();
             LoadContainers(); 
-            SendMessage(txtJ2534Input.Handle, UnmanagedUtility.EM_SETCUEBANNER, 0, "J2534 Console : Enter hex values (01 23 45 57) and press enter to send a raw J2534 command");
+            UnmanagedUtility.SendMessage(txtJ2534Input.Handle, UnmanagedUtility.EM_SETCUEBANNER, 0, "J2534 Console : Enter hex values (01 23 45 57) and press enter to send a raw J2534 command");
 
             Connection = new ECUConnection();
         }
@@ -94,12 +84,14 @@ namespace Diogenes
                 treeImages.Images.Add(Resources.bullet_yellow); // 17
 
                 treeImages.Images.Add(Resources.computer_go); // 18
-                treeImages.Images.Add(Resources.lock_edit);
-                treeImages.Images.Add(Resources.key);
+                treeImages.Images.Add(Resources.lock_edit); // 19
+                treeImages.Images.Add(Resources.key); // 20
+                treeImages.Images.Add(Resources.application_xp_terminal); // 21
+                treeImages.Images.Add(Resources.page_white_edit); // 22
 
                 tvMain.ImageList = treeImages;
 
-                SendMessage(tvMain.Handle, TVM_SETEXTENDEDSTYLE, (IntPtr)TVS_EX_DOUBLEBUFFER, (IntPtr)TVS_EX_DOUBLEBUFFER);
+                UnmanagedUtility.SendMessage(tvMain.Handle, UnmanagedUtility.TVM_SETEXTENDEDSTYLE, (IntPtr)UnmanagedUtility.TVS_EX_DOUBLEBUFFER, (IntPtr)UnmanagedUtility.TVS_EX_DOUBLEBUFFER);
             }
         }
 
@@ -115,7 +107,7 @@ namespace Diogenes
                     // cbfContainer.CaesarECUs.ForEach(x => x.ECUInterfaces.ForEach(y => y.PrintDebug()));
                     // cbfContainer.CaesarECUs.ForEach(x => x.ECUInterfaceSubtypes.ForEach(y => Console.WriteLine(y.ctName)));
 
-                    TreeNode ecuNode = new TreeNode(ecu.ecuName, 1, 1);
+                    TreeNode ecuNode = new TreeNode(ecu.Qualifier, 1, 1);
                     ecuNode.Tag = nameof(ECU);
                     //ecuNode.ImageIndex = -1;
 
@@ -136,19 +128,26 @@ namespace Diogenes
                         ecuNode.Nodes.Add(interfaceNode);
                     }
                     */
+                    TreeNode execDiagAtRoot = new TreeNode("Execute Diagnostic Service (Root)", 21, 21);
+                    execDiagAtRoot.Tag = $"{nameof(DiagService)}:{nameof(ECU)}:{ecu.Qualifier}";
+                    ecuNode.Nodes.Add(execDiagAtRoot);
+
+                    TreeNode fixCbfPermissions = new TreeNode("Fix Client Access Permissions (Export)", 22, 22);
+                    fixCbfPermissions.Tag = $"CALFix";
+                    ecuNode.Nodes.Add(fixCbfPermissions);
 
                     foreach (ECUInterfaceSubtype subtype in ecu.ECUInterfaceSubtypes)
                     {
-                        TreeNode interfaceNode = new TreeNode(subtype.ctName, 5, 5);
+                        TreeNode interfaceNode = new TreeNode(subtype.Qualifier, 5, 5);
                         interfaceNode.Tag = "";
 
                         TreeNode initiateContactNode = new TreeNode("Initiate Contact", 18, 18);
-                        initiateContactNode.Tag = $"{nameof(ECUInterfaceSubtype)}:{subtype.ctName}";
+                        initiateContactNode.Tag = $"{nameof(ECUInterfaceSubtype)}:{subtype.Qualifier}";
                         interfaceNode.Nodes.Add(initiateContactNode);
 
                         foreach (ComParameter parameter in subtype.CommunicationParameters)
                         {
-                            TreeNode comNode = new TreeNode($"{parameter.ParamName} : {parameter.comValue} (0x{parameter.comValue:X})", 9, 9);
+                            TreeNode comNode = new TreeNode($"{parameter.ParamName} : {parameter.ComParamValue} (0x{parameter.ComParamValue:X})", 9, 9);
                             comNode.Tag = nameof(ComParameter);
                             interfaceNode.Nodes.Add(comNode);
                         }
@@ -157,8 +156,13 @@ namespace Diogenes
 
                     foreach (ECUVariant variant in ecu.ECUVariants) 
                     {
-                        TreeNode ecuVariantNode = new TreeNode(variant.variantName, 2, 2);
+                        TreeNode ecuVariantNode = new TreeNode(variant.Qualifier, 2, 2);
                         ecuVariantNode.Tag = nameof(ECUVariant);
+
+                        // exec diag button
+                        TreeNode execDiagAtVariant = new TreeNode("Execute Diagnostic Service", 21, 21);
+                        execDiagAtVariant.Tag = $"{nameof(DiagService)}:{nameof(ECUVariant)}:{variant.Qualifier}";
+                        ecuVariantNode.Nodes.Add(execDiagAtVariant);
 
                         // metadata
                         TreeNode metadataNode = new TreeNode($"Metadata", 6, 6);
@@ -176,7 +180,7 @@ namespace Diogenes
                         // vc domains
                         foreach (VCDomain domain in variant.VCDomains) 
                         {
-                            TreeNode vcDomainNode = new TreeNode(domain.vcdName, 3, 3);
+                            TreeNode vcDomainNode = new TreeNode(domain.Qualifier, 3, 3);
                             vcDomainNode.Tag = nameof(VCDomain);
                             ecuVariantNode.Nodes.Add(vcDomainNode);
                         }
@@ -186,6 +190,48 @@ namespace Diogenes
                     tvMain.Nodes.Add(ecuNode);
                 }
             }
+        }
+
+        private void FixCALs(CaesarContainer container, ECU ecu) 
+        {
+            int newLevel = 1;
+            byte[] newFile = new byte[container.FileBytes.Length];
+            Buffer.BlockCopy(container.FileBytes, 0, newFile, 0, container.FileBytes.Length);
+
+            Console.WriteLine($"Creating a new CBF with access level requirements set at {newLevel}");
+            List<DiagService> dsPendingFix = new List<DiagService>();
+
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(container.FileBytes)))
+            {
+                foreach (DiagService ds in ecu.GlobalDiagServices)
+                {
+                    if (ds.ClientAccessLevel > newLevel)
+                    {
+                        dsPendingFix.Add(ds);
+                        Console.WriteLine($"-> {ds.Qualifier} (Level {ds.ClientAccessLevel})");
+                        long fileOffset = ds.GetCALInt16Offset(reader);
+                        if (fileOffset != -1)
+                        {
+                            newFile[fileOffset] = (byte)newLevel;
+                            newFile[fileOffset + 1] = (byte)(newLevel >> 8);
+                        }
+                    }
+                }
+
+                uint checksum = Caesar.CaesarReader.ComputeFileChecksum(newFile);
+                byte[] checksumBytes = BitConverter.GetBytes(checksum);
+                Array.ConstrainedCopy(checksumBytes, 0, newFile, newFile.Length - 4, checksumBytes.Length);
+            }
+
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Specify a location to save your new CBF file";
+            sfd.Filter = "CBF files (*.cbf)|*.cbf|All files (*.*)|*.*";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllBytes(sfd.FileName, newFile);
+            }
+
         }
 
         private void tvMain_DoubleClick(object sender, EventArgs e)
@@ -210,17 +256,29 @@ namespace Diogenes
                     Console.WriteLine($"VC Confirmation: {domainName} : {BitUtility.BytesToHex(vcForm.VCValue)}");
                 }
             }
+            else if (node.Tag.ToString() == "CALFix")
+            {
+                foreach (CaesarContainer container in Containers)
+                {
+                    ECU ecu = container.CaesarECUs.Find(x => x.Qualifier == node.Parent.Text);
+                    if (ecu != null)
+                    {
+                        FixCALs(container, ecu);
+                        break;
+                    }
+                }
+            }
             else if (node.Tag.ToString().StartsWith(nameof(ECUInterfaceSubtype)))
             {
                 string connectionProfileName = node.Tag.ToString().Substring(nameof(ECUInterfaceSubtype).Length + 1);
                 string ecuName = node.Parent.Parent.Text;
 
-                foreach (CaesarContainer container in Containers) 
+                foreach (CaesarContainer container in Containers)
                 {
-                    ECU ecu = container.CaesarECUs.Find(x => x.ecuName == ecuName);
+                    ECU ecu = container.CaesarECUs.Find(x => x.Qualifier == ecuName);
                     if (ecu != null)
                     {
-                        ECUInterfaceSubtype subtype = ecu.ECUInterfaceSubtypes.Find(x => x.ctName == connectionProfileName);
+                        ECUInterfaceSubtype subtype = ecu.ECUInterfaceSubtypes.Find(x => x.Qualifier == connectionProfileName);
                         if (subtype != null)
                         {
                             Console.WriteLine($"Attempting to open a connection to ({ecuName}) with profile '{connectionProfileName}'");
@@ -229,6 +287,50 @@ namespace Diogenes
                         }
                     }
                 }
+            }
+            else if (node.Tag.ToString().StartsWith(nameof(DiagService)))
+            {
+                string diagOrigin = node.Tag.ToString().Substring(nameof(DiagService).Length + 1);
+                string variantName = "";
+                string ecuName = "";
+
+                if (diagOrigin.StartsWith($"{nameof(ECUVariant)}:"))
+                {
+                    variantName = node.Parent.Text;
+                    ecuName = node.Parent.Parent.Text;
+                }
+                else 
+                {
+                    ecuName = node.Parent.Text;
+                }
+
+                foreach (CaesarContainer container in Containers)
+                {
+                    ECU ecu = container.CaesarECUs.Find(x => x.Qualifier == ecuName);
+                    if (ecu != null)
+                    {
+                        PickDiagForm picker;
+                        ECUVariant variant = ecu.ECUVariants.Find(x => x.Qualifier == variantName);
+                        if (variant != null)
+                        {
+                            Console.WriteLine($"Starting Diagnostic Service picker modal for variant {variantName}");
+                            picker = new PickDiagForm(variant.DiagServices);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Starting Diagnostic Service picker modal for root {ecuName}");
+                            picker = new PickDiagForm(ecu.GlobalDiagServices.ToArray());
+                        }
+                        if (picker.ShowDialog() == DialogResult.OK) 
+                        {
+                            RunDiagForm runDiagForm = new RunDiagForm(picker.SelectedDiagService);
+                            runDiagForm.ShowDialog();
+                            // Console.WriteLine($"Picker returned: {picker.SelectedDiagService.qualifierName}");
+                        }
+                        break;
+                    }
+                }
+
             }
         }
         private void ShowAbout() 

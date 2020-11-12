@@ -130,29 +130,24 @@ namespace Diogenes
         public void Connect(ECUInterfaceSubtype profile, ECU ecuContext)
         {
             EcuContext = ecuContext;
-            SetEcuSessionState(EcuSessionType.Extended);
             if (ConnectionDevice is null) 
             {
                 Console.WriteLine("No interfaces available : please select a J2534 interfaces from the Connection menu");
                 return;
             }
 
-            // sanity check: names should normally start with HSCAN to avoid unsupported interfaces/protocols?
+            if (!profile.Qualifier.StartsWith("HSCAN"))
+            {
+                Console.WriteLine("Profile not supported: only HSCAN interfaces are supported.");
+                return;
+            }
 
             // actually start fixing up the connection
             if (ConnectionChannel != null) 
             {
                 ConnectionChannel.Dispose();
             }
-            FriendlyProfileName = profile.ctName;
-
-            /*
-            Console.WriteLine($"{FriendlyProfileName} connection properties:");
-            foreach (ComParameter parameter in profile.CommunicationParameters) 
-            {
-                Console.WriteLine($"{parameter.ParamName} : {parameter.comValue} (0x{parameter.comValue:X})");
-            }
-            */
+            FriendlyProfileName = profile.Qualifier;
 
             try
             {
@@ -167,6 +162,8 @@ namespace Diogenes
                 CanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_REQUEST_CANIDENTIFIER));
                 // input byte data is in big-endian
                 Array.Reverse(CanIdentifier);
+
+                Console.WriteLine($"CAN Identifier: {BitUtility.BytesToHex(CanIdentifier)}");
 
                 filter.StandardISO15765(CanIdentifier);
                 ConnectionChannel.DefaultTxFlag = TxFlag.ISO15765_FRAME_PAD;
@@ -202,14 +199,7 @@ namespace Diogenes
                         sconfigList.Add(new SConfig(comPair.Item1, comValue));
                     }
                 }
-                /*
-                ConnectionChannel.SetConfig(new SConfig[]
-                {
-                    new SConfig(Parameter.STMIN_TX, profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_STMIN_SUG)), // typically 0
-                    // new SConfig(Parameter.ISO15765_BS, profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_BLOCKSIZE_SUG)), // typically 8
-                    new SConfig(Parameter.ISO15765_STMIN, profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_STMIN_SUG)), // typically 0
-                });
-                */
+
                 ConnectionChannel.SetConfig(sconfigList.ToArray());
 
                 ConnectionChannel.ClearRxBuffer();
@@ -217,7 +207,6 @@ namespace Diogenes
 
                 // start an extended session
                 SetEcuSessionState(EcuSessionType.Extended);
-                SendMessage(new byte[] {0x10, 0x03 });
 
                 State = ConnectionState.ChannelConnectedPendingEcuContact;
             }
@@ -254,11 +243,14 @@ namespace Diogenes
             }
             foreach (DiagService diag in EcuContext.GlobalDiagServices) 
             {
-                string diagNameLower = diag.qualifierName.ToLower();
+                string diagNameLower = diag.Qualifier.ToLower();
 
-                if (diag.DataClass_ServiceType == (int)DiagService.ServiceType.Session) 
+                if (diag.DataClass_ServiceType == (int)DiagService.ServiceType.Session)
                 {
-                    bool diagIsValid = diagNameLower.Contains("physical"); // choose between "physical" and "functional". no idea what they do, the dumps are identical
+                    bool diagIsPhysical = diagNameLower.Contains("physical");
+                    bool diagIsFunctional = diagNameLower.Contains("functional");
+                    // edit: apparently not always specified (wtf)
+                    bool diagIsValid = true;  // choose between "physical" and "functional". no idea what they do, the dumps are identical
 
                     foreach (string sessionIdentifyingString in EcuSessionStrings[(int)newSessionLevel]) 
                     {
@@ -277,15 +269,15 @@ namespace Diogenes
 
         public void SendDiagRequest(DiagService diag) 
         {
-            Console.WriteLine($"Running diagnostic request : {diag.qualifierName} ({BitUtility.BytesToHex(diag.RequestBytes, true)})");
+            Console.WriteLine($"Running diagnostic request : {diag.Qualifier} ({BitUtility.BytesToHex(diag.RequestBytes, true)})");
             SendMessage(diag.RequestBytes);
         }
 
         public void SendMessage(IEnumerable<byte> message)
         {
-            string messageAsString = BitUtility.BytesToHex(message.ToArray(), true);
             List<byte> packet = new List<byte>(CanIdentifier);
             packet.AddRange(message);
+            string messageAsString = BitUtility.BytesToHex(packet.ToArray(), true);
             Console.WriteLine($"J2534 Write: {messageAsString}");
 
             if (ConnectionDevice is null)

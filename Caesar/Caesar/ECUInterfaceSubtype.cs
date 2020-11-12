@@ -44,20 +44,20 @@ namespace Caesar
             CP_P2_EXT_TIMEOUT_7F_21,
         }
 
-        public string ctName;
-        public int InterfaceName_T;
-        public int InterfaceLongName_T;
+        public string Qualifier;
+        public int Name_CTF;
+        public int Description_CTF;
 
-        public int ctUnk3;
-        public int ctUnk4;
+        public int Unk3;
+        public int Unk4;
 
-        public int ctUnk5;
-        public int ctUnk6;
-        public int ctUnk7;
+        public int Unk5;
+        public int Unk6;
+        public int Unk7;
 
-        public int ctUnk8;
-        public int ctUnk9;
-        public int ctUnk10; // might be signed
+        public int Unk8;
+        public int Unk9;
+        public int Unk10; // might be signed
 
         public long BaseAddress;
         public int Index;
@@ -72,22 +72,20 @@ namespace Caesar
             // we can now properly operate on the interface block
             ulong ctBitflags = reader.ReadUInt32();
 
-            ctName = CaesarReader.ReadBitflagStringWithReader(ref ctBitflags, reader, BaseAddress);
-            InterfaceName_T = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader, -1);
-            InterfaceLongName_T = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader, -1);
+            Qualifier = CaesarReader.ReadBitflagStringWithReader(ref ctBitflags, reader, BaseAddress);
+            Name_CTF = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader, -1);
+            Description_CTF = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader, -1);
 
-            ctUnk3 = CaesarReader.ReadBitflagInt16(ref ctBitflags, reader);
-            ctUnk4 = CaesarReader.ReadBitflagInt16(ref ctBitflags, reader);
+            Unk3 = CaesarReader.ReadBitflagInt16(ref ctBitflags, reader);
+            Unk4 = CaesarReader.ReadBitflagInt16(ref ctBitflags, reader);
 
-            ctUnk5 = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader);
-            ctUnk6 = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader);
-            ctUnk7 = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader);
+            Unk5 = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader);
+            Unk6 = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader);
+            Unk7 = CaesarReader.ReadBitflagInt32(ref ctBitflags, reader);
 
-            ctUnk8 = CaesarReader.ReadBitflagUInt8(ref ctBitflags, reader);
-            ctUnk9 = CaesarReader.ReadBitflagUInt8(ref ctBitflags, reader);
-            ctUnk10 = CaesarReader.ReadBitflagInt8(ref ctBitflags, reader); // might be signed
-
-            // PrintDebug();
+            Unk8 = CaesarReader.ReadBitflagUInt8(ref ctBitflags, reader);
+            Unk9 = CaesarReader.ReadBitflagUInt8(ref ctBitflags, reader);
+            Unk10 = CaesarReader.ReadBitflagInt8(ref ctBitflags, reader); // might be signed
         }
 
         public ComParameter GetComParameterByName(string paramName) 
@@ -96,7 +94,7 @@ namespace Caesar
         }
         public int GetComParameterValue(ParamName name)
         {
-            return GetComParameterByName(name.ToString()).comValue;
+            return GetComParameterByName(name.ToString()).ComParamValue;
         }
         public bool GetComParameterValue(ParamName name, out int result)
         {
@@ -108,7 +106,7 @@ namespace Caesar
             }
             else 
             {
-                result = param.comValue;
+                result = param.ComParamValue;
                 return true;
             }
         }
@@ -116,17 +114,17 @@ namespace Caesar
         public void PrintDebug()
         {
             Console.WriteLine($"iface subtype: @ 0x{BaseAddress:X}");
-            Console.WriteLine($"{nameof(InterfaceName_T)} : {InterfaceName_T}");
-            Console.WriteLine($"{nameof(InterfaceLongName_T)} : {InterfaceLongName_T}");
-            Console.WriteLine($"{nameof(ctUnk3)} : {ctUnk3}");
-            Console.WriteLine($"{nameof(ctUnk4)} : {ctUnk4}");
-            Console.WriteLine($"{nameof(ctUnk5)} : {ctUnk5}");
-            Console.WriteLine($"{nameof(ctUnk6)} : {ctUnk6}");
-            Console.WriteLine($"{nameof(ctUnk7)} : {ctUnk7}");
-            Console.WriteLine($"{nameof(ctUnk8)} : {ctUnk8}");
-            Console.WriteLine($"{nameof(ctUnk9)} : {ctUnk9}");
-            Console.WriteLine($"{nameof(ctUnk10)} : {ctUnk10}");
-            Console.WriteLine($"CT: {ctName}");
+            Console.WriteLine($"{nameof(Name_CTF)} : {Name_CTF}");
+            Console.WriteLine($"{nameof(Description_CTF)} : {Description_CTF}");
+            Console.WriteLine($"{nameof(Unk3)} : {Unk3}");
+            Console.WriteLine($"{nameof(Unk4)} : {Unk4}");
+            Console.WriteLine($"{nameof(Unk5)} : {Unk5}");
+            Console.WriteLine($"{nameof(Unk6)} : {Unk6}");
+            Console.WriteLine($"{nameof(Unk7)} : {Unk7}");
+            Console.WriteLine($"{nameof(Unk8)} : {Unk8}");
+            Console.WriteLine($"{nameof(Unk9)} : {Unk9}");
+            Console.WriteLine($"{nameof(Unk10)} : {Unk10}");
+            Console.WriteLine($"CT: {Qualifier}");
         }
     }
 }

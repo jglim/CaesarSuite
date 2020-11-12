@@ -63,6 +63,16 @@ namespace Diogenes.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap application_xp_terminal {
+            get {
+                object obj = ResourceManager.GetObject("application_xp_terminal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap blank {
             get {
                 object obj = ResourceManager.GetObject("blank", resourceCulture);
@@ -266,6 +276,16 @@ namespace Diogenes.Properties {
         internal static System.Drawing.Bitmap lock_edit {
             get {
                 object obj = ResourceManager.GetObject("lock_edit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap page_white_edit {
+            get {
+                object obj = ResourceManager.GetObject("page_white_edit", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

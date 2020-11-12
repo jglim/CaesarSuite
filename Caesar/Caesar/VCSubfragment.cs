@@ -9,14 +9,14 @@ namespace Caesar
 {
     public class VCSubfragment
     {
-        public int subfragmentName_T;
-        public byte[] subfragmentDump;
-        public int subfragmentName2_T;
-        public string fragmentNameUsuallyDisabled;
-        public int subfragmentIdk3;
-        public int subfragmentIdk4;
-        public string fragmentStringIdk;
-        public string subfragmentNameResolved;
+        public int Name_CTF;
+        public byte[] Dump;
+        public int Description_CTF;
+        public string QualifierUsuallyDisabled;
+        public int Unk3;
+        public int Unk4;
+        public string UnkStr5;
+        public string NameCTFResolved;
 
         public VCSubfragment(BinaryReader reader, VCFragment parentFragment, CTFLanguage language, long baseAddress)
         {
@@ -24,18 +24,18 @@ namespace Caesar
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             ulong bitflags = reader.ReadUInt16();
 
-            subfragmentName_T = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-            if (parentFragment.fragmentCCFHandle == 5) 
+            Name_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
+            if (parentFragment.CCFHandle == 5) 
             {
                 // fragment should be parsed as PBSGetDumpAsStringFn, though internally we perceive this as the same
             }
-            subfragmentDump = CaesarReader.ReadBitflagDumpWithReader(ref bitflags, reader, parentFragment.fragmentVarcodeDumpSize, baseAddress);
-            subfragmentName2_T = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-            fragmentNameUsuallyDisabled = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-            subfragmentIdk3 = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-            subfragmentIdk4 = CaesarReader.ReadBitflagInt16(ref bitflags, reader, -1);
-            fragmentStringIdk = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-            subfragmentNameResolved = language.GetString(subfragmentName2_T);
+            Dump = CaesarReader.ReadBitflagDumpWithReader(ref bitflags, reader, parentFragment.VarcodeDumpSize, baseAddress);
+            Description_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
+            QualifierUsuallyDisabled = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
+            Unk3 = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
+            Unk4 = CaesarReader.ReadBitflagInt16(ref bitflags, reader, -1);
+            UnkStr5 = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
+            NameCTFResolved = language.GetString(Description_CTF);
 
             //int subfragmentIdk2 = reader.ReadInt32();
             //int subfragmentName = reader.ReadInt32();
@@ -49,18 +49,18 @@ namespace Caesar
             if (verbose)
             {
                 Console.WriteLine("------------- subfragment ------------- ");
-                Console.WriteLine($"{nameof(subfragmentName_T)}, {subfragmentName_T}");
-                Console.WriteLine($"{nameof(subfragmentDump)}, {BitUtility.BytesToHex(subfragmentDump)}");
-                Console.WriteLine($"{nameof(subfragmentName2_T)}, {subfragmentName2_T}");
-                Console.WriteLine($"{nameof(subfragmentNameResolved)}, {subfragmentNameResolved}");
-                Console.WriteLine($"{nameof(fragmentNameUsuallyDisabled)}, {fragmentNameUsuallyDisabled}");
-                Console.WriteLine($"{nameof(subfragmentIdk3)}, {subfragmentIdk3}");
-                Console.WriteLine($"{nameof(subfragmentIdk4)}, {subfragmentIdk4}");
-                Console.WriteLine($"{nameof(fragmentStringIdk)}, {fragmentStringIdk}");
+                Console.WriteLine($"{nameof(Name_CTF)}, {Name_CTF}");
+                Console.WriteLine($"{nameof(Dump)}, {BitUtility.BytesToHex(Dump)}");
+                Console.WriteLine($"{nameof(Description_CTF)}, {Description_CTF}");
+                Console.WriteLine($"{nameof(NameCTFResolved)}, {NameCTFResolved}");
+                Console.WriteLine($"{nameof(QualifierUsuallyDisabled)}, {QualifierUsuallyDisabled}");
+                Console.WriteLine($"{nameof(Unk3)}, {Unk3}");
+                Console.WriteLine($"{nameof(Unk4)}, {Unk4}");
+                Console.WriteLine($"{nameof(UnkStr5)}, {UnkStr5}");
             }
             else
             {
-                Console.WriteLine($">> {BitUtility.BytesToHex(subfragmentDump)} : {subfragmentNameResolved}");
+                Console.WriteLine($">> {BitUtility.BytesToHex(Dump)} : {NameCTFResolved}");
             }
         }
     }

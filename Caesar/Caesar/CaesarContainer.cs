@@ -12,8 +12,10 @@ namespace Caesar
         public CFFHeader CaesarCFFHeader;
         public CTFHeader CaesarCTFHeader;
         public List<ECU> CaesarECUs = new List<ECU>();
+        public byte[] FileBytes = new byte[] { };
         public CaesarContainer(byte[] fileBytes)
         {
+            FileBytes = fileBytes;
             // work from int __cdecl DIIAddCBFFile(char *fileName)
             using (BinaryReader reader = new BinaryReader(new MemoryStream(fileBytes)))
             {
@@ -23,12 +25,18 @@ namespace Caesar
                 int cffHeaderSize = reader.ReadInt32();
                 byte[] cffHeaderData = reader.ReadBytes(cffHeaderSize);
 
+                uint computedChecksum = CaesarReader.ComputeFileChecksumLazy(fileBytes);
+                uint providedChecksum = ReadFileChecksum(fileBytes);
+                
+                if (computedChecksum != providedChecksum)
+                {
+                    Console.WriteLine($"WARNING: Checksum mismatch : computed/provided: {computedChecksum:X8}/{providedChecksum:X8}");
+                }
                 ReadCFFDefinition(reader);
                 // language is the highest priority since all our strings come from it
                 ReadCTF(reader);
                 ReadECU(reader);
             }
-
         }
 
         public static string GetCaesarVersionString() 
@@ -36,13 +44,19 @@ namespace Caesar
             return "1.0.0";
         }
 
+        public uint ReadFileChecksum(byte[] fileBytes) 
+        {
+            return BitConverter.ToUInt32(fileBytes, fileBytes.Length - 4);
+        }
+
+
         public ECUVariant GetECUVariantByName(string name) 
         {
             foreach (ECU ecu in CaesarECUs) 
             {
                 foreach (ECUVariant variant in ecu.ECUVariants) 
                 {
-                    if (variant.variantName == name) 
+                    if (variant.Qualifier == name) 
                     {
                         return variant;
                     }
@@ -59,7 +73,7 @@ namespace Caesar
             {
                 foreach (ECUVariant variant in ecu.ECUVariants)
                 {
-                    result.Add(variant.variantName);
+                    result.Add(variant.Qualifier);
                 }
             }
             return result.ToArray();
@@ -67,14 +81,14 @@ namespace Caesar
 
         public CTFLanguage GetLanguage() 
         {
-            if (CaesarCTFHeader.CTFLanguages is null)
+            if (CaesarCTFHeader.CtfLanguages is null)
             {
                 throw new NotImplementedException("stringtable not initialized");
             }
 
-            if (CaesarCTFHeader.CTFLanguages.Count != 0)
+            if (CaesarCTFHeader.CtfLanguages.Count != 0)
             {
-                return CaesarCTFHeader.CTFLanguages[0];
+                return CaesarCTFHeader.CtfLanguages[0];
             }
             throw new NotImplementedException("no idea how to handle missing stringtable");
         }
@@ -83,15 +97,15 @@ namespace Caesar
         {
             CaesarECUs = new List<ECU>();
             // read all ecu definitions
-            long ecuTableOffset = CaesarCFFHeader.offsetsToEcuOffsets + CaesarCFFHeader.BaseAddress;
+            long ecuTableOffset = CaesarCFFHeader.EcuOffset + CaesarCFFHeader.BaseAddress;
             
-            for (int ecuIndex = 0; ecuIndex < CaesarCFFHeader.numberOfEcus; ecuIndex++)
+            for (int ecuIndex = 0; ecuIndex < CaesarCFFHeader.EcuCount; ecuIndex++)
             {
                 // seek to an entry the ecu offsets table
                 fileReader.BaseStream.Seek(ecuTableOffset + (ecuIndex * 4), SeekOrigin.Begin);
                 // read the offset to the ecu entry, then seek to the actual address
                 int offsetToActualEcuEntry = fileReader.ReadInt32();
-                CaesarECUs.Add(new ECU(fileReader, GetLanguage(), CaesarCFFHeader, ecuTableOffset + offsetToActualEcuEntry));
+                CaesarECUs.Add(new ECU(fileReader, GetLanguage(), CaesarCFFHeader, ecuTableOffset + offsetToActualEcuEntry, this));
             }
 
         }
@@ -100,13 +114,13 @@ namespace Caesar
         {
             // parse CTF language stuff
             // approx 0x1304 / 4 number of strings?
-            if (CaesarCFFHeader.nCtfHeaderRpos == 0)
+            if (CaesarCFFHeader.CtfOffset == 0)
             {
                 throw new NotImplementedException("No idea how to handle nonexistent ctf header");
             }
             // Console.WriteLine($"ctf header relative to definitions: {nameof(CaesarCFFHeader.nCtfHeaderRpos)} : 0x{CaesarCFFHeader.nCtfHeaderRpos:X}");
 
-            long ctfOffset = CaesarCFFHeader.BaseAddress + CaesarCFFHeader.nCtfHeaderRpos;
+            long ctfOffset = CaesarCFFHeader.BaseAddress + CaesarCFFHeader.CtfOffset;
             CaesarCTFHeader = new CTFHeader(fileReader, ctfOffset, CaesarCFFHeader);
         }
 
@@ -117,13 +131,13 @@ namespace Caesar
             CaesarCFFHeader = new CFFHeader(fileReader);
             // CaesarCFFHeader.PrintDebug();
 
-            if (CaesarCFFHeader.caesarVersion < 400) 
+            if (CaesarCFFHeader.CaesarVersion < 400) 
             {
-                throw new NotImplementedException($"Unhandled Caesar version: {CaesarCFFHeader.caesarVersion}");
+                throw new NotImplementedException($"Unhandled Caesar version: {CaesarCFFHeader.CaesarVersion}");
             }
 
-            int caesarStringTableOffset = CaesarCFFHeader.cffHeaderSize + 0x410 + 4;
-            int formEntryTable = caesarStringTableOffset + CaesarCFFHeader.sizeOfStringPool;
+            int caesarStringTableOffset = CaesarCFFHeader.CffHeaderSize + 0x410 + 4;
+            int formEntryTable = caesarStringTableOffset + CaesarCFFHeader.StringPoolSize;
                 
             //Console.WriteLine($"{nameof(caesarStringTableOffset)} : 0x{caesarStringTableOffset:X}");
             //Console.WriteLine($"{nameof(afterStringTableOffset)} : 0x{afterStringTableOffset:X}");
