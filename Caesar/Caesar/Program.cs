@@ -15,7 +15,21 @@ namespace Caesar
         static void Main(string[] args)
         {
             Console.WriteLine("Caesar (running as console application)");
+            CaesarMain();
+            //DscMain();
+            Console.WriteLine("Done, press any key to exit");
+            Console.ReadKey();
+        }
 
+
+        private static void DscMain()
+        {
+            byte[] palContainer = File.ReadAllBytes("auth.pal");
+            DSCContext ctx = new DSCContext(palContainer);
+        }
+
+        private static void CaesarMain() 
+        {
             byte[] cbfBytes = File.ReadAllBytes("MED40.CBF");
             //byte[] cbfBytes = File.ReadAllBytes("LRSM222.CBF");
             //byte[] cbfBytes = File.ReadAllBytes("CRD3S2.CBF");
@@ -36,9 +50,6 @@ namespace Caesar
             // DebugFindEcuVariantIdentifier(container);
             // DebugFindDiag(container);
             // container.CaesarECUs[0].PrintDebug();
-            Console.WriteLine("Done, press any key to exit");
-            Console.ReadKey();
-
         }
 
         private static void TryDecodeVC(CaesarContainer container) 
@@ -223,13 +234,6 @@ DJ_Zugriffsberechtigung_Abgleich
 
                     }
                 }
-            }
-        }
-        private static void DebugParseDiagjobs(CaesarContainer container)
-        {
-            foreach (ECU ecu in container.CaesarECUs)
-            {
-                
             }
         }
 

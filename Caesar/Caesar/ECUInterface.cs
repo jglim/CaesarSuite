@@ -50,7 +50,7 @@ namespace Caesar
                 // from pointer, seek to string
                 long interfaceStringReadoutPtr = reader.ReadInt32() + comparamFileOffset;
                 reader.BaseStream.Seek(interfaceStringReadoutPtr, SeekOrigin.Begin);
-                string comParameter = CaesarReader.ReadStringFromBinaryReader(reader, Encoding.ASCII);
+                string comParameter = CaesarReader.ReadStringFromBinaryReader(reader);
                 comParameters.Add(comParameter);
             }
         }

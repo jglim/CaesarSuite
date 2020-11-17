@@ -39,9 +39,11 @@ namespace Caesar
             }
         }
 
-        public static string GetCaesarVersionString() 
+        public static string GetCaesarVersionString()
         {
-            return "1.0.0";
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fvi.FileVersion;
         }
 
         public uint ReadFileChecksum(byte[] fileBytes) 

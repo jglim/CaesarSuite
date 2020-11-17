@@ -31,7 +31,7 @@ namespace Caesar
             StringCount = CaesarReader.ReadBitflagInt32(ref languageEntryBitflags, reader);
 
             // I have no idea if encoding data is included, using ascii as a default for now. Some german character data will be lost
-            LoadStrings(reader, header, Encoding.ASCII);
+            LoadStrings(reader, header, CaesarReader.DefaultEncoding);
 
             //PrintDebug();
         }

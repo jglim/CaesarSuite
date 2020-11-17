@@ -293,7 +293,8 @@ namespace Caesar
                     reader.BaseStream.Seek(dscRecordOffset, SeekOrigin.Begin);
 
                     // Console.WriteLine($"DSC {qualifierName} @ 0x{dscTableBaseAddress:X8} {idk1}/{idk2} pool @ 0x{dscPoolOffset:X}, name: {dscQualifier}");
-                    // byte[] dscBytes = reader.ReadBytes(dscRecordSize); // until meaningful progress on DSC is made, this is disabled for performance
+                    byte[] dscBytes = reader.ReadBytes(dscRecordSize);
+                    // at this point, the DSC binary is available in dscBytes, intended for use in DSCContext (but is currently unimplemented)
                     // Console.WriteLine($"DSC actual at 0x{dscRecordOffset:X}, size=0x{dscRecordSize:X}\n");
                 }
 

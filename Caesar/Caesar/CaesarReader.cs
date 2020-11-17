@@ -9,6 +9,8 @@ namespace Caesar
 {
     public class CaesarReader
     {
+        public static Encoding DefaultEncoding = Encoding.UTF8;
+
         // slightly more complex because it jumps to the string position for reading
         public static string ReadBitflagStringWithReader(ref ulong bitFlags, BinaryReader reader, long virtualBase = 0)
         {
@@ -20,7 +22,7 @@ namespace Caesar
                 long readerPosition = reader.BaseStream.Position;
                 // seek to the specified offset, then read out the string
                 reader.BaseStream.Seek(stringOffset + virtualBase, SeekOrigin.Begin);
-                string result = ReadStringFromBinaryReader(reader, Encoding.ASCII);
+                string result = ReadStringFromBinaryReader(reader);
                 // restore our reading cursor
                 reader.BaseStream.Seek(readerPosition, SeekOrigin.Begin);
                 return result;
@@ -55,11 +57,16 @@ namespace Caesar
         public static string ReadBitflagDumpWithReaderAsString(ref ulong bitFlags, BinaryReader reader, int dumpSize, long virtualBase = 0)
         {
             byte[] stringBytes = ReadBitflagDumpWithReader(ref bitFlags, reader, dumpSize, virtualBase);
-            return Encoding.ASCII.GetString(stringBytes); // lazy: no encoding is specified
+            return DefaultEncoding.GetString(stringBytes); // lazy: no encoding is specified
         }
 
-        public static string ReadStringFromBinaryReader(BinaryReader reader, Encoding encoding)
+        public static string ReadStringFromBinaryReader(BinaryReader reader, Encoding encoding = null)
         {
+            if (encoding is null) 
+            {
+                encoding = DefaultEncoding;
+            }
+
             // read out a string, stopping at the first null terminator
             using (BinaryWriter writer = new BinaryWriter(new MemoryStream()))
             {
