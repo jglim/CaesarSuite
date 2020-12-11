@@ -20,7 +20,7 @@ namespace Caesar
         public List<CTFLanguage> CtfLanguages;
 
         public long BaseAddress;
-        public CTFHeader(BinaryReader reader, long baseAddress, CFFHeader header) 
+        public CTFHeader(BinaryReader reader, long baseAddress, int headerSize) 
         {
             BaseAddress = baseAddress;
             reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
@@ -44,7 +44,7 @@ namespace Caesar
 
                 reader.BaseStream.Seek(languageTableEntryOffset, SeekOrigin.Begin);
                 long realLanguageEntryAddress = reader.ReadInt32() + ctfLanguageTableOffsetRelativeToDefintions;
-                CTFLanguage language = new CTFLanguage(reader, realLanguageEntryAddress, header);
+                CTFLanguage language = new CTFLanguage(reader, realLanguageEntryAddress, headerSize);
                 CtfLanguages.Add(language);
             }
         }

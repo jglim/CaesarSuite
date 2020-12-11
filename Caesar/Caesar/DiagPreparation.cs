@@ -32,7 +32,7 @@ namespace Caesar
         public static readonly byte[] IntegerSizeMapping = new byte[] { 0x00, 0x01, 0x04, 0x08, 0x10, 0x20, 0x40 };
 
         long BaseAddress;
-        private ECU ParentECU;
+        public ECU ParentECU;
         private DiagService ParentDiagService;
         public InferredDataType FieldType;
 
@@ -181,7 +181,7 @@ namespace Caesar
                             int presentationStructOffset = poolReader.ReadInt32();
                             int presentationStructSize = poolReader.ReadInt32();
 
-                            reader.BaseStream.Seek(presentationStructOffset + ParentECU.Presenations_BlockOffset, SeekOrigin.Begin);
+                            reader.BaseStream.Seek(presentationStructOffset + ParentECU.Presentations_BlockOffset, SeekOrigin.Begin);
                             byte[] presentationStruct = reader.ReadBytes(presentationStructSize);
 
                             int presentationMode = CaesarStructure.ReadCBFWithOffset(0x1C, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // PRESS_Type
@@ -289,7 +289,8 @@ namespace Caesar
                             }
                             else
                             {
-                                throw new NotImplementedException($"0x410 : sys param: 17 for qualifier {Qualifier} could not find referenced DiagService");
+                                Console.WriteLine($"0x410 : sys param: 17 for qualifier {Qualifier} could not find referenced DiagService with index {ParentDiagService.InputRefNameMaybe}");
+                                // throw new NotImplementedException
                             }
                         }
                         else

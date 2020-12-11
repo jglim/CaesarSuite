@@ -64,7 +64,7 @@ namespace Diogenes
                         diag.ClientAccessLevel.ToString(),
                         diag.SecurityAccessLevel.ToString(),
                         diag.InputPreparations.Count.ToString(),
-                        diag.OutputPresentations.Count.ToString(),
+                        diag.OutputPreparations.Count.ToString(),
                         BitUtility.BytesToHex(diag.RequestBytes, true),
                     });
                 }

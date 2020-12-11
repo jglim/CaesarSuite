@@ -14,6 +14,7 @@ namespace Diogenes
 {
     public partial class VCForm : Form
     {
+        ECU SelectedECU;
         ECUVariant ECUVariant;
         VCDomain VariantCodingDomain;
         string ECUName;
@@ -21,8 +22,8 @@ namespace Diogenes
         string VCDomainName;
         public byte[] VCValue;
 
-        DiagService ReadService;
-        DiagService WriteService;
+        public DiagService ReadService;
+        public DiagService WriteService;
 
         public VCForm(CaesarContainer container, string ecuName, string variantName, string vcDomain, ECUConnection connection)
         {
@@ -32,6 +33,7 @@ namespace Diogenes
             VariantName = variantName;
             VCDomainName = vcDomain;
 
+            SelectedECU = container.GetECUByName(ecuName);
             ECUVariant = container.GetECUVariantByName(variantName);
             VariantCodingDomain = ECUVariant.GetVCDomainByName(VCDomainName);
 
@@ -54,9 +56,20 @@ namespace Diogenes
                 }
             }
 
-            if (connection.State == ECUConnection.ConnectionState.EcuContacted)
+            if (connection.State >= ECUConnection.ConnectionState.ChannelConnectedPendingEcuContact)
             {
                 Console.WriteLine($"Requesting variant coding read: {ReadService.Qualifier} : ({BitUtility.BytesToHex(ReadService.RequestBytes)})");
+                byte[] response = connection.SendDiagRequest(ReadService);
+
+                DiagPreparation largestPrep = GetLargestPreparation(ReadService.OutputPreparations);
+                if (largestPrep.PresPoolIndex > -1)
+                {
+                    DiagPresentation pres = SelectedECU.GlobalPresentations[largestPrep.PresPoolIndex];
+                    // pres.PrintDebug();
+                }
+                Console.WriteLine($"Variant coding received: {BitUtility.BytesToHex(response)}");
+
+                VCValue = response.Skip(largestPrep.BitPosition / 8).Take(largestPrep.SizeInBits / 8).ToArray();
             }
             else
             {
@@ -65,9 +78,58 @@ namespace Diogenes
                 btnApply.Enabled = false;
             }
 
-            VCSanityCheck();
+            // VCSanityCheck();
             IntepretVC();
             PresentVC();
+        }
+
+        // extremely unscientific way of figuring out the actual vc data
+        public static DiagPreparation GetLargestPreparation(List<List<DiagPreparation>> presSet)
+        {
+            int largestField = 0;
+            foreach (List<DiagPreparation> wtf in presSet)
+            {
+                foreach (DiagPreparation prep in wtf)
+                {
+                    if (prep.SizeInBits > largestField)
+                    {
+                        largestField = prep.SizeInBits;
+                    }
+                }
+            }
+
+            foreach (List<DiagPreparation> wtf in presSet)
+            {
+                foreach (DiagPreparation prep in wtf)
+                {
+                    if (prep.SizeInBits == largestField)
+                    {
+                        return prep;
+                    }
+                }
+            }
+            return null;
+        }
+        
+        public static DiagPreparation GetLargestPreparation(List<DiagPreparation> presSet)
+        {
+            int largestField = 0;
+            foreach (DiagPreparation prep in presSet)
+            {
+                if (prep.SizeInBits > largestField)
+                {
+                    largestField = prep.SizeInBits;
+                }
+            }
+
+            foreach (DiagPreparation prep in presSet)
+            {
+                if (prep.SizeInBits == largestField)
+                {
+                    return prep;
+                }
+            }
+            return null;
         }
 
         private void VCSanityCheck() 

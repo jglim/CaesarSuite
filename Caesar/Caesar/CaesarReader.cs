@@ -92,6 +92,15 @@ namespace Caesar
             bitFlag >>= 1;
             return flagIsSet;
         }
+        public static float ReadBitflagFloat(ref ulong bitFlags, BinaryReader reader, float defaultResult = 0)
+        {
+            if (CheckAndAdvanceBitflag(ref bitFlags))
+            {
+                byte[] floatBytes = reader.ReadBytes(4);
+                return BitConverter.ToSingle(floatBytes, 0);
+            }
+            return defaultResult;
+        }
         public static int ReadBitflagInt32(ref ulong bitFlags, BinaryReader reader, int defaultResult = 0)
         {
             if (CheckAndAdvanceBitflag(ref bitFlags))

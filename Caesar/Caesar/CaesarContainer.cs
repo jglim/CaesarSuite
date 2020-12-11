@@ -13,6 +13,9 @@ namespace Caesar
         public CTFHeader CaesarCTFHeader;
         public List<ECU> CaesarECUs = new List<ECU>();
         public byte[] FileBytes = new byte[] { };
+
+        public uint FileChecksum;
+
         public CaesarContainer(byte[] fileBytes)
         {
             FileBytes = fileBytes;
@@ -32,6 +35,9 @@ namespace Caesar
                 {
                     Console.WriteLine($"WARNING: Checksum mismatch : computed/provided: {computedChecksum:X8}/{providedChecksum:X8}");
                 }
+
+                FileChecksum = computedChecksum;
+
                 ReadCFFDefinition(reader);
                 // language is the highest priority since all our strings come from it
                 ReadCTF(reader);
@@ -52,16 +58,27 @@ namespace Caesar
         }
 
 
-        public ECUVariant GetECUVariantByName(string name) 
+        public ECUVariant GetECUVariantByName(string name)
         {
-            foreach (ECU ecu in CaesarECUs) 
+            foreach (ECU ecu in CaesarECUs)
             {
-                foreach (ECUVariant variant in ecu.ECUVariants) 
+                foreach (ECUVariant variant in ecu.ECUVariants)
                 {
-                    if (variant.Qualifier == name) 
+                    if (variant.Qualifier == name)
                     {
                         return variant;
                     }
+                }
+            }
+            return null;
+        }
+        public ECU GetECUByName(string name)
+        {
+            foreach (ECU ecu in CaesarECUs)
+            {
+                if (ecu.Qualifier == name)
+                {
+                    return ecu;
                 }
             }
             return null;
@@ -123,7 +140,7 @@ namespace Caesar
             // Console.WriteLine($"ctf header relative to definitions: {nameof(CaesarCFFHeader.nCtfHeaderRpos)} : 0x{CaesarCFFHeader.nCtfHeaderRpos:X}");
 
             long ctfOffset = CaesarCFFHeader.BaseAddress + CaesarCFFHeader.CtfOffset;
-            CaesarCTFHeader = new CTFHeader(fileReader, ctfOffset, CaesarCFFHeader);
+            CaesarCTFHeader = new CTFHeader(fileReader, ctfOffset, CaesarCFFHeader.CffHeaderSize);
         }
 
 
@@ -155,6 +172,22 @@ namespace Caesar
             }
             */
             
+        }
+
+        public override bool Equals(object obj)
+        {
+            var container = obj as CaesarContainer;
+
+            if (container == null) 
+            {
+                return false;
+            }
+            return this.FileChecksum == container.FileChecksum;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)FileChecksum;
         }
 
     }

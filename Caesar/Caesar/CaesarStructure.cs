@@ -127,9 +127,10 @@ namespace Caesar
             CaesarTypes.Add(new byte[] { 2, 4, 4, 4, 1, 1 }); // UNK12
             CaesarTypes.Add(new byte[] { 2, 4, 2, 2, 2, 4, 2, 2, 4, 4, 4 }); // UNK13
             CaesarTypes.Add(new byte[] { 2, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1 }); // UNK14
-            CaesarTypes.Add(new byte[] { 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1 }); // UNK15
-            CaesarTypes.Add(new byte[] { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }); // FLASH_DESCRIPTION_HEADER
-            CaesarTypes.Add(new byte[] { 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }); // FLASH_TABLE_STRUCTURE
+            CaesarTypes.Add(new byte[] { 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1 }); // 0xF : FlashHeader : FLASH_DESCRIPTION_HEADER
+
+            CaesarTypes.Add(new byte[] { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }); // 0x10 : FLASH_DESCRIPTION_HEADER
+            CaesarTypes.Add(new byte[] { 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }); // 
             CaesarTypes.Add(new byte[] { 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }); // UNK18
             CaesarTypes.Add(new byte[] { 2, 4, 4, 4, 4 }); // UNK19
             CaesarTypes.Add(new byte[] { 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2 }); // SESSION_TABLE_STRUCTURE

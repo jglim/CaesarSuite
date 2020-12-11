@@ -48,6 +48,8 @@
   <ItemGroup>
     <Compile Include="BitUtility.cs" />
     <Compile Include="CaesarContainer.cs" />
+    <Compile Include="DiagPresentation.cs" />
+    <Compile Include="Flash\CaesarFlashContainer.cs" />
     <Compile Include="CaesarReader.cs" />
     <Compile Include="CaesarStructure.cs" />
     <Compile Include="CFFHeader.cs" />
@@ -62,8 +64,13 @@
     <Compile Include="ECUInterfaceSubtype.cs" />
     <Compile Include="ECUVariant.cs" />
     <Compile Include="ECUVariantPattern.cs" />
+    <Compile Include="Flash\FlashDataBlock.cs" />
+    <Compile Include="Flash\FlashDescriptionHeader.cs" />
+    <Compile Include="Flash\FlashHeader.cs" />
+    <Compile Include="Flash\FlashSegment.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scale.cs" />
     <Compile Include="StubHeader.cs" />
     <Compile Include="VCDomain.cs" />
     <Compile Include="VCFragment.cs" />

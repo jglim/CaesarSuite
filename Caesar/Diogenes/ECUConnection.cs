@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using SAE.J2534;
 using Caesar;
+using System.Timers;
+using System.Diagnostics;
 
 namespace Diogenes
 {
@@ -67,7 +69,15 @@ namespace Diogenes
 
         public ConnectionState State;
         public byte[] CanIdentifier = new byte[] { 0xDE, 0xAD, 0xBE, 0xEF };
+        public byte[] RxCanIdentifier = new byte[] { 0xDE, 0xAD, 0xBE, 0xEF };
         public ECU EcuContext;
+
+        public bool UDSCapable = false;
+
+        // constant 2000 ms as recomended by the ISO 15765-3 standard (§6.3.3).
+        // strangely it times out too quickly
+        Timer TesterPresentTimer = new Timer(1000);
+        Timer RxTimer = new Timer(50);
 
         public enum ConnectionState 
         {
@@ -93,6 +103,83 @@ namespace Diogenes
             ConnectionAPI = APIFactory.GetAPI(fileName);
             State = ConnectionState.PendingDeviceSelection;
             ConnectionUpdateState();
+            TesterPresentTimer.Elapsed += TesterPresentTimer_Elapsed;
+            TesterPresentTimer.Start();
+
+            RxTimer.Elapsed += RxTimer_Elapsed;
+            // RxTimer.Start();
+        }
+
+        private void RxTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (State > ConnectionState.DeviceSelectedPendingChannelConnection)
+            {
+                while (true)
+                {
+                    GetMessageResults readResult = ConnectionChannel.GetMessage();
+                    if (readResult.Result == ResultCode.STATUS_NOERROR)
+                    {
+                        foreach (Message row in readResult.Messages)
+                        {
+                            ProcessReceivedMessage(row);
+                        }
+                    }
+                    else 
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void ProcessReceivedMessage(Message message)
+        {
+            while (true) 
+            {
+            
+            }
+
+            if (message.Data.Length < 4)
+            {
+                Console.WriteLine($"Discarding received message (invalid size):  {BitUtility.BytesToHex(message.Data, true)}");
+                return;
+            }
+
+            if (!message.Data.Take(4).SequenceEqual(RxCanIdentifier))
+            {
+                if (message.Data.Take(4).SequenceEqual(CanIdentifier))
+                {
+                    // quietly ignore if it is our can id, usually empty packet
+                    return;
+                }
+                Console.WriteLine($"Discarding received message (unknown sender):  {BitUtility.BytesToHex(message.Data, true)} expects {BitUtility.BytesToHex(RxCanIdentifier, true)}");
+                return;
+            }
+
+            byte[] messageBody = message.Data.Skip(4).ToArray();
+
+            if (messageBody.Length == 0) 
+            {
+                return;
+            }
+
+            if (messageBody[0] == 0x7E) 
+            {
+                // testerpresent response
+                // return;
+            }
+
+            Console.WriteLine($"ECU:  {BitUtility.BytesToHex(messageBody, true)}");
+        }
+
+        private void TesterPresentTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            // normally we would wait until the session was switched to extended, but we don't know for sure. seems to be probably OK to send this as-is?
+            if (State > ConnectionState.DeviceSelectedPendingChannelConnection)
+            {
+                // TesterPresent, expects 0x7E, 0x00
+                SendMessage(new byte[] {0x3E, 0x00}, true);
+            }
         }
 
         public void OpenDevice() 
@@ -141,6 +228,10 @@ namespace Diogenes
                 Console.WriteLine("Profile not supported: only HSCAN interfaces are supported.");
                 return;
             }
+            if (profile.Qualifier.Contains("_UDS_"))
+            {
+                UDSCapable = true;
+            }
 
             // actually start fixing up the connection
             if (ConnectionChannel != null) 
@@ -160,8 +251,10 @@ namespace Diogenes
                 // setup ecu filter (mimicking vediamo's behavior)
                 MessageFilter filter = new MessageFilter();
                 CanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_REQUEST_CANIDENTIFIER));
+                RxCanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_RESPONSE_CANIDENTIFIER));
                 // input byte data is in big-endian
                 Array.Reverse(CanIdentifier);
+                Array.Reverse(RxCanIdentifier);
 
                 Console.WriteLine($"CAN Identifier: {BitUtility.BytesToHex(CanIdentifier)}");
 
@@ -179,8 +272,8 @@ namespace Diogenes
                     FlowControl = new byte[] { 0x00, 0x00, 0x07, 0xE0 }
                 };
                 // note that the FRAME_PAD flag is also enabled (which is desired in the case of MED40, but might not be universal)
-                // ISO15765_FRAME_PAD = 0x00000040; ComParams don't seem to have anything on this
-                 */
+                // ISO15765_FRAME_PAD = 0x00000040; ComParams don't seem to have anything on this  <----- this is still very concerning
+                */
 
                 ConnectionChannel.StartMsgFilter(filter);
 
@@ -205,10 +298,14 @@ namespace Diogenes
                 ConnectionChannel.ClearRxBuffer();
                 ConnectionChannel.ClearTxBuffer();
 
-                // start an extended session
-                SetEcuSessionState(EcuSessionType.Extended);
-
                 State = ConnectionState.ChannelConnectedPendingEcuContact;
+
+                // start an extended session
+                // avoiding this; if target isn't UDS capable, this might have side effects
+                // SetEcuSessionState(EcuSessionType.Extended);
+
+                // Tester presence
+                // ConnectionChannel.StartPeriodicMessage(new PeriodicMessage(2000, new byte[] {0x3E, 0x00}));
             }
             catch (Exception e) 
             {
@@ -267,30 +364,46 @@ namespace Diogenes
             }
         }
 
-        public void SendDiagRequest(DiagService diag) 
+        public byte[] SendDiagRequest(DiagService diag) 
         {
             Console.WriteLine($"Running diagnostic request : {diag.Qualifier} ({BitUtility.BytesToHex(diag.RequestBytes, true)})");
-            SendMessage(diag.RequestBytes);
+            byte[] response = SendMessage(diag.RequestBytes);
+            Console.WriteLine($"InternalDiagJob:  {BitUtility.BytesToHex(response, true)}");
+            return response;
         }
 
-        public void SendMessage(IEnumerable<byte> message)
+        public byte[] SendMessage(IEnumerable<byte> message, bool quiet = false)
         {
+            byte[] response = Array.Empty<byte>();
+
+            // prepare data to send
             List<byte> packet = new List<byte>(CanIdentifier);
             packet.AddRange(message);
-            string messageAsString = BitUtility.BytesToHex(packet.ToArray(), true);
-            Console.WriteLine($"J2534 Write: {messageAsString}");
+            string messageAsString = BitUtility.BytesToHex(message.ToArray(), true);
+            if (!quiet)
+            {
+                if (UDSCapable)
+                {
+                    Console.WriteLine($"Send: {messageAsString} ({UDS.GetDescriptionForCommand(message.ToArray())})");
+                }
+                else
+                {
+                    Console.WriteLine($"Send: {messageAsString}");
+                }
+            }
 
             if (ConnectionDevice is null)
             {
                 Console.WriteLine($"Attempted to write into an invalid device, data: {messageAsString}");
-                return;
+                return response;
             }
             if (ConnectionChannel is null) 
             {
                 Console.WriteLine($"Attempted to write into an invalid channel, data: {messageAsString}");
-                return;
+                return response;
             }
 
+            // try to send the message
             try
             {
                 ConnectionChannel.SendMessage(packet);
@@ -299,6 +412,75 @@ namespace Diogenes
             {
                 Console.WriteLine($"Exception while sending {messageAsString} : {ex.Message}");
             }
+
+            // reset the heartbeat timer
+            TesterPresentTimer.Stop();
+            TesterPresentTimer.Start();
+
+
+            // read response from ecu
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while (true)
+            {
+                if (sw.ElapsedMilliseconds > 2000) 
+                {
+                    sw.Stop();
+                    break;
+                }
+
+                GetMessageResults readResult = ConnectionChannel.GetMessage();
+                if (readResult.Result == ResultCode.STATUS_NOERROR)
+                {
+                    foreach (Message row in readResult.Messages)
+                    {
+                        if (row.Data.Length < 4)
+                        {
+                            Console.WriteLine($"Discarding received message (invalid size):  {BitUtility.BytesToHex(row.Data, true)}");
+                            continue;
+                        }
+                        byte[] identifier = row.Data.Take(4).ToArray();
+                        if (!identifier.SequenceEqual(RxCanIdentifier))
+                        {
+                            if (identifier.SequenceEqual(CanIdentifier))
+                            {
+                                // quietly ignore if it is our can id, usually empty packet
+                                continue;
+                            }
+                            Console.WriteLine($"Discarding received message (unknown sender):  {BitUtility.BytesToHex(row.Data, true)} expects {BitUtility.BytesToHex(RxCanIdentifier, true)}");
+                            continue;
+                        }
+
+                        // skip can identifier
+                        byte[] rxMessageBody = row.Data.Skip(4).ToArray();
+
+                        if (rxMessageBody.Length == 0)
+                        {
+                            continue;
+                        }
+
+                        if (!quiet)
+                        {
+                            string rxMessageAsString = BitUtility.BytesToHex(rxMessageBody.ToArray(), true);
+                            if (UDSCapable)
+                            {
+                                Console.WriteLine($"Receive: {rxMessageAsString} ({UDS.GetDescriptionForCommand(rxMessageBody)})");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Receive: {rxMessageAsString}");
+                            }
+                        }
+                        response = rxMessageBody;
+                        //Console.WriteLine($"ECU:  {BitUtility.BytesToHex(messageBody, true)}");
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return response;
         }
 
         public void Connect()

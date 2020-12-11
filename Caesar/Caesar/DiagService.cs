@@ -103,7 +103,7 @@ namespace Caesar
         public int PoolIndex;
 
         public List<DiagPreparation> InputPreparations = new List<DiagPreparation>();
-        public List<List<DiagPreparation>> OutputPresentations = new List<List<DiagPreparation>>();
+        public List<List<DiagPreparation>> OutputPreparations = new List<List<DiagPreparation>>();
         public List<ComParameter> DiagComParameters = new List<ComParameter>();
 
         public DiagService(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu) 
@@ -205,7 +205,7 @@ namespace Caesar
             }
 
 
-            OutputPresentations = new List<List<DiagPreparation>>();
+            OutputPreparations = new List<List<DiagPreparation>>();
             long outPresBaseAddress = BaseAddress + W_OutPres_Offset;
 
             for (int presIndex = 0; presIndex < W_OutPres_Count; presIndex++)
@@ -227,7 +227,7 @@ namespace Caesar
                     DiagPreparation preparation = new DiagPreparation(reader, language, presentationTableOffset + prepEntryOffset, prepEntryBitPos, prepEntryMode, parentEcu, this);
                     ResultPresentationSet.Add(preparation);
                 }
-                OutputPresentations.Add(ResultPresentationSet);
+                OutputPreparations.Add(ResultPresentationSet);
             }
 
             DiagComParameters = new List<ComParameter>();
@@ -294,6 +294,11 @@ namespace Caesar
 
                     // Console.WriteLine($"DSC {qualifierName} @ 0x{dscTableBaseAddress:X8} {idk1}/{idk2} pool @ 0x{dscPoolOffset:X}, name: {dscQualifier}");
                     byte[] dscBytes = reader.ReadBytes(dscRecordSize);
+#if DEBUG
+                    //string dscName = $"{parentEcu.Qualifier}_{Qualifier}_{dscIndex}.pal";
+                    //Console.WriteLine($"Exporting DSC: {dscName}");
+                    //File.WriteAllBytes(dscName, dscBytes);
+#endif
                     // at this point, the DSC binary is available in dscBytes, intended for use in DSCContext (but is currently unimplemented)
                     // Console.WriteLine($"DSC actual at 0x{dscRecordOffset:X}, size=0x{dscRecordSize:X}\n");
                 }

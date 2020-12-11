@@ -53,7 +53,7 @@ namespace Caesar
         public int VcDomain_EntrySize; // [2], 12 0xC (multiply with [1] for size), 43*12=516 = 0x204
         public int VcDomain_BlockSize; // [3] unused
 
-        public int Presenations_BlockOffset;
+        public int Presentations_BlockOffset;
         public int Presentations_EntryCount;
         public int Presentations_EntrySize;
         public int Presentations_BlockSize;
@@ -75,6 +75,7 @@ namespace Caesar
         public List<ECUVariant> ECUVariants = new List<ECUVariant>();
 
         public List<DiagService> GlobalDiagServices = new List<DiagService>();
+        public List<DiagPresentation> GlobalPresentations = new List<DiagPresentation>();
 
         public long BaseAddress;
 
@@ -128,7 +129,7 @@ namespace Caesar
         {
             if (cachedPresentationsPool.Length == 0)
             {
-                cachedPresentationsPool = ReadEcuPool(reader, Presenations_BlockOffset, Presentations_EntryCount, Presentations_EntrySize);
+                cachedPresentationsPool = ReadEcuPool(reader, Presentations_BlockOffset, Presentations_EntryCount, Presentations_EntrySize);
             }
             return cachedPresentationsPool;
         }
@@ -213,7 +214,7 @@ namespace Caesar
             VcDomain_EntrySize = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
             VcDomain_BlockSize = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
 
-            Presenations_BlockOffset = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader) + dataBufferOffsetRelativeToFile;
+            Presentations_BlockOffset = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader) + dataBufferOffsetRelativeToFile;
             Presentations_EntryCount = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
             Presentations_EntrySize = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
             Presentations_BlockSize = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
@@ -271,25 +272,13 @@ namespace Caesar
                 ECUInterfaceSubtypes.Add(ecuInterfaceSubtype);
             }
 
-            // unknown "qwer" block
-            /*
-            if (ecuIdk_3_qwer_count > 0)
-            {
-                Console.WriteLine("QWER block found, intentionally throwing exception");
-                throw new NotImplementedException("yay qwer");
-            }
-            else
-            {
-                //Console.WriteLine("QWER block is absent");
-            }
-            */
-
             CreateDiagServices(reader, language);
             CreateEcuVariants(reader, language);
+            CreatePresentations(reader, language);
             ECUDescriptionTranslated = language.GetString(EcuDescription_CTF);
         }
 
-        public void CreateDiagServices(BinaryReader reader, CTFLanguage language) 
+        public void CreateDiagServices(BinaryReader reader, CTFLanguage language)
         {
             byte[] diagjobPool = ReadDiagjobPool(reader);
             // arrays since list has become too expensive
@@ -314,6 +303,31 @@ namespace Caesar
             }
 
             GlobalDiagServices = new List<DiagService>(globalDiagServices);
+        }
+        public void CreatePresentations(BinaryReader reader, CTFLanguage language)
+        {
+            byte[] presentationsPool = ReadECUPresentationsPool(reader);
+            // arrays since list has become too expensive
+            // DiagService[] globalDiagServices = new DiagService[DiagJob_EntryCount];
+            DiagPresentation[] globalPresentations = new DiagPresentation[Presentations_EntryCount];
+
+            using (BinaryReader poolReader = new BinaryReader(new MemoryStream(presentationsPool)))
+            {
+                for (int presentationsIndex = 0; presentationsIndex < Presentations_EntryCount; presentationsIndex++)
+                {
+                    
+                    int offset = poolReader.ReadInt32();
+                    int size = poolReader.ReadInt32();
+
+                    long presentationsBaseAddress = offset + Presentations_BlockOffset;
+                    // string offsetLog = $"Pres @ 0x{offset:X} with size 0x{size:X} base 0x{presentationsBaseAddress:X}";
+
+                    DiagPresentation pres = new DiagPresentation(reader, presentationsBaseAddress, presentationsIndex, language);
+                    globalPresentations[presentationsIndex] = pres;
+                }
+                // Console.WriteLine($"Entry count/size for presentations : {Presentations_EntryCount}, {Presentations_EntrySize}");
+            }
+            GlobalPresentations = new List<DiagPresentation>(globalPresentations);
         }
         public void CreateEcuVariants(BinaryReader reader, CTFLanguage language) 
         {
@@ -395,7 +409,7 @@ namespace Caesar
             Console.WriteLine($"{nameof(VcDomain_EntryCount)} : {VcDomain_EntryCount}");
             Console.WriteLine($"{nameof(VcDomain_EntrySize)} : {VcDomain_EntrySize}");
             Console.WriteLine($"{nameof(VcDomain_BlockSize)} : 0x{VcDomain_BlockSize:X}");
-            Console.WriteLine($"{nameof(Presenations_BlockOffset)} : 0x{Presenations_BlockOffset:X}");
+            Console.WriteLine($"{nameof(Presentations_BlockOffset)} : 0x{Presentations_BlockOffset:X}");
             Console.WriteLine($"{nameof(Presentations_EntryCount)} : {Presentations_EntryCount}");
             Console.WriteLine($"{nameof(Presentations_EntrySize)} : {Presentations_EntrySize}");
             Console.WriteLine($"{nameof(Presentations_BlockSize)} : 0x{Presentations_BlockSize:X}");

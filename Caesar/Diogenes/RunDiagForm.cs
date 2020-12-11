@@ -14,9 +14,12 @@ namespace Diogenes
     public partial class RunDiagForm : Form
     {
         public DiagService CurrentDiagService;
+        public byte[] Result = Array.Empty<byte>();
+
         public RunDiagForm(DiagService diagService)
         {
             CurrentDiagService = diagService;
+            Result = CurrentDiagService.RequestBytes;
             InitializeComponent();
         }
 
@@ -24,7 +27,7 @@ namespace Diogenes
         {
             this.Text = $"Run Diagnostics Service: {CurrentDiagService.Qualifier}";
             TrimIntegerDumps();
-            txtDiagCommand.Text = BitUtility.BytesToHex(CurrentDiagService.RequestBytes, true);
+            txtDiagCommand.Text = BitUtility.BytesToHex(Result, true);
 
             if (!CheckBitAlignment()) 
             {
@@ -103,12 +106,12 @@ namespace Diogenes
                 });
                 listUniqueIndex++;
             }
-            for (int i = 0; i < CurrentDiagService.OutputPresentations.Count; i++)
+            for (int i = 0; i < CurrentDiagService.OutputPreparations.Count; i++)
             {
-                List<DiagPreparation> currentDiagList = CurrentDiagService.OutputPresentations[i];
+                List<DiagPreparation> currentDiagList = CurrentDiagService.OutputPreparations[i];
                 for (int j = 0; j < currentDiagList.Count; j++) 
                 {
-                    DiagPreparation prep = CurrentDiagService.OutputPresentations[i][j];
+                    DiagPreparation prep = CurrentDiagService.OutputPreparations[i][j];
 
                     dt.Rows.Add(new string[]
                     {
@@ -141,6 +144,19 @@ namespace Diogenes
             dgvMain.Columns[4].Visible = false;
             // dgvMain.Columns[6].Visible = false;
             dgvMain.Sort(dgvMain.Columns[0], ListSortDirection.Ascending);
+        }
+
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            string commandAsString = txtDiagCommand.Text;
+            if (!BitUtility.CheckHexValid(commandAsString))
+            {
+                MessageBox.Show("Hex data could not be parsed. Please check if there are any invalid values", "Write Variant Coding");
+                return;
+            }
+            Result = BitUtility.BytesFromHex(commandAsString);
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

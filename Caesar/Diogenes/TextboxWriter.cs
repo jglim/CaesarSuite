@@ -25,7 +25,8 @@ namespace Diogenes
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (dirty)
+            // using a timer since invoking an event on every character write gets expensive quickly
+            if (dirty || (InputTextbox.Text.Length != sb.Length))
             {
                 InputTextbox.Text = sb.ToString();
                 dirty = false;

@@ -17,7 +17,7 @@ namespace Caesar
         public List<string> StringEntries;
 
         public long BaseAddress;
-        public CTFLanguage(BinaryReader reader, long baseAddress, CFFHeader header) 
+        public CTFLanguage(BinaryReader reader, long baseAddress, int headerSize) 
         {
             BaseAddress = baseAddress;
             reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
@@ -31,15 +31,15 @@ namespace Caesar
             StringCount = CaesarReader.ReadBitflagInt32(ref languageEntryBitflags, reader);
 
             // I have no idea if encoding data is included, using ascii as a default for now. Some german character data will be lost
-            LoadStrings(reader, header, CaesarReader.DefaultEncoding);
+            LoadStrings(reader, headerSize, CaesarReader.DefaultEncoding);
 
             //PrintDebug();
         }
 
-        public void LoadStrings(BinaryReader reader, CFFHeader header, Encoding encoding) 
+        public void LoadStrings(BinaryReader reader, int headerSize, Encoding encoding) 
         {
             StringEntries = new List<string>();
-            int caesarStringTableOffset = header.CffHeaderSize + 0x410 + 4;
+            int caesarStringTableOffset = headerSize + 0x410 + 4; // header.CffHeaderSize
             for (int i = 0; i < StringCount; i++) 
             {
                 reader.BaseStream.Seek(caesarStringTableOffset + (i * 4), SeekOrigin.Begin);

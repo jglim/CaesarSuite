@@ -47,6 +47,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="J2534-Sharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\J2534-Sharp.1.0.0-CI00026\lib\net46\J2534-Sharp.dll</HintPath>
@@ -94,6 +97,7 @@
       <DependentUpon>SecurityLevelForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TextboxWriter.cs" />
+    <Compile Include="UDS.cs" />
     <Compile Include="UnmanagedUtility.cs" />
     <Compile Include="VCForm.cs">
       <SubType>Form</SubType>
@@ -226,6 +230,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\page_white_edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\asterisk_orange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\accept.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

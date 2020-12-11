@@ -49,8 +49,10 @@
             this.tvMain = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
+            this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -183,16 +185,18 @@
             // eCUToolStripMenuItem
             // 
             this.eCUToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setSecurityLevelToolStripMenuItem});
+            this.setSecurityLevelToolStripMenuItem,
+            this.cFFExportFlashSegmentsToolStripMenuItem,
+            this.fixClientAccessPermissionsToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
-            this.eCUToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
-            this.eCUToolStripMenuItem.Text = "ECU";
+            this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.eCUToolStripMenuItem.Text = "Tools";
             // 
             // setSecurityLevelToolStripMenuItem
             // 
             this.setSecurityLevelToolStripMenuItem.Name = "setSecurityLevelToolStripMenuItem";
-            this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.setSecurityLevelToolStripMenuItem.Text = "Set Security Level";
+            this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.setSecurityLevelToolStripMenuItem.Text = "Set Security Level (DLL)";
             this.setSecurityLevelToolStripMenuItem.Click += new System.EventHandler(this.setSecurityLevelToolStripMenuItem_Click);
             // 
             // tvMain
@@ -200,6 +204,7 @@
             this.tvMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tvMain.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tvMain.Location = new System.Drawing.Point(3, 3);
             this.tvMain.Name = "tvMain";
             this.tvMain.Size = new System.Drawing.Size(1117, 480);
@@ -239,17 +244,6 @@
             this.splitContainer1.SplitterDistance = 486;
             this.splitContainer1.TabIndex = 5;
             // 
-            // pbResourcePlaceholder
-            // 
-            this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.page_white_edit;
-            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
-            this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
-            this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
-            this.pbResourcePlaceholder.TabIndex = 4;
-            this.pbResourcePlaceholder.TabStop = false;
-            this.pbResourcePlaceholder.Visible = false;
-            // 
             // txtJ2534Input
             // 
             this.txtJ2534Input.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -260,6 +254,31 @@
             this.txtJ2534Input.Size = new System.Drawing.Size(1117, 20);
             this.txtJ2534Input.TabIndex = 4;
             this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
+            // 
+            // cFFExportFlashSegmentsToolStripMenuItem
+            // 
+            this.cFFExportFlashSegmentsToolStripMenuItem.Name = "cFFExportFlashSegmentsToolStripMenuItem";
+            this.cFFExportFlashSegmentsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.cFFExportFlashSegmentsToolStripMenuItem.Text = "CFF: Export Flash Segments";
+            this.cFFExportFlashSegmentsToolStripMenuItem.Click += new System.EventHandler(this.cFFExportFlashSegmentsToolStripMenuItem_Click);
+            // 
+            // fixClientAccessPermissionsToolStripMenuItem
+            // 
+            this.fixClientAccessPermissionsToolStripMenuItem.Name = "fixClientAccessPermissionsToolStripMenuItem";
+            this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.fixClientAccessPermissionsToolStripMenuItem.Text = "Fix Client Access Permissions";
+            this.fixClientAccessPermissionsToolStripMenuItem.Click += new System.EventHandler(this.fixClientAccessPermissionsToolStripMenuItem_Click);
+            // 
+            // pbResourcePlaceholder
+            // 
+            this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.accept;
+            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
+            this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
+            this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
+            this.pbResourcePlaceholder.TabIndex = 4;
+            this.pbResourcePlaceholder.TabStop = false;
+            this.pbResourcePlaceholder.Visible = false;
             // 
             // MainForm
             // 
@@ -313,6 +332,8 @@
         private System.Windows.Forms.ToolStripMenuItem defaultJ2534InterfaceToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox txtJ2534Input;
+        private System.Windows.Forms.ToolStripMenuItem cFFExportFlashSegmentsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fixClientAccessPermissionsToolStripMenuItem;
     }
 }
 

@@ -63,9 +63,29 @@ namespace Diogenes.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap accept {
+            get {
+                object obj = ResourceManager.GetObject("accept", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap application_xp_terminal {
             get {
                 object obj = ResourceManager.GetObject("application_xp_terminal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap asterisk_orange {
+            get {
+                object obj = ResourceManager.GetObject("asterisk_orange", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -236,6 +256,16 @@ namespace Diogenes.Properties {
         internal static System.Drawing.Bitmap connect {
             get {
                 object obj = ResourceManager.GetObject("connect", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap folder {
+            get {
+                object obj = ResourceManager.GetObject("folder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

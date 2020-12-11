@@ -94,6 +94,7 @@
             this.btnApply.TabIndex = 5;
             this.btnApply.Text = "Write";
             this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // btnReinterpret
             // 
