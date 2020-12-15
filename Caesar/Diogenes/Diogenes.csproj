@@ -68,6 +68,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ECUConnection.cs" />
+    <Compile Include="GenericPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GenericPicker.Designer.cs">
+      <DependentUpon>GenericPicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="PickDiagForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +111,9 @@
     <Compile Include="VCForm.Designer.cs">
       <DependentUpon>VCForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="GenericPicker.resx">
+      <DependentUpon>GenericPicker.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

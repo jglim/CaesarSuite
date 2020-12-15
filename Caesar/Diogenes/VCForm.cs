@@ -280,9 +280,16 @@ namespace Diogenes
                 contextMenuStrip1.Items.Clear();
                 ToolStripMenuItem tsHeader = new ToolStripMenuItem();
                 tsHeader.Text = fragmentName;
-                if (fragment.Subfragments.Count > contextMenuLimit) 
+                if (fragment.Subfragments.Count > contextMenuLimit)
                 {
                     tsHeader.Text += " (Warning: too many entries to show)";
+
+                    // build table for picker
+                    ShowPickerDialog(fragmentName, fragment);
+
+                    e.Cancel = true;
+                    return;
+
                 }
                 tsHeader.Enabled = false;
                 contextMenuStrip1.Items.Add(tsHeader);
@@ -309,14 +316,35 @@ namespace Diogenes
             e.Cancel = false;
         }
 
+        private void ShowPickerDialog(string fragmentName, VCFragment fragment)
+        {
+            string[][] table = new string[fragment.Subfragments.Count][];
+
+            for (int i = 0; i < fragment.Subfragments.Count; i++)
+            {
+                table[i] = new string[] { fragment.Subfragments[i].NameCTFResolved };
+            }
+            GenericPicker picker = new GenericPicker(table, new string[] { "Name" });
+            picker.Text = $"Select an option for {fragmentName}";
+
+            if (picker.ShowDialog() == DialogResult.OK) 
+            {
+                SelectVC(fragmentName, picker.SelectedResult[0]);
+            }
+        }
+
         private void VCContextMenu_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem senderItem = (ToolStripMenuItem)sender;
             string fragmentName = senderItem.Tag.ToString();
             string fragmentValue = senderItem.Text;
+            SelectVC(fragmentName, fragmentValue);
+        }
 
+        private void SelectVC(string fragmentName, string fragmentValue) 
+        {
             VCFragment fragment = VariantCodingDomain.VCFragments.Find(x => x.Qualifier == fragmentName);
-            if (fragment is null) 
+            if (fragment is null)
             {
                 Console.WriteLine("Coding context menu: couldn't find a matching fragment");
                 return;
