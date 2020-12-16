@@ -43,6 +43,38 @@ namespace Caesar
             Unk7 = CaesarReader.ReadBitflagInt32(ref bitFlags, reader);
         }
 
+        public long GetMappedAddressFileOffset(BinaryReader reader)
+        {
+            reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
+
+            ulong bitFlags = reader.ReadUInt16();
+
+            if (CaesarReader.CheckAndAdvanceBitflag(ref bitFlags))
+            {
+                return reader.BaseStream.Position;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        public long GetSegmentLengthFileOffset(BinaryReader reader)
+        {
+            reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
+
+            ulong bitFlags = reader.ReadUInt16();
+
+            CaesarReader.ReadBitflagInt32(ref bitFlags, reader); // skip FromAddress
+            if (CaesarReader.CheckAndAdvanceBitflag(ref bitFlags))
+            {
+                return reader.BaseStream.Position;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         public void PrintDebug()
         {
             Console.WriteLine($"{nameof(FromAddress)} : 0x{FromAddress:X}");

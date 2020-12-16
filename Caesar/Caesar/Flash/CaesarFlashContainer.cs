@@ -73,7 +73,13 @@ namespace Caesar
                     long fileCursor = 0;
                     foreach (FlashSegment seg in db.FlashSegments)
                     {
-                        long offset = db.FlashData + container.CaesarFlashHeader.CffHeaderSize + container.CaesarFlashHeader.LanguageBlockLength + fileCursor + 0x414;
+                        long offset = 
+                            db.FlashData + 
+                            container.CaesarFlashHeader.CffHeaderSize +
+                            container.CaesarFlashHeader.LanguageBlockLength + 
+                            fileCursor + 
+                            0x414;
+
                         fileCursor += seg.SegmentLength;
                         Console.WriteLine($"Segment: {seg.SegmentName} mapped to 0x{seg.FromAddress:X} with size 0x{seg.SegmentLength:X}");
                         reader.BaseStream.Seek(offset, SeekOrigin.Begin);
@@ -83,7 +89,44 @@ namespace Caesar
                     }
                 }
             }
+            Console.WriteLine($"Exported segments can be found at {directory}");
+        }
 
+        public void SpliceCFFFile(string filePath)
+        {
+            string directory = Path.GetDirectoryName(filePath);
+
+            Console.WriteLine($"Starting CFF splicer..");
+            byte[] flashContainer = File.ReadAllBytes(filePath);
+            CaesarFlashContainer container = new CaesarFlashContainer(flashContainer);
+
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(flashContainer)))
+            {
+                foreach (FlashDataBlock db in container.CaesarFlashHeader.DataBlocks)
+                {
+                    Console.WriteLine($"FlashDataBlock: {db.Qualifier}");
+                    long fileCursor = 0;
+                    foreach (FlashSegment seg in db.FlashSegments)
+                    {
+                        // check: which fields are mutable when splicing
+
+                        long offset =
+                            db.FlashData + // somewhat mutable : probably if there's more than 1 datablock, this value will be nonzero
+                            container.CaesarFlashHeader.CffHeaderSize + // constant
+                            container.CaesarFlashHeader.LanguageBlockLength + // constant
+                            fileCursor + // mutable, see below
+                            0x414; // constant
+
+                        fileCursor += seg.SegmentLength; // mutable because of segment length
+
+                        Console.WriteLine($"Segment: {seg.SegmentName} mapped to 0x{seg.FromAddress:X} with size 0x{seg.SegmentLength:X}");
+                        reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+                        byte[] fileBytes = reader.ReadBytes(seg.SegmentLength);
+
+                        File.WriteAllBytes($"{directory}\\{db.Qualifier}_{seg.FromAddress:X}.bin", fileBytes);
+                    }
+                }
+            }
             Console.WriteLine($"Exported segments can be found at {directory}");
         }
 

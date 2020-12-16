@@ -40,7 +40,6 @@ namespace Caesar
         /*
             21 bits active
             f [6, 4,4,4,4, 4,4,4,4, 4,4,4,4, 4,4,4,4, 4,4,4,4, 1],
-         
          */
         public FlashHeader(BinaryReader reader)
         {

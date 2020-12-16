@@ -92,6 +92,50 @@ namespace Caesar
             }
 
         }
+
+
+        public long GetBlockLengthOffset(BinaryReader reader)
+        {
+            reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
+
+            ulong bitflags = reader.ReadUInt32();
+            reader.ReadUInt16();
+
+            CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, BaseAddress); // Qualifier 
+            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // LongName 
+            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // Description 
+            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // FlashData 
+
+            if (CaesarReader.CheckAndAdvanceBitflag(ref bitflags))
+            {
+                return reader.BaseStream.Position;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        public long GetFlashDataOffset(BinaryReader reader)
+        {
+            reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
+
+            ulong bitflags = reader.ReadUInt32();
+            reader.ReadUInt16();
+
+            CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, BaseAddress); // Qualifier 
+            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // LongName 
+            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // Description 
+
+            if (CaesarReader.CheckAndAdvanceBitflag(ref bitflags))
+            {
+                return reader.BaseStream.Position;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         public void PrintDebug()
         {
             Console.WriteLine($"{nameof(Qualifier)} : {Qualifier}");

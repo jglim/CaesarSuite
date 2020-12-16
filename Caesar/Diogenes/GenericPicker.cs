@@ -15,17 +15,20 @@ namespace Diogenes
         private string[][] Table;
         private string[] Headers;
         public string[] SelectedResult;
+        public int FilterColumnIndex;
 
-        public GenericPicker(string[][] table, string[] headers)
+        public GenericPicker(string[][] table, string[] headers, int filterColumn = 0)
         {
             InitializeComponent();
             Table = table;
             Headers = headers;
+            FilterColumnIndex = filterColumn;
         }
 
         private void PresentRows()
         {
             DataTable dt = new DataTable();
+            string namePartialMatch = txtFilter.Text.ToLower();
 
             dt.Columns.Add("Index", typeof(int));
             foreach (string header in Headers)
@@ -36,9 +39,12 @@ namespace Diogenes
 
             for (int i = 0; i < Table.Length; i++)
             {
-                List<string> row = new List<string>(Table[i]);
-                row.Insert(0, i.ToString());
-                dt.Rows.Add(row.ToArray());
+                if (Table[i][FilterColumnIndex].ToLower().Contains(namePartialMatch))
+                {
+                    List<string> row = new List<string>(Table[i]);
+                    row.Insert(0, i.ToString());
+                    dt.Rows.Add(row.ToArray());
+                }
             }
 
             for (int i = 1; i < Headers.Length; i++)
@@ -53,6 +59,7 @@ namespace Diogenes
 
         private void GenericPicker_Load(object sender, EventArgs e)
         {
+            UnmanagedUtility.SendMessage(txtFilter.Handle, UnmanagedUtility.EM_SETCUEBANNER, 0, "Type here to filter results");
             PresentRows();
         }
 
@@ -65,6 +72,11 @@ namespace Diogenes
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
+        }
+
+        private void txtFilter_TextChanged(object sender, EventArgs e)
+        {
+            PresentRows();
         }
     }
 }

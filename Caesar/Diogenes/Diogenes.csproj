@@ -68,6 +68,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ECUConnection.cs" />
+    <Compile Include="FlashSplicer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FlashSplicer.Designer.cs">
+      <DependentUpon>FlashSplicer.cs</DependentUpon>
+    </Compile>
     <Compile Include="GenericPicker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +117,9 @@
     <Compile Include="VCForm.Designer.cs">
       <DependentUpon>VCForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="FlashSplicer.resx">
+      <DependentUpon>FlashSplicer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GenericPicker.resx">
       <DependentUpon>GenericPicker.cs</DependentUpon>
     </EmbeddedResource>

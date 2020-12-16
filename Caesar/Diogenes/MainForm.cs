@@ -727,5 +727,11 @@ namespace Diogenes
                 FixCALs(new CaesarContainer(File.ReadAllBytes(ofd.FileName)));
             }
         }
+
+        private void cFFFlashSplicerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FlashSplicer splicer = new FlashSplicer();
+            splicer.Show();
+        }
     }
 }

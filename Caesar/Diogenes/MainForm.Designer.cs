@@ -46,13 +46,14 @@
             this.defaultJ2534InterfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eCUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setSecurityLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tvMain = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.txtJ2534Input = new System.Windows.Forms.TextBox();
-            this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
+            this.txtJ2534Input = new System.Windows.Forms.TextBox();
+            this.cFFFlashSplicerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -186,6 +187,7 @@
             // 
             this.eCUToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setSecurityLevelToolStripMenuItem,
+            this.cFFFlashSplicerToolStripMenuItem,
             this.cFFExportFlashSegmentsToolStripMenuItem,
             this.fixClientAccessPermissionsToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
@@ -198,6 +200,20 @@
             this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.setSecurityLevelToolStripMenuItem.Text = "Set Security Level (DLL)";
             this.setSecurityLevelToolStripMenuItem.Click += new System.EventHandler(this.setSecurityLevelToolStripMenuItem_Click);
+            // 
+            // cFFExportFlashSegmentsToolStripMenuItem
+            // 
+            this.cFFExportFlashSegmentsToolStripMenuItem.Name = "cFFExportFlashSegmentsToolStripMenuItem";
+            this.cFFExportFlashSegmentsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.cFFExportFlashSegmentsToolStripMenuItem.Text = "CFF: Export Flash Segments";
+            this.cFFExportFlashSegmentsToolStripMenuItem.Click += new System.EventHandler(this.cFFExportFlashSegmentsToolStripMenuItem_Click);
+            // 
+            // fixClientAccessPermissionsToolStripMenuItem
+            // 
+            this.fixClientAccessPermissionsToolStripMenuItem.Name = "fixClientAccessPermissionsToolStripMenuItem";
+            this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.fixClientAccessPermissionsToolStripMenuItem.Text = "Fix Client Access Permissions";
+            this.fixClientAccessPermissionsToolStripMenuItem.Click += new System.EventHandler(this.fixClientAccessPermissionsToolStripMenuItem_Click);
             // 
             // tvMain
             // 
@@ -244,6 +260,17 @@
             this.splitContainer1.SplitterDistance = 486;
             this.splitContainer1.TabIndex = 5;
             // 
+            // pbResourcePlaceholder
+            // 
+            this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.accept;
+            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
+            this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
+            this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
+            this.pbResourcePlaceholder.TabIndex = 4;
+            this.pbResourcePlaceholder.TabStop = false;
+            this.pbResourcePlaceholder.Visible = false;
+            // 
             // txtJ2534Input
             // 
             this.txtJ2534Input.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -255,30 +282,12 @@
             this.txtJ2534Input.TabIndex = 4;
             this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
             // 
-            // cFFExportFlashSegmentsToolStripMenuItem
+            // cFFFlashSplicerToolStripMenuItem
             // 
-            this.cFFExportFlashSegmentsToolStripMenuItem.Name = "cFFExportFlashSegmentsToolStripMenuItem";
-            this.cFFExportFlashSegmentsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.cFFExportFlashSegmentsToolStripMenuItem.Text = "CFF: Export Flash Segments";
-            this.cFFExportFlashSegmentsToolStripMenuItem.Click += new System.EventHandler(this.cFFExportFlashSegmentsToolStripMenuItem_Click);
-            // 
-            // fixClientAccessPermissionsToolStripMenuItem
-            // 
-            this.fixClientAccessPermissionsToolStripMenuItem.Name = "fixClientAccessPermissionsToolStripMenuItem";
-            this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.fixClientAccessPermissionsToolStripMenuItem.Text = "Fix Client Access Permissions";
-            this.fixClientAccessPermissionsToolStripMenuItem.Click += new System.EventHandler(this.fixClientAccessPermissionsToolStripMenuItem_Click);
-            // 
-            // pbResourcePlaceholder
-            // 
-            this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.accept;
-            this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
-            this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
-            this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
-            this.pbResourcePlaceholder.TabIndex = 4;
-            this.pbResourcePlaceholder.TabStop = false;
-            this.pbResourcePlaceholder.Visible = false;
+            this.cFFFlashSplicerToolStripMenuItem.Name = "cFFFlashSplicerToolStripMenuItem";
+            this.cFFFlashSplicerToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.cFFFlashSplicerToolStripMenuItem.Text = "CFF: Flash Splicer";
+            this.cFFFlashSplicerToolStripMenuItem.Click += new System.EventHandler(this.cFFFlashSplicerToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -334,6 +343,7 @@
         private System.Windows.Forms.TextBox txtJ2534Input;
         private System.Windows.Forms.ToolStripMenuItem cFFExportFlashSegmentsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fixClientAccessPermissionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cFFFlashSplicerToolStripMenuItem;
     }
 }
 

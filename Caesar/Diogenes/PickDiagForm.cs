@@ -72,6 +72,15 @@ namespace Diogenes
 
             dgvMain.DataSource = dt;
 
+            // apparently resize+sort is really expensive
+            if (dgvMain.Columns[dgvMain.Columns.Count - 1].AutoSizeMode != DataGridViewAutoSizeColumnMode.Fill) 
+            {
+                dgvMain.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                dgvMain.Columns[dgvMain.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dgvMain.Columns[0].Visible = false;
+            }
+
+            /*
             int colIndex = 0;
             dgvMain.Columns[colIndex++].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dgvMain.Columns[colIndex++].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -81,9 +90,8 @@ namespace Diogenes
             dgvMain.Columns[colIndex++].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dgvMain.Columns[colIndex++].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dgvMain.Columns[colIndex++].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
-            dgvMain.Columns[0].Visible = false;
-            dgvMain.Sort(dgvMain.Columns[0], ListSortDirection.Ascending);
+            */
+            // dgvMain.Sort(dgvMain.Columns[0], ListSortDirection.Ascending);
         }
 
         private void txtFilter_TextChanged(object sender, EventArgs e)

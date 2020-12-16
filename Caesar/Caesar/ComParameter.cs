@@ -44,11 +44,17 @@ namespace Caesar
                 ComParamValue = BitConverter.ToInt32(Dump, 0);
             }
 
-            if (ComParamIndex > parentEcuInterface.comParameters.Count)
+            if (ComParamIndex >= parentEcuInterface.comParameters.Count)
             {
-                throw new Exception("Invalid communication parameter : parent interface has no matching key");
+                // throw new Exception("Invalid communication parameter : parent interface has no matching key");
+                // apparently some files can be malformed and remain valid
+                ParamName = "CP_UNKNOWN_MISSING_KEY";
+                Console.WriteLine($"Warning: Tried to load a communication parameter without a parent (value: {ComParamValue})");
             }
-            ParamName = parentEcuInterface.comParameters[ComParamIndex];
+            else
+            {
+                ParamName = parentEcuInterface.comParameters[ComParamIndex];
+            }
         }
 
         public void PrintDebug() 
