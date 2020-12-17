@@ -21,6 +21,7 @@ namespace Diogenes
         string VariantName;
         string VCDomainName;
         public byte[] VCValue;
+        public byte[] UnfilteredReadValue;
 
         public DiagService ReadService;
         public DiagService WriteService;
@@ -46,6 +47,8 @@ namespace Diogenes
             }
 
             VCValue = new byte[VariantCodingDomain.DumpSize];
+            UnfilteredReadValue = new byte[] { };
+
             foreach (Tuple<string, byte[]> row in VariantCodingDomain.DefaultData)
             {
                 if (row.Item1.ToLower() == "default" && (row.Item2.Length == VariantCodingDomain.DumpSize))
@@ -70,6 +73,8 @@ namespace Diogenes
                 Console.WriteLine($"Variant coding received: {BitUtility.BytesToHex(response)}");
 
                 VCValue = response.Skip(largestPrep.BitPosition / 8).Take(largestPrep.SizeInBits / 8).ToArray();
+                // store the received VC: when writing back, we might need the previous author's fingerprints
+                UnfilteredReadValue = response;
             }
             else
             {
@@ -174,14 +179,20 @@ namespace Diogenes
             DataTable dt = new DataTable();
             dt.Columns.Add("Fragment", typeof(String));
             dt.Columns.Add("Value", typeof(String));
+            dt.Columns.Add("Bit Position", typeof(String));
+            dt.Columns.Add("Bit Length", typeof(String));
 
             for (int i = 0; i < VariantCodingDomain.VCFragments.Count; i++)
             {
                 VCFragment currentFragment = VariantCodingDomain.VCFragments[i];
-                // DataRow row = dt.Rows.Add(new object[] { currentFragment.fragmentName, new string[] {"hi", "bye" } });
                 VCSubfragment subfragment = currentFragment.GetSubfragmentConfiguration(VCValue);
 
-                dt.Rows.Add(new string[] { currentFragment.Qualifier, subfragment is null ? "(warning: no matching subfragment)" : subfragment.NameCTFResolved });
+                dt.Rows.Add(new string[] { 
+                    currentFragment.Qualifier, 
+                    subfragment is null ? "(warning: no matching subfragment)" : subfragment.NameCTFResolved,
+                    currentFragment.ByteBitPos.ToString(),
+                    currentFragment.BitLength.ToString(),
+                });
             }
 
             dgvMain.DataSource = dt;
@@ -275,7 +286,7 @@ namespace Diogenes
                     return;
                 }
 
-                int contextMenuLimit = 100;
+                int contextMenuLimit = 30;
 
                 contextMenuStrip1.Items.Clear();
                 ToolStripMenuItem tsHeader = new ToolStripMenuItem();

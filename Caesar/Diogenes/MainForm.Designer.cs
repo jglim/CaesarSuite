@@ -46,6 +46,7 @@
             this.defaultJ2534InterfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eCUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setSecurityLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cFFFlashSplicerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tvMain = new System.Windows.Forms.TreeView();
@@ -53,7 +54,8 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
-            this.cFFFlashSplicerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allowWriteVariantCodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -98,6 +100,7 @@
             this.loadCBFFilesToolStripMenuItem,
             this.unloadExistingFilesToolStripMenuItem,
             this.toolStripSeparator1,
+            this.allowWriteVariantCodingToolStripMenuItem,
             this.preferencesToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.toolStripSeparator2,
@@ -109,45 +112,45 @@
             // loadCBFFilesToolStripMenuItem
             // 
             this.loadCBFFilesToolStripMenuItem.Name = "loadCBFFilesToolStripMenuItem";
-            this.loadCBFFilesToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.loadCBFFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.loadCBFFilesToolStripMenuItem.Text = "Load CBF Files";
             this.loadCBFFilesToolStripMenuItem.Click += new System.EventHandler(this.loadCBFFilesToolStripMenuItem_Click);
             // 
             // unloadExistingFilesToolStripMenuItem
             // 
             this.unloadExistingFilesToolStripMenuItem.Name = "unloadExistingFilesToolStripMenuItem";
-            this.unloadExistingFilesToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.unloadExistingFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.unloadExistingFilesToolStripMenuItem.Text = "Unload Existing Files";
             this.unloadExistingFilesToolStripMenuItem.Click += new System.EventHandler(this.unloadExistingFilesToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(213, 6);
             // 
             // preferencesToolStripMenuItem
             // 
             this.preferencesToolStripMenuItem.Enabled = false;
             this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.preferencesToolStripMenuItem.Text = "Preferences";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.aboutToolStripMenuItem.Text = "About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(213, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -163,7 +166,7 @@
             // debugJ2534ToolStripMenuItem
             // 
             this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
             this.debugJ2534ToolStripMenuItem.Visible = false;
             this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
@@ -173,7 +176,7 @@
             this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.defaultJ2534InterfaceToolStripMenuItem});
             this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
-            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
             this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
             // 
@@ -189,7 +192,8 @@
             this.setSecurityLevelToolStripMenuItem,
             this.cFFFlashSplicerToolStripMenuItem,
             this.cFFExportFlashSegmentsToolStripMenuItem,
-            this.fixClientAccessPermissionsToolStripMenuItem});
+            this.fixClientAccessPermissionsToolStripMenuItem,
+            this.showTraceToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.eCUToolStripMenuItem.Text = "Tools";
@@ -200,6 +204,13 @@
             this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.setSecurityLevelToolStripMenuItem.Text = "Set Security Level (DLL)";
             this.setSecurityLevelToolStripMenuItem.Click += new System.EventHandler(this.setSecurityLevelToolStripMenuItem_Click);
+            // 
+            // cFFFlashSplicerToolStripMenuItem
+            // 
+            this.cFFFlashSplicerToolStripMenuItem.Name = "cFFFlashSplicerToolStripMenuItem";
+            this.cFFFlashSplicerToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.cFFFlashSplicerToolStripMenuItem.Text = "CFF: Flash Splicer";
+            this.cFFFlashSplicerToolStripMenuItem.Click += new System.EventHandler(this.cFFFlashSplicerToolStripMenuItem_Click);
             // 
             // cFFExportFlashSegmentsToolStripMenuItem
             // 
@@ -282,12 +293,21 @@
             this.txtJ2534Input.TabIndex = 4;
             this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
             // 
-            // cFFFlashSplicerToolStripMenuItem
+            // allowWriteVariantCodingToolStripMenuItem
             // 
-            this.cFFFlashSplicerToolStripMenuItem.Name = "cFFFlashSplicerToolStripMenuItem";
-            this.cFFFlashSplicerToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.cFFFlashSplicerToolStripMenuItem.Text = "CFF: Flash Splicer";
-            this.cFFFlashSplicerToolStripMenuItem.Click += new System.EventHandler(this.cFFFlashSplicerToolStripMenuItem_Click);
+            this.allowWriteVariantCodingToolStripMenuItem.Name = "allowWriteVariantCodingToolStripMenuItem";
+            this.allowWriteVariantCodingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.allowWriteVariantCodingToolStripMenuItem.Text = "Allow Write Variant Coding";
+            this.allowWriteVariantCodingToolStripMenuItem.Click += new System.EventHandler(this.allowWriteVariantCodingToolStripMenuItem_Click);
+            // 
+            // showTraceToolStripMenuItem
+            // 
+            this.showTraceToolStripMenuItem.Enabled = false;
+            this.showTraceToolStripMenuItem.Name = "showTraceToolStripMenuItem";
+            this.showTraceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Q)));
+            this.showTraceToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.showTraceToolStripMenuItem.Text = "Show Trace";
+            this.showTraceToolStripMenuItem.Click += new System.EventHandler(this.showTraceToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -344,6 +364,8 @@
         private System.Windows.Forms.ToolStripMenuItem cFFExportFlashSegmentsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fixClientAccessPermissionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cFFFlashSplicerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem allowWriteVariantCodingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showTraceToolStripMenuItem;
     }
 }
 

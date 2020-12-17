@@ -74,6 +74,8 @@ namespace Diogenes
 
         public bool UDSCapable = false;
 
+        public StringBuilder CommunicationsLogHighLevel = new StringBuilder();
+
         // constant 2000 ms as recomended by the ISO 15765-3 standard (§6.3.3).
         // strangely it times out too quickly
         Timer TesterPresentTimer = new Timer(1000);
@@ -375,6 +377,7 @@ namespace Diogenes
         public byte[] SendMessage(IEnumerable<byte> message, bool quiet = false)
         {
             byte[] response = Array.Empty<byte>();
+            CommunicationsLogHighLevel.Append($"W {BitUtility.BytesToHex(message.ToArray(), true)}\r\n");
 
             // prepare data to send
             List<byte> packet = new List<byte>(CanIdentifier);
@@ -480,6 +483,7 @@ namespace Diogenes
                     break;
                 }
             }
+            CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(response.ToArray(), true)}\r\n\r\n");
             return response;
         }
 
