@@ -18,7 +18,7 @@ namespace Caesar
         public int Unk5;
         public string VendorName;
 
-        public int Unk7;
+        public int KwpVendorID;
         public int Unk8;
         public int Unk9;
         public int Unk10;
@@ -40,8 +40,10 @@ namespace Caesar
 
         public int Unk22;
         public int Unk23;
-        public int VariantID;
+        public int UdsVendorID;
         public int PatternType;
+
+        public int VariantID;
 
         public long BaseAddress;
         public ECUVariantPattern(BinaryReader reader, long baseAddress) 
@@ -58,7 +60,7 @@ namespace Caesar
             Unk5 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             VendorName = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
 
-            Unk7 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
+            KwpVendorID = CaesarReader.ReadBitflagUInt16(ref bitflags, reader);
             Unk8 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             Unk9 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             Unk10 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
@@ -80,11 +82,41 @@ namespace Caesar
 
             Unk22 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             Unk23 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            VariantID = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            UdsVendorID = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             PatternType = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
+            VariantID = UdsVendorID == 0 ? KwpVendorID : UdsVendorID;
             // type 3 contains a vendor name
 
+        }
+
+        public void PrintDebug() 
+        {
+            Console.WriteLine($"UnkBufferSize : {UnkBufferSize}");
+            Console.WriteLine($"UnkBuffer : {UnkBuffer}");
+            Console.WriteLine($"Unk3 : {Unk3}");
+            Console.WriteLine($"Unk4 : {Unk4}");
+            Console.WriteLine($"Unk5 : {Unk5}");
+            Console.WriteLine($"VendorName : {VendorName}");
+            Console.WriteLine($"Unk7 : {KwpVendorID}");
+            Console.WriteLine($"Unk8 : {Unk8}");
+            Console.WriteLine($"Unk9 : {Unk9}");
+            Console.WriteLine($"Unk10 : {Unk10}");
+            Console.WriteLine($"Unk11 : {Unk11}");
+            Console.WriteLine($"Unk12 : {Unk12}");
+            Console.WriteLine($"Unk13 : {Unk13}");
+            Console.WriteLine($"Unk14 : {Unk14}");
+            Console.WriteLine($"Unk15 : {Unk15}");
+            Console.WriteLine($"Unk16 : {Unk16}");
+            Console.WriteLine($"Unk17 : {Unk17}");
+            Console.WriteLine($"Unk18 : {Unk18}");
+            Console.WriteLine($"Unk19 : {Unk19}");
+            Console.WriteLine($"Unk20 : {Unk20}");
+            Console.WriteLine($"Unk21 : {Unk21}");
+            Console.WriteLine($"Unk22 : {Unk22}");
+            Console.WriteLine($"Unk23 : {Unk23}");
+            Console.WriteLine($"VariantID : {VariantID}");
+            Console.WriteLine($"PatternType : {PatternType}");
         }
     }
 }

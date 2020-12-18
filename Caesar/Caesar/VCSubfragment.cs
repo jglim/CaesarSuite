@@ -15,7 +15,7 @@ namespace Caesar
         public string QualifierUsuallyDisabled;
         public int Unk3;
         public int Unk4;
-        public string UnkStr5;
+        public string SupplementKey;
         public string NameCTFResolved;
 
         public VCSubfragment(BinaryReader reader, VCFragment parentFragment, CTFLanguage language, long baseAddress)
@@ -34,7 +34,7 @@ namespace Caesar
             QualifierUsuallyDisabled = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
             Unk3 = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
             Unk4 = CaesarReader.ReadBitflagInt16(ref bitflags, reader, -1);
-            UnkStr5 = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
+            SupplementKey = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
             NameCTFResolved = language.GetString(Description_CTF);
 
             //int subfragmentIdk2 = reader.ReadInt32();
@@ -56,7 +56,7 @@ namespace Caesar
                 Console.WriteLine($"{nameof(QualifierUsuallyDisabled)}, {QualifierUsuallyDisabled}");
                 Console.WriteLine($"{nameof(Unk3)}, {Unk3}");
                 Console.WriteLine($"{nameof(Unk4)}, {Unk4}");
-                Console.WriteLine($"{nameof(UnkStr5)}, {UnkStr5}");
+                Console.WriteLine($"{nameof(SupplementKey)}, {SupplementKey}");
             }
             else
             {

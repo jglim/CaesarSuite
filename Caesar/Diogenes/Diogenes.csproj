@@ -109,6 +109,12 @@
       <DependentUpon>SecurityLevelForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TextboxWriter.cs" />
+    <Compile Include="TraceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TraceForm.Designer.cs">
+      <DependentUpon>TraceForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UDS.cs" />
     <Compile Include="UnmanagedUtility.cs" />
     <Compile Include="VCForm.cs">
@@ -117,6 +123,7 @@
     <Compile Include="VCForm.Designer.cs">
       <DependentUpon>VCForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="VCReport.cs" />
     <EmbeddedResource Include="FlashSplicer.resx">
       <DependentUpon>FlashSplicer.cs</DependentUpon>
     </EmbeddedResource>
@@ -144,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SecurityLevelForm.resx">
       <DependentUpon>SecurityLevelForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TraceForm.resx">
+      <DependentUpon>TraceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VCForm.resx">
       <DependentUpon>VCForm.cs</DependentUpon>

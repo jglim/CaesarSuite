@@ -17,34 +17,35 @@ namespace Diogenes
 {
     public partial class MainForm : Form
     {
-        private ECUConnection Connection;
+        public ECUConnection Connection;
 
         public MainForm()
         {
             InitializeComponent();
         }
 
+        TraceForm TraceFormSingleInstance;
         List<CaesarContainer> Containers = new List<CaesarContainer>();
         ImageList treeImages = null;
         private void MainForm_Load(object sender, EventArgs e)
         {
             RedirectConsole();
-            LoadContainers(); 
+            LoadContainers();
             UnmanagedUtility.SendMessage(txtJ2534Input.Handle, UnmanagedUtility.EM_SETCUEBANNER, 0, "J2534 Console : Enter hex values (01 23 45 57) and press enter to send a raw J2534 command");
 
             Connection = new ECUConnection();
         }
 
-        private void RedirectConsole() 
+        private void RedirectConsole()
         {
             TextboxWriter writer = new TextboxWriter(txtLog);
             Console.SetOut(writer);
         }
 
-        private void LoadContainers() 
+        private void LoadContainers()
         {
             Containers.Clear();
-            foreach (string file in Directory.GetFiles(Application.StartupPath)) 
+            foreach (string file in Directory.GetFiles(Application.StartupPath))
             {
                 if (Path.GetExtension(file).ToLower() == ".cbf")
                 {
@@ -55,9 +56,9 @@ namespace Diogenes
             LoadTree();
         }
 
-        private void InitializeTree() 
+        private void InitializeTree()
         {
-            if (treeImages is null) 
+            if (treeImages is null)
             {
                 treeImages = new ImageList();
                 treeImages.Images.Add(Resources.blank); // 0
@@ -124,7 +125,7 @@ namespace Diogenes
             diagDownload.Tag = newTag;
 
 
-            for (int i = 0; i < variant.DiagServices.Length; i++) 
+            for (int i = 0; i < variant.DiagServices.Length; i++)
             {
                 DiagService currentDiagService = variant.DiagServices[i];
 
@@ -180,7 +181,7 @@ namespace Diogenes
             InitializeTree();
             tvMain.Nodes.Clear();
 
-            foreach (CaesarContainer container in Containers) 
+            foreach (CaesarContainer container in Containers)
             {
                 foreach (ECU ecu in container.CaesarECUs)
                 {
@@ -193,7 +194,7 @@ namespace Diogenes
 
                     foreach (ECUInterfaceSubtype subtype in ecu.ECUInterfaceSubtypes)
                     {
-                        if (variantFilter) 
+                        if (variantFilter)
                         {
                             // interfaces don't matter anymore when we are connected
                             break;
@@ -237,7 +238,7 @@ namespace Diogenes
                         ecuNode.Nodes.Add(sessionContainer);
                     }
 
-                    foreach (ECUVariant variant in ecu.ECUVariants) 
+                    foreach (ECUVariant variant in ecu.ECUVariants)
                     {
                         TreeNode ecuVariantNode = new TreeNode(variant.Qualifier, 2, 2);
                         ecuVariantNode.Tag = nameof(ECUVariant);
@@ -253,24 +254,24 @@ namespace Diogenes
                         foreach (ECUVariantPattern pattern in variant.VariantPatterns)
                         {
                             string vendorText = pattern.PatternType == 3 ? $", Vendor: {pattern.VendorName}" : "";
-                            TreeNode patternNode = new TreeNode($"Variant ID: {pattern.VariantID}{vendorText}", 9, 9);
+                            TreeNode patternNode = new TreeNode($"Variant ID: {pattern.VariantID} ({pattern.VariantID:X4}){vendorText}", 9, 9);
                             patternNode.Tag = nameof(ECUVariantPattern);
                             metadataNode.Nodes.Add(patternNode);
                         }
 
                         AddDiagServicesToNode(ecuVariantNode, variant);
-                        
+
                         ecuVariantNode.Nodes.Add(metadataNode);
 
                         // vc domains
-                        foreach (VCDomain domain in variant.VCDomains) 
+                        foreach (VCDomain domain in variant.VCDomains)
                         {
                             TreeNode vcDomainNode = new TreeNode(domain.Qualifier, 3, 3);
                             vcDomainNode.Tag = nameof(VCDomain);
                             ecuVariantNode.Nodes.Add(vcDomainNode);
                         }
 
-                        TreeNode backupNode = new TreeNode("Run Backup", 3, 3);
+                        TreeNode backupNode = new TreeNode("Backup Variant Strings", 3, 3);
                         backupNode.Tag = "VCBackup";
                         ecuVariantNode.Nodes.Add(backupNode);
 
@@ -289,7 +290,7 @@ namespace Diogenes
             }
         }
 
-        private void FixCALs(CaesarContainer container) 
+        private void FixCALs(CaesarContainer container)
         {
             int newLevel = 1;
             byte[] newFile = new byte[container.FileBytes.Length];
@@ -331,7 +332,7 @@ namespace Diogenes
             }
         }
 
-        private void TreeViewDoubleClickCheckIfSession(TreeNode node) 
+        private void TreeViewDoubleClickCheckIfSession(TreeNode node)
         {
             if (node.Parent != null && node.Parent.Tag.ToString() == "Session")
             {
@@ -354,11 +355,11 @@ namespace Diogenes
             }
         }
 
-        private void TreeViewDoubleClickCheckIfVariantDiag(TreeNode node) 
+        private void TreeViewDoubleClickCheckIfVariantDiag(TreeNode node)
         {
             string validNodePrefix = $"Exec{nameof(DiagService)}:";
 
-            if (node.Parent is null) 
+            if (node.Parent is null)
             {
                 return;
             }
@@ -367,13 +368,13 @@ namespace Diogenes
                 string variantName = node.Parent.Tag.ToString().Substring(validNodePrefix.Length);
 
                 ECUVariant foundVariant = null;
-                foreach (CaesarContainer container in Containers) 
+                foreach (CaesarContainer container in Containers)
                 {
-                    foreach (ECU ecu in container.CaesarECUs) 
+                    foreach (ECU ecu in container.CaesarECUs)
                     {
-                        foreach (ECUVariant variant in ecu.ECUVariants) 
+                        foreach (ECUVariant variant in ecu.ECUVariants)
                         {
-                            if (variant.Qualifier == variantName) 
+                            if (variant.Qualifier == variantName)
                             {
                                 foundVariant = variant;
                             }
@@ -381,7 +382,7 @@ namespace Diogenes
                     }
                 }
                 // variant found, exec the diag service
-                if (foundVariant != null) 
+                if (foundVariant != null)
                 {
                     DiagService ds = foundVariant.DiagServices[int.Parse(node.Tag.ToString())];
 
@@ -416,7 +417,7 @@ namespace Diogenes
         {
             Console.WriteLine($"\r\nRunning: {diagService.Qualifier}");
             byte[] response = Connection.SendMessage(request);
-            foreach (List<DiagPreparation> wtf in diagService.OutputPreparations) 
+            foreach (List<DiagPreparation> wtf in diagService.OutputPreparations)
             {
                 foreach (DiagPreparation outputPreparation in wtf)
                 {
@@ -427,13 +428,13 @@ namespace Diogenes
                 }
             }
             // check if the response was an ECU seed
-            if (Connection.UDSCapable && (response.Length >= 2) && (response[0] == 0x67)) 
+            if (Connection.UDSCapable && (response.Length >= 2) && (response[0] == 0x67))
             {
                 if (response.Length == 2)
                 {
                     Console.WriteLine($"Security level has been successfully changed to 0x{(response[1] - 1):X}");
                 }
-                else 
+                else
                 {
                     byte[] seedValue = response.Skip(2).ToArray();
                     string seedValueAsString = BitUtility.BytesToHex(seedValue, true);
@@ -611,7 +612,8 @@ namespace Diogenes
             }
             else if (node.Tag.ToString() == "VCBackup")
             {
-
+                // variant coding backup
+                VCReport.treeViewSelectVariantCodingBackup(node, Connection, Containers);
             }
             else if (node.Tag.ToString().StartsWith(nameof(ECUInterfaceSubtype)))
             {
@@ -868,7 +870,11 @@ namespace Diogenes
 
         private void showTraceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (TraceFormSingleInstance is null || TraceFormSingleInstance.IsDisposed)
+            {
+                TraceFormSingleInstance = new TraceForm(this);
+            }
+            TraceFormSingleInstance.Show();
         }
     }
 }

@@ -36,6 +36,7 @@
             this.loadCBFFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unloadExistingFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.allowWriteVariantCodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -49,13 +50,12 @@
             this.cFFFlashSplicerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tvMain = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
-            this.allowWriteVariantCodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -128,6 +128,13 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(213, 6);
             // 
+            // allowWriteVariantCodingToolStripMenuItem
+            // 
+            this.allowWriteVariantCodingToolStripMenuItem.Name = "allowWriteVariantCodingToolStripMenuItem";
+            this.allowWriteVariantCodingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.allowWriteVariantCodingToolStripMenuItem.Text = "Allow Write Variant Coding";
+            this.allowWriteVariantCodingToolStripMenuItem.Click += new System.EventHandler(this.allowWriteVariantCodingToolStripMenuItem_Click);
+            // 
             // preferencesToolStripMenuItem
             // 
             this.preferencesToolStripMenuItem.Enabled = false;
@@ -166,7 +173,7 @@
             // debugJ2534ToolStripMenuItem
             // 
             this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
             this.debugJ2534ToolStripMenuItem.Visible = false;
             this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
@@ -176,7 +183,7 @@
             this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.defaultJ2534InterfaceToolStripMenuItem});
             this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
-            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
             this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
             // 
@@ -225,6 +232,14 @@
             this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.fixClientAccessPermissionsToolStripMenuItem.Text = "Fix Client Access Permissions";
             this.fixClientAccessPermissionsToolStripMenuItem.Click += new System.EventHandler(this.fixClientAccessPermissionsToolStripMenuItem_Click);
+            // 
+            // showTraceToolStripMenuItem
+            // 
+            this.showTraceToolStripMenuItem.Name = "showTraceToolStripMenuItem";
+            this.showTraceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Q)));
+            this.showTraceToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.showTraceToolStripMenuItem.Text = "Show Trace";
+            this.showTraceToolStripMenuItem.Click += new System.EventHandler(this.showTraceToolStripMenuItem_Click);
             // 
             // tvMain
             // 
@@ -292,22 +307,6 @@
             this.txtJ2534Input.Size = new System.Drawing.Size(1117, 20);
             this.txtJ2534Input.TabIndex = 4;
             this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
-            // 
-            // allowWriteVariantCodingToolStripMenuItem
-            // 
-            this.allowWriteVariantCodingToolStripMenuItem.Name = "allowWriteVariantCodingToolStripMenuItem";
-            this.allowWriteVariantCodingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.allowWriteVariantCodingToolStripMenuItem.Text = "Allow Write Variant Coding";
-            this.allowWriteVariantCodingToolStripMenuItem.Click += new System.EventHandler(this.allowWriteVariantCodingToolStripMenuItem_Click);
-            // 
-            // showTraceToolStripMenuItem
-            // 
-            this.showTraceToolStripMenuItem.Enabled = false;
-            this.showTraceToolStripMenuItem.Name = "showTraceToolStripMenuItem";
-            this.showTraceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Q)));
-            this.showTraceToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.showTraceToolStripMenuItem.Text = "Show Trace";
-            this.showTraceToolStripMenuItem.Click += new System.EventHandler(this.showTraceToolStripMenuItem_Click);
             // 
             // MainForm
             // 

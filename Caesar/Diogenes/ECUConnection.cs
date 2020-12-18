@@ -78,8 +78,7 @@ namespace Diogenes
 
         // constant 2000 ms as recomended by the ISO 15765-3 standard (§6.3.3).
         // strangely it times out too quickly
-        Timer TesterPresentTimer = new Timer(1000);
-        Timer RxTimer = new Timer(50);
+        Timer TesterPresentTimer = new Timer(2000);
 
         public enum ConnectionState 
         {
@@ -107,71 +106,7 @@ namespace Diogenes
             ConnectionUpdateState();
             TesterPresentTimer.Elapsed += TesterPresentTimer_Elapsed;
             TesterPresentTimer.Start();
-
-            RxTimer.Elapsed += RxTimer_Elapsed;
             // RxTimer.Start();
-        }
-
-        private void RxTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (State > ConnectionState.DeviceSelectedPendingChannelConnection)
-            {
-                while (true)
-                {
-                    GetMessageResults readResult = ConnectionChannel.GetMessage();
-                    if (readResult.Result == ResultCode.STATUS_NOERROR)
-                    {
-                        foreach (Message row in readResult.Messages)
-                        {
-                            ProcessReceivedMessage(row);
-                        }
-                    }
-                    else 
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-
-        private void ProcessReceivedMessage(Message message)
-        {
-            while (true) 
-            {
-            
-            }
-
-            if (message.Data.Length < 4)
-            {
-                Console.WriteLine($"Discarding received message (invalid size):  {BitUtility.BytesToHex(message.Data, true)}");
-                return;
-            }
-
-            if (!message.Data.Take(4).SequenceEqual(RxCanIdentifier))
-            {
-                if (message.Data.Take(4).SequenceEqual(CanIdentifier))
-                {
-                    // quietly ignore if it is our can id, usually empty packet
-                    return;
-                }
-                Console.WriteLine($"Discarding received message (unknown sender):  {BitUtility.BytesToHex(message.Data, true)} expects {BitUtility.BytesToHex(RxCanIdentifier, true)}");
-                return;
-            }
-
-            byte[] messageBody = message.Data.Skip(4).ToArray();
-
-            if (messageBody.Length == 0) 
-            {
-                return;
-            }
-
-            if (messageBody[0] == 0x7E) 
-            {
-                // testerpresent response
-                // return;
-            }
-
-            Console.WriteLine($"ECU:  {BitUtility.BytesToHex(messageBody, true)}");
         }
 
         private void TesterPresentTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -483,7 +418,7 @@ namespace Diogenes
                     break;
                 }
             }
-            CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(response.ToArray(), true)}\r\n\r\n");
+            CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(response.ToArray(), true)}\r\n");
             return response;
         }
 

@@ -157,7 +157,7 @@ namespace Diogenes
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x03 };
             if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
             {
-                Console.WriteLine($"Failed to switch session : target responded with {BitUtility.BytesToHex(sessionSwitchResponse, true)}");
+                Console.WriteLine($"Failed to switch session : target responded with [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
             }
             else
             {
@@ -168,7 +168,7 @@ namespace Diogenes
 
                 if (!variantQueryResponse.Take(2).SequenceEqual(variantExpectedResponse))
                 {
-                    Console.WriteLine($"Failed to identify variant (unexpected response) : target responded with {BitUtility.BytesToHex(variantQueryResponse, true)}");
+                    Console.WriteLine($"Failed to identify variant (unexpected response) : target responded with [{BitUtility.BytesToHex(variantQueryResponse, true)}]");
                 }
                 else
                 {
