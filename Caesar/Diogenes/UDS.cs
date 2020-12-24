@@ -151,7 +151,7 @@ namespace Diogenes
         // try to switch the session and filter the list of containers if a variant match is found
         public static bool TryDetectVariantAndSwitchSession(ECUConnection connection, List<CaesarContainer> containers) 
         {
-            Console.WriteLine("Switching session states..");
+            Console.WriteLine("UDS: Switching session states");
 
             byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x03 });
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x03 };
@@ -161,57 +161,63 @@ namespace Diogenes
             }
             else
             {
-                Console.WriteLine("Querying variant.. ");
+                Console.WriteLine("UDS: Querying variant");
                 // this is NOT uds specific (!)
                 byte[] variantQueryResponse = connection.SendMessage(new byte[] { 0x22, 0xF1, 0x00 });
-                byte[] variantExpectedResponse = new byte[] { 0x62, 0xF1 };
+                return TrySetVariant(variantQueryResponse, containers);
+            }
+            return false;
+        }
 
-                if (!variantQueryResponse.Take(2).SequenceEqual(variantExpectedResponse))
+        public static bool TrySetVariant(byte[] variantQueryResponse, List<CaesarContainer> containers)
+        {
+            byte[] variantExpectedResponse = new byte[] { 0x62, 0xF1 };
+
+            if (!variantQueryResponse.Take(2).SequenceEqual(variantExpectedResponse))
+            {
+                Console.WriteLine($"Failed to identify variant (unexpected response) : target responded with [{BitUtility.BytesToHex(variantQueryResponse, true)}]");
+            }
+            else
+            {
+                // found a variant id, check loaded ecus if any of them have a match
+                int variantId = (variantQueryResponse[3] << 16) | (variantQueryResponse[4] << 8) | variantQueryResponse[5];
+
+                ECUVariant matchingVariant = null;
+                ECU matchingEcu = null;
+                CaesarContainer matchingContainer = null;
+
+                foreach (CaesarContainer container in containers)
                 {
-                    Console.WriteLine($"Failed to identify variant (unexpected response) : target responded with [{BitUtility.BytesToHex(variantQueryResponse, true)}]");
-                }
-                else
-                {
-                    // found a variant id, check loaded ecus if any of them have a match
-                    int variantId = (variantQueryResponse[3] << 16) | (variantQueryResponse[4] << 8) | variantQueryResponse[5];
-
-                    ECUVariant matchingVariant = null;
-                    ECU matchingEcu = null;
-                    CaesarContainer matchingContainer = null;
-
-                    foreach (CaesarContainer container in containers)
+                    foreach (ECU ecu in container.CaesarECUs)
                     {
-                        foreach (ECU ecu in container.CaesarECUs)
+                        foreach (ECUVariant variant in ecu.ECUVariants)
                         {
-                            foreach (ECUVariant variant in ecu.ECUVariants)
+                            foreach (ECUVariantPattern pattern in variant.VariantPatterns)
                             {
-                                foreach (ECUVariantPattern pattern in variant.VariantPatterns)
+                                if (variantId == pattern.VariantID)
                                 {
-                                    if (variantId == pattern.VariantID)
-                                    {
-                                        matchingVariant = variant;
-                                        matchingEcu = ecu;
-                                        matchingContainer = container;
-                                        break;
-                                    }
+                                    matchingVariant = variant;
+                                    matchingEcu = ecu;
+                                    matchingContainer = container;
+                                    break;
                                 }
                             }
                         }
                     }
+                }
 
-                    if (matchingVariant != null)
-                    {
-                        // if a match was found, clean up the tree to show relevant content only
-                        matchingEcu.ECUVariants = new List<ECUVariant>() { matchingEcu.ECUVariants.Find(x => x.Qualifier == matchingVariant.Qualifier) };
-                        matchingContainer.CaesarECUs = new List<ECU>() { matchingContainer.CaesarECUs.Find(x => x.Qualifier == matchingEcu.Qualifier) };
-                        containers = new List<CaesarContainer>() { containers.Find(x => x.FileChecksum == matchingContainer.FileChecksum) };
-                        Console.WriteLine($"Variant has been successfully configured as {matchingVariant.Qualifier}");
-                        return true;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"No matching variants found. Please check if the loaded CBF files are valid for your target. \n\nVariant ID: {variantId}");
-                    }
+                if (matchingVariant != null)
+                {
+                    // if a match was found, clean up the tree to show relevant content only
+                    matchingEcu.ECUVariants = new List<ECUVariant>() { matchingEcu.ECUVariants.Find(x => x.Qualifier == matchingVariant.Qualifier) };
+                    matchingContainer.CaesarECUs = new List<ECU>() { matchingContainer.CaesarECUs.Find(x => x.Qualifier == matchingEcu.Qualifier) };
+                    containers = new List<CaesarContainer>() { containers.Find(x => x.FileChecksum == matchingContainer.FileChecksum) };
+                    Console.WriteLine($"Variant has been successfully configured as {matchingVariant.Qualifier}");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine($"No matching variants found. Please check if the loaded CBF files are valid for your target. \n\nVariant ID: {variantId}");
                 }
             }
             return false;

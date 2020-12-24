@@ -46,6 +46,9 @@ namespace Diogenes
                 this.Close();
             }
 
+            //Console.WriteLine(ReadService.Qualifier);
+            //Console.WriteLine(WriteService.Qualifier);
+
             VCValue = new byte[VariantCodingDomain.DumpSize];
             UnfilteredReadValue = new byte[] { };
 
@@ -54,23 +57,23 @@ namespace Diogenes
                 if (row.Item1.ToLower() == "default" && (row.Item2.Length == VariantCodingDomain.DumpSize))
                 {
                     VCValue = row.Item2;
-                    Console.WriteLine("Default variant coding data has been found and loaded");
+                    Console.WriteLine("Default CBF variant coding data is available");
                     break;
                 }
             }
 
             if (connection.State >= ECUConnection.ConnectionState.ChannelConnectedPendingEcuContact)
             {
-                Console.WriteLine($"Requesting variant coding read: {ReadService.Qualifier} : ({BitUtility.BytesToHex(ReadService.RequestBytes)})");
+                // Console.WriteLine($"Requesting variant coding read: {ReadService.Qualifier} : ({BitUtility.BytesToHex(ReadService.RequestBytes)})");
                 byte[] response = connection.SendDiagRequest(ReadService);
 
                 DiagPreparation largestPrep = GetLargestPreparation(ReadService.OutputPreparations);
                 if (largestPrep.PresPoolIndex > -1)
                 {
-                    DiagPresentation pres = SelectedECU.GlobalPresentations[largestPrep.PresPoolIndex];
+                    // DiagPresentation pres = SelectedECU.GlobalPresentations[largestPrep.PresPoolIndex];
                     // pres.PrintDebug();
                 }
-                Console.WriteLine($"Variant coding received: {BitUtility.BytesToHex(response)}");
+                // Console.WriteLine($"Variant coding received: {BitUtility.BytesToHex(response)}");
 
                 VCValue = response.Skip(largestPrep.BitPosition / 8).Take(largestPrep.SizeInBits / 8).ToArray();
                 // store the received VC: when writing back, we might need the previous author's fingerprints
@@ -241,8 +244,6 @@ namespace Diogenes
 
             if (MessageBox.Show("The SCN (Software Calibration Number) will be reset for some ECUs when the variant coding is modified. Continue?", "SCN Warning", MessageBoxButtons.YesNo) == DialogResult.Yes) 
             {
-                Console.WriteLine($"Write: {BitUtility.BytesToHex(WriteService.RequestBytes)}");
-
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }

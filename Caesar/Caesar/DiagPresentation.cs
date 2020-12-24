@@ -280,6 +280,13 @@ namespace Caesar
                         result = 2;
                     }
                 }
+
+                // jg: this isn't official, but if it is a single byte at this point, it's probably an unsigned 1byte
+                // see UDS DT_STO* for examples (e.g. variant query)
+                if ((result == -1)  && (TypeLength_1a == 1))
+                {
+                    result = 18;
+                }
                 return result;
             }
         }

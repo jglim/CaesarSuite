@@ -27,6 +27,8 @@ namespace Diogenes
         TraceForm TraceFormSingleInstance;
         List<CaesarContainer> Containers = new List<CaesarContainer>();
         ImageList treeImages = null;
+        TextboxWriter LogTextbox;
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             RedirectConsole();
@@ -38,8 +40,8 @@ namespace Diogenes
 
         private void RedirectConsole()
         {
-            TextboxWriter writer = new TextboxWriter(txtLog);
-            Console.SetOut(writer);
+            LogTextbox = new TextboxWriter(txtLog);
+            Console.SetOut(LogTextbox);
         }
 
         private void LoadContainers()
@@ -91,6 +93,7 @@ namespace Diogenes
                 treeImages.Images.Add(Resources.asterisk_orange); // 23
                 treeImages.Images.Add(Resources.folder); // 24
                 treeImages.Images.Add(Resources.accept); // 25
+                treeImages.Images.Add(Resources.report); // 26
 
                 tvMain.ImageList = treeImages;
 
@@ -176,6 +179,42 @@ namespace Diogenes
             parentNode.Nodes.Add(diagDownload);
         }
 
+
+        private void AddEcuMetadataToNode(TreeNode parentNode, CaesarContainer container, ECU ecu)
+        {
+            TreeNode rootMetadata = new TreeNode("Metadata", 26, 26);
+            rootMetadata.Tag = $"RootMetadata";
+
+            TreeNode metadataRowNode;
+
+            metadataRowNode = new TreeNode($"Container File Size: {container.GetFileSize()}", 9, 9);
+            metadataRowNode.Tag = "RootMetadataEntry";
+            rootMetadata.Nodes.Add(metadataRowNode);
+
+            metadataRowNode = new TreeNode($"Container Checksum: {container.FileChecksum:X8}", 9, 9);
+            metadataRowNode.Tag = "RootMetadataEntry";
+            rootMetadata.Nodes.Add(metadataRowNode);
+
+            metadataRowNode = new TreeNode($"CBF Version: {container.CaesarCFFHeader.CbfVersionString}", 9, 9);
+            metadataRowNode.Tag = "RootMetadataEntry";
+            rootMetadata.Nodes.Add(metadataRowNode);
+
+            metadataRowNode = new TreeNode($"GPD Version: {container.CaesarCFFHeader.GpdVersionString}", 9, 9);
+            metadataRowNode.Tag = "RootMetadataEntry";
+            rootMetadata.Nodes.Add(metadataRowNode);
+
+            metadataRowNode = new TreeNode($"ECU Version: {ecu.EcuXmlVersion}", 9, 9);
+            metadataRowNode.Tag = "RootMetadataEntry";
+            rootMetadata.Nodes.Add(metadataRowNode);
+
+            metadataRowNode = new TreeNode($"ECU Ignition Required: {ecu.IgnitionRequired}", 9, 9);
+            metadataRowNode.Tag = "RootMetadataEntry";
+            rootMetadata.Nodes.Add(metadataRowNode);
+
+
+            parentNode.Nodes.Add(rootMetadata);
+        }
+
         private void LoadTree(bool variantFilter = false)
         {
             InitializeTree();
@@ -191,6 +230,8 @@ namespace Diogenes
                     TreeNode execDiagAtRoot = new TreeNode("Execute Diagnostic Service (Root)", 21, 21);
                     execDiagAtRoot.Tag = $"{nameof(DiagService)}:{nameof(ECU)}:{ecu.Qualifier}";
                     ecuNode.Nodes.Add(execDiagAtRoot);
+
+                    AddEcuMetadataToNode(ecuNode, container, ecu);
 
                     foreach (ECUInterfaceSubtype subtype in ecu.ECUInterfaceSubtypes)
                     {
@@ -212,6 +253,7 @@ namespace Diogenes
                         foreach (ComParameter parameter in subtype.CommunicationParameters)
                         {
                             TreeNode comNode = new TreeNode($"{parameter.ParamName} : {parameter.ComParamValue} (0x{parameter.ComParamValue:X})", 9, 9);
+                            // Console.WriteLine(comNode.Text);
                             comNode.Tag = nameof(ComParameter);
                             comparamParentNode.Nodes.Add(comNode);
                         }
@@ -451,13 +493,13 @@ namespace Diogenes
             string domainName = node.Text;
             string variantName = node.Parent.Text;
             string ecuName = node.Parent.Parent.Text;
-            Console.WriteLine($"Starting VC for {ecuName} ({variantName}) with domain as {domainName}");
+            Console.WriteLine($"Starting VC Dialog for {ecuName} ({variantName}) with domain as {domainName}");
 
             CaesarContainer container = Containers.Find(x => x.GetECUVariantByName(variantName) != null);
             VCForm vcForm = new VCForm(container, ecuName, variantName, domainName, Connection);
             if (vcForm.ShowDialog() == DialogResult.OK)
             {
-                Console.WriteLine($"VC Confirmation: {domainName} : {BitUtility.BytesToHex(vcForm.VCValue)}");
+                Console.WriteLine($"Operator requesting for VC: {BitUtility.BytesToHex(vcForm.VCValue, true)}");
 
                 RunDiagForm runDiagForm = new RunDiagForm(vcForm.WriteService);
 
@@ -558,16 +600,6 @@ namespace Diogenes
                     }
                 }
 
-                if (assumptionsMade.Length > 0) 
-                {
-                    if (MessageBox.Show("Some assumptions were made when preparing the write parameters. You may wish to review them, and optionally press cancel to stop the process.\r\n\r\n" + assumptionsMade.ToString(), 
-                        "Review assumptions", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) != DialogResult.OK) 
-                    {
-                        return;
-                    }
-                }
-
-
                 /*
                 // lazy me dumping the values
                 for (int i = 0; i < vcForm.WriteService.InputPreparations.Count; i++)
@@ -578,22 +610,37 @@ namespace Diogenes
                 */
 
                 // we are done preparing the command, if we are confident we can send the command straight to the ECU, else, let the user review
-                //Array.ConstrainedCopy(vcForm.VCValue, 0, runDiagForm.Result, (largestOutPrep.BitPosition / 8), vcForm.VCValue.Length);
-                runDiagForm.Result = writeCommand;
-
-                if (runDiagForm.ShowDialog() == DialogResult.OK)
+                if (assumptionsMade.Length > 0) 
                 {
-                    bool allowVcWrite = allowWriteVariantCodingToolStripMenuItem.Checked;
-
-                    if (allowVcWrite)
+                    if (MessageBox.Show("Some assumptions were made when preparing the write parameters. \r\n\r\n" +
+                        "You may wish to review them by selecting Cancel, or select OK to execute the write command immediately.\r\n\r\n" + assumptionsMade.ToString(),
+                        "Review assumptions", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
                     {
-                        ExecUserDiagJob(runDiagForm.Result, vcForm.WriteService);
+                        ExecVCWrite(runDiagForm.Result, vcForm.WriteService);
                     }
                     else
                     {
-                        MessageBox.Show("This VC write action has to be manually enabled under \r\nFile >  Allow Write Variant Coding\r\nPlease make sure that you understand the risks before doing so.", "Accidental Brick Protection");
+                        runDiagForm.Result = writeCommand;
+                        if (runDiagForm.ShowDialog() == DialogResult.OK)
+                        {
+                            ExecVCWrite(runDiagForm.Result, vcForm.WriteService);
+                        }
                     }
                 }
+            }
+        }
+
+        private void ExecVCWrite(byte[] request, DiagService service)
+        {
+            bool allowVcWrite = allowWriteVariantCodingToolStripMenuItem.Checked;
+            if (allowVcWrite)
+            {
+                ExecUserDiagJob(request, service);
+            }
+            else
+            {
+                MessageBox.Show("This VC write action has to be manually enabled under \r\nFile >  Allow Write Variant Coding\r\nPlease make sure that you understand the risks before doing so.", 
+                    "Accidental Brick Protection");
             }
         }
 
@@ -663,12 +710,12 @@ namespace Diogenes
                         ECUVariant variant = ecu.ECUVariants.Find(x => x.Qualifier == variantName);
                         if (variant != null)
                         {
-                            Console.WriteLine($"Starting Diagnostic Service picker modal for variant {variantName}");
+                            //Console.WriteLine($"Starting Diagnostic Service picker modal for variant {variantName}");
                             picker = new PickDiagForm(variant.DiagServices);
                         }
                         else
                         {
-                            Console.WriteLine($"Starting Diagnostic Service picker modal for root {ecuName}");
+                            //Console.WriteLine($"Starting Diagnostic Service picker modal for root {ecuName}");
                             picker = new PickDiagForm(ecu.GlobalDiagServices.ToArray());
                         }
                         if (picker.ShowDialog() == DialogResult.OK) 
@@ -875,6 +922,11 @@ namespace Diogenes
                 TraceFormSingleInstance = new TraceForm(this);
             }
             TraceFormSingleInstance.Show();
+        }
+
+        private void clearConsoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LogTextbox?.Clear();
         }
     }
 }

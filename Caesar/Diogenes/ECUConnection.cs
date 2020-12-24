@@ -80,7 +80,9 @@ namespace Diogenes
         // strangely it times out too quickly
         Timer TesterPresentTimer = new Timer(2000);
 
-        public enum ConnectionState 
+        public volatile bool TransactionInProgress = false;
+
+        public enum ConnectionState
         {
             PendingDeviceSelection,
             DeviceSelectedPendingChannelConnection,
@@ -88,7 +90,7 @@ namespace Diogenes
             EcuContacted
         }
 
-        public ECUConnection() 
+        public ECUConnection()
         {
             // create a dummy connection
             FriendlyName = "Simulation";
@@ -99,8 +101,19 @@ namespace Diogenes
 
         public ECUConnection(string fileName, string friendlyName)
         {
-            FriendlyName = friendlyName;
-            Console.WriteLine($"Initializing new connection to {friendlyName} using {fileName}");
+            // apparently AVDI embeds their hardware identifier in the device's name and path, which might be regarded as sensitive when sharing
+            // this redacts it (somewhat) to help save some time for testers
+            if (friendlyName.Contains("AVDI-PT"))
+            {
+                FriendlyName = "AVDI-PT";
+                Console.WriteLine($"Initializing new connection to {friendlyName}");
+            }
+            else
+            {
+                FriendlyName = friendlyName;
+                Console.WriteLine($"Initializing new connection to {friendlyName} using {fileName}");
+            }
+
             ConnectionAPI = APIFactory.GetAPI(fileName);
             State = ConnectionState.PendingDeviceSelection;
             ConnectionUpdateState();
@@ -115,17 +128,17 @@ namespace Diogenes
             if (State > ConnectionState.DeviceSelectedPendingChannelConnection)
             {
                 // TesterPresent, expects 0x7E, 0x00
-                SendMessage(new byte[] {0x3E, 0x00}, true);
+                SendMessage(new byte[] { 0x3E, 0x00 }, true);
             }
         }
 
-        public void OpenDevice() 
+        public void OpenDevice()
         {
             try
             {
                 ConnectionDevice = ConnectionAPI.GetDevice();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -133,10 +146,10 @@ namespace Diogenes
             ConnectionUpdateState();
         }
 
-        private void ConnectionUpdateState() 
+        private void ConnectionUpdateState()
         {
             string connectionState = "No interface selected (disconnected)";
-            if (ConnectionDevice != null) 
+            if (ConnectionDevice != null)
             {
                 connectionState = $"Device: {FriendlyName} online";
                 if (ConnectionChannel != null)
@@ -154,7 +167,7 @@ namespace Diogenes
         public void Connect(ECUInterfaceSubtype profile, ECU ecuContext)
         {
             EcuContext = ecuContext;
-            if (ConnectionDevice is null) 
+            if (ConnectionDevice is null)
             {
                 Console.WriteLine("No interfaces available : please select a J2534 interfaces from the Connection menu");
                 return;
@@ -171,7 +184,7 @@ namespace Diogenes
             }
 
             // actually start fixing up the connection
-            if (ConnectionChannel != null) 
+            if (ConnectionChannel != null)
             {
                 ConnectionChannel.Dispose();
             }
@@ -184,134 +197,110 @@ namespace Diogenes
                 // baudrate is specified by the ECU
                 ConnectionChannel = ConnectionDevice.GetChannel(Protocol.ISO15765, (Baud)profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_BAUDRATE), ConnectFlag.CAN_ID_BOTH);
                 Console.WriteLine($"Target voltage : {ConnectionChannel.MeasureBatteryVoltage()} mV");
-
-                // setup ecu filter (mimicking vediamo's behavior)
-                MessageFilter filter = new MessageFilter();
-                CanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_REQUEST_CANIDENTIFIER));
-                RxCanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_RESPONSE_CANIDENTIFIER));
-                // input byte data is in big-endian
-                Array.Reverse(CanIdentifier);
-                Array.Reverse(RxCanIdentifier);
-
-                Console.WriteLine($"CAN Identifier: {BitUtility.BytesToHex(CanIdentifier)}");
-
-                filter.StandardISO15765(CanIdentifier);
                 ConnectionChannel.DefaultTxFlag = TxFlag.ISO15765_FRAME_PAD;
 
-                /*
-                // this should be equivalent to:
-                
-                MessageFilter FlowControlFilter = new MessageFilter()
-                {
-                    FilterType = Filter.FLOW_CONTROL_FILTER,
-                    Mask = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF },
-                    Pattern = new byte[] { 0x00, 0x00, 0x07, 0xE8 },
-                    FlowControl = new byte[] { 0x00, 0x00, 0x07, 0xE0 }
-                };
-                // note that the FRAME_PAD flag is also enabled (which is desired in the case of MED40, but might not be universal)
-                // ISO15765_FRAME_PAD = 0x00000040; ComParams don't seem to have anything on this  <----- this is still very concerning
-                */
+                // this chunk is repeated twice, seems to be required for some j2534 devices, and doesn't harm preexisting, working devices
+                J2534SetFilters(profile);
+                J2534SetConfig(profile);
+                J2534FlushBuffers();
 
-                ConnectionChannel.StartMsgFilter(filter);
-
-                List<SConfig> sconfigList = new List<SConfig>();
-
-                List<Tuple<Parameter, ECUInterfaceSubtype.ParamName>> comPairs = new List<Tuple<Parameter, ECUInterfaceSubtype.ParamName>>();
-                comPairs.Add(new Tuple<Parameter, ECUInterfaceSubtype.ParamName>(Parameter.STMIN_TX, ECUInterfaceSubtype.ParamName.CP_STMIN_SUG));
-                comPairs.Add(new Tuple<Parameter, ECUInterfaceSubtype.ParamName>(Parameter.ISO15765_STMIN, ECUInterfaceSubtype.ParamName.CP_STMIN_SUG));
-                comPairs.Add(new Tuple<Parameter, ECUInterfaceSubtype.ParamName>(Parameter.ISO15765_BS, ECUInterfaceSubtype.ParamName.CP_BLOCKSIZE_SUG));
-
-                foreach (Tuple<Parameter, ECUInterfaceSubtype.ParamName> comPair in comPairs) 
-                {
-                    // apparently some are optional so we have to check for the presence of known comparams to configure the target j2534 device
-                    if (profile.GetComParameterValue(comPair.Item2, out int comValue)) 
-                    {
-                        sconfigList.Add(new SConfig(comPair.Item1, comValue));
-                    }
-                }
-
-                ConnectionChannel.SetConfig(sconfigList.ToArray());
-
-                ConnectionChannel.ClearRxBuffer();
-                ConnectionChannel.ClearTxBuffer();
+                J2534SetFilters(profile);
+                J2534SetConfig(profile);
+                J2534FlushBuffers();
 
                 State = ConnectionState.ChannelConnectedPendingEcuContact;
-
-                // start an extended session
-                // avoiding this; if target isn't UDS capable, this might have side effects
-                // SetEcuSessionState(EcuSessionType.Extended);
-
-                // Tester presence
-                // ConnectionChannel.StartPeriodicMessage(new PeriodicMessage(2000, new byte[] {0x3E, 0x00}));
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Console.WriteLine($"{e.Message}");
             }
             ConnectionUpdateState();
         }
 
-
-        public enum EcuSessionType 
+        public void J2534SetFilters(ECUInterfaceSubtype profile)
         {
-            Normal = 0,
-            Extended = 1,
-            Programming = 2,
-            Standby = 3,
+            // setup ecu filter (mimicking vediamo's behavior)
+
+            // convert the CBF's identifier integers to byte arrays
+            CanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_REQUEST_CANIDENTIFIER));
+            RxCanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_RESPONSE_CANIDENTIFIER));
+            // input byte data is in big-endian
+            Array.Reverse(CanIdentifier);
+            Array.Reverse(RxCanIdentifier);
+
+            MessageFilter filter = new MessageFilter();
+
+            // Apparently in the EIS series, the RX identifier is !! NOT !! CanIdentifier+8 per ISO15765, so the automatic config in J2534-Sharp will fail
+            //filter.StandardISO15765(CanIdentifier);
+
+            // manually configure a ISO15765 filter
+            filter.FilterType = Filter.FLOW_CONTROL_FILTER;
+            filter.Mask = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
+            filter.Pattern = RxCanIdentifier; // RX address, typically CanIdentifier+8, EXCEPT EIS
+            filter.FlowControl = CanIdentifier; // TX address
+            filter.TxFlags = TxFlag.ISO15765_FRAME_PAD;
+
+            ConnectionChannel.StartMsgFilter(filter);
         }
 
-        public string[][] EcuSessionStrings = new string[][]
+        public void J2534SetConfig(ECUInterfaceSubtype profile)
         {
-            new string[] { "default", "normal" },
-            new string[] { "extended" },
-            new string[] { "programming" },
-            new string[] { "standby" },
-        };
+            List<SConfig> sconfigList = new List<SConfig>();
 
-        public void SetEcuSessionState(EcuSessionType newSessionLevel = EcuSessionType.Extended) 
-        {
-            if (EcuContext is null) 
-            {
-                Console.WriteLine($"{nameof(SetEcuSessionState)} : cannot proceed as {nameof(EcuContext)} is null");
-                return;
-            }
-            foreach (DiagService diag in EcuContext.GlobalDiagServices) 
-            {
-                string diagNameLower = diag.Qualifier.ToLower();
+            List<Tuple<Parameter, ECUInterfaceSubtype.ParamName>> comPairs = new List<Tuple<Parameter, ECUInterfaceSubtype.ParamName>>();
+            comPairs.Add(new Tuple<Parameter, ECUInterfaceSubtype.ParamName>(Parameter.STMIN_TX, ECUInterfaceSubtype.ParamName.CP_STMIN_SUG));
+            comPairs.Add(new Tuple<Parameter, ECUInterfaceSubtype.ParamName>(Parameter.ISO15765_STMIN, ECUInterfaceSubtype.ParamName.CP_STMIN_SUG));
+            comPairs.Add(new Tuple<Parameter, ECUInterfaceSubtype.ParamName>(Parameter.ISO15765_BS, ECUInterfaceSubtype.ParamName.CP_BLOCKSIZE_SUG));
 
-                if (diag.DataClass_ServiceType == (int)DiagService.ServiceType.Session)
+            foreach (Tuple<Parameter, ECUInterfaceSubtype.ParamName> comPair in comPairs)
+            {
+                // apparently some are optional so we have to check for the presence of known comparams to configure the target j2534 device
+                if (profile.GetComParameterValue(comPair.Item2, out int comValue))
                 {
-                    bool diagIsPhysical = diagNameLower.Contains("physical");
-                    bool diagIsFunctional = diagNameLower.Contains("functional");
-                    // edit: apparently not always specified (wtf)
-                    bool diagIsValid = true;  // choose between "physical" and "functional". no idea what they do, the dumps are identical
-
-                    foreach (string sessionIdentifyingString in EcuSessionStrings[(int)newSessionLevel]) 
-                    {
-                        diagIsValid &= diagNameLower.Contains(sessionIdentifyingString);
-                    }
-                    if (diagIsValid) 
-                    {
-                        // diag.PrintDebug();
-                        Console.WriteLine($"Switching ECU session state to {newSessionLevel}");
-                        SendDiagRequest(diag);
-                        break;
-                    }
+                    sconfigList.Add(new SConfig(comPair.Item1, comValue));
                 }
             }
+            ConnectionChannel.SetConfig(sconfigList.ToArray());
+        }
+
+        public void J2534FlushBuffers()
+        {
+            ConnectionChannel.ClearRxBuffer();
+            ConnectionChannel.ClearTxBuffer();
         }
 
         public byte[] SendDiagRequest(DiagService diag) 
         {
             Console.WriteLine($"Running diagnostic request : {diag.Qualifier} ({BitUtility.BytesToHex(diag.RequestBytes, true)})");
             byte[] response = SendMessage(diag.RequestBytes);
-            Console.WriteLine($"InternalDiagJob:  {BitUtility.BytesToHex(response, true)}");
             return response;
+        }
+
+        public void LogPacket(IEnumerable<byte> packet, bool isSending)
+        {
+            string messageAsString = BitUtility.BytesToHex(packet.ToArray(), true);
+            string prefix = isSending ? "Send" : "Receive";
+            if (UDSCapable)
+            {
+                Console.WriteLine($"{prefix}: [{messageAsString}] ({UDS.GetDescriptionForCommand(packet.ToArray())})");
+            }
+            else
+            {
+                Console.WriteLine($"{prefix}: [{messageAsString}]");
+            }
         }
 
         public byte[] SendMessage(IEnumerable<byte> message, bool quiet = false)
         {
             byte[] response = Array.Empty<byte>();
+
+            // hack: "quiet" is almost always for tester presence, this prevents tester presence from interrupting existing transactions
+            if (TransactionInProgress && quiet) 
+            {
+                return response;
+            }
+            TransactionInProgress = true;
+
             CommunicationsLogHighLevel.Append($"W {BitUtility.BytesToHex(message.ToArray(), true)}\r\n");
 
             // prepare data to send
@@ -320,24 +309,19 @@ namespace Diogenes
             string messageAsString = BitUtility.BytesToHex(message.ToArray(), true);
             if (!quiet)
             {
-                if (UDSCapable)
-                {
-                    Console.WriteLine($"Send: {messageAsString} ({UDS.GetDescriptionForCommand(message.ToArray())})");
-                }
-                else
-                {
-                    Console.WriteLine($"Send: {messageAsString}");
-                }
+                // LogPacket(message, true);
             }
 
             if (ConnectionDevice is null)
             {
-                Console.WriteLine($"Attempted to write into an invalid device, data: {messageAsString}");
+                Console.WriteLine($"[!] Attempted to write into an invalid device, data: {messageAsString}");
+                TransactionInProgress = false;
                 return response;
             }
             if (ConnectionChannel is null) 
             {
-                Console.WriteLine($"Attempted to write into an invalid channel, data: {messageAsString}");
+                Console.WriteLine($"[!] Attempted to write into an invalid channel, data: {messageAsString}");
+                TransactionInProgress = false;
                 return response;
             }
 
@@ -348,7 +332,9 @@ namespace Diogenes
             }
             catch (Exception ex) 
             {
-                Console.WriteLine($"Exception while sending {messageAsString} : {ex.Message}");
+                Console.WriteLine($"[!] Exception while sending {messageAsString} : {ex.Message}");
+                TransactionInProgress = false;
+                return response;
             }
 
             // reset the heartbeat timer
@@ -359,10 +345,13 @@ namespace Diogenes
             // read response from ecu
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            while (true)
+
+            bool waitingForPacket = true;
+            while (waitingForPacket)
             {
-                if (sw.ElapsedMilliseconds > 2000) 
+                if (sw.ElapsedMilliseconds > 2500) // is this P2_TIMEOUT? initially picked 2000 since that is the minimum for tester presence 
                 {
+                    Console.WriteLine($"[!] Internally timed out: {messageAsString}");
                     sw.Stop();
                     break;
                 }
@@ -374,7 +363,7 @@ namespace Diogenes
                     {
                         if (row.Data.Length < 4)
                         {
-                            Console.WriteLine($"Discarding received message (invalid size):  {BitUtility.BytesToHex(row.Data, true)}");
+                            Console.WriteLine($"[!] Discarding received message (invalid size):  {BitUtility.BytesToHex(row.Data, true)}");
                             continue;
                         }
                         byte[] identifier = row.Data.Take(4).ToArray();
@@ -385,7 +374,7 @@ namespace Diogenes
                                 // quietly ignore if it is our can id, usually empty packet
                                 continue;
                             }
-                            Console.WriteLine($"Discarding received message (unknown sender):  {BitUtility.BytesToHex(row.Data, true)} expects {BitUtility.BytesToHex(RxCanIdentifier, true)}");
+                            Console.WriteLine($"[!] Discarding received message (unknown sender):  {BitUtility.BytesToHex(row.Data, true)} expects {BitUtility.BytesToHex(RxCanIdentifier, true)}");
                             continue;
                         }
 
@@ -399,46 +388,29 @@ namespace Diogenes
 
                         if (!quiet)
                         {
-                            string rxMessageAsString = BitUtility.BytesToHex(rxMessageBody.ToArray(), true);
-                            if (UDSCapable)
-                            {
-                                Console.WriteLine($"Receive: {rxMessageAsString} ({UDS.GetDescriptionForCommand(rxMessageBody)})");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Receive: {rxMessageAsString}");
-                            }
+                            // LogPacket(rxMessageBody, false);
                         }
                         response = rxMessageBody;
+                        waitingForPacket = false;
+                        break;
                         //Console.WriteLine($"ECU:  {BitUtility.BytesToHex(messageBody, true)}");
                     }
                 }
+                else if (readResult.Result == ResultCode.BUFFER_EMPTY) 
+                {
+                    // nothing in the mailbox, try again
+                    Console.WriteLine($"[!] Retrying: empty buffer: {readResult.Result} for request {BitUtility.BytesToHex(message.ToArray())}");
+                }
                 else
                 {
+                    Console.WriteLine($"[!] Error in receive result: {readResult.Result}");
                     break;
                 }
             }
             CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(response.ToArray(), true)}\r\n");
+            
+            TransactionInProgress = false;
             return response;
-        }
-
-        public void Connect()
-        {
-            // reference for j2534 library, not actually used
-            MessageFilter FlowControlFilter = new MessageFilter()
-            {
-                FilterType = Filter.FLOW_CONTROL_FILTER,
-                Mask = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF },
-                Pattern = new byte[] { 0x00, 0x00, 0x07, 0xE8 },
-                FlowControl = new byte[] { 0x00, 0x00, 0x07, 0xE0 }
-            };
-
-            ConnectionChannel = ConnectionDevice.GetChannel(Protocol.ISO15765, Baud.ISO15765, ConnectFlag.NONE);
-
-            ConnectionChannel.StartMsgFilter(FlowControlFilter);
-            Console.WriteLine($"Voltage is {ConnectionChannel.MeasureBatteryVoltage() / 1000}");
-            ConnectionChannel.SendMessage(new byte[] { 0x00, 0x00, 0x07, 0xE0, 0x01, 0x00 });
-            GetMessageResults Response = ConnectionChannel.GetMessage();
         }
 
         public void TryCleanup() 
@@ -460,14 +432,5 @@ namespace Diogenes
                 Console.WriteLine($"Cleanup issues: {ex.Message}");
             }
         }
-
-        ~ECUConnection()
-        {
-            // using these throw exceptions during cleanup
-            //ConnectionChannel?.Dispose();
-            //ConnectionDevice?.Dispose();
-            //ConnectionAPI?.Dispose();
-        }
-        
     }
 }

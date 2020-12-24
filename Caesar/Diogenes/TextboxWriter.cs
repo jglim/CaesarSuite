@@ -47,6 +47,12 @@ namespace Diogenes
             dirty = true;
         }
 
+        public void Clear()
+        {
+            sb = new StringBuilder();
+            dirty = true;
+        }
+
         public override Encoding Encoding
         {
             get { return Encoding.Unicode; }

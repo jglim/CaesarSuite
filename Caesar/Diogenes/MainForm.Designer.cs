@@ -56,6 +56,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -197,10 +200,13 @@
             // 
             this.eCUToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setSecurityLevelToolStripMenuItem,
+            this.fixClientAccessPermissionsToolStripMenuItem,
+            this.toolStripSeparator4,
             this.cFFFlashSplicerToolStripMenuItem,
             this.cFFExportFlashSegmentsToolStripMenuItem,
-            this.fixClientAccessPermissionsToolStripMenuItem,
-            this.showTraceToolStripMenuItem});
+            this.toolStripSeparator3,
+            this.showTraceToolStripMenuItem,
+            this.clearConsoleToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.eCUToolStripMenuItem.Text = "Tools";
@@ -289,7 +295,7 @@
             // pbResourcePlaceholder
             // 
             this.pbResourcePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.accept;
+            this.pbResourcePlaceholder.Image = global::Diogenes.Properties.Resources.report;
             this.pbResourcePlaceholder.Location = new System.Drawing.Point(1070, 3);
             this.pbResourcePlaceholder.Name = "pbResourcePlaceholder";
             this.pbResourcePlaceholder.Size = new System.Drawing.Size(50, 50);
@@ -307,6 +313,23 @@
             this.txtJ2534Input.Size = new System.Drawing.Size(1117, 20);
             this.txtJ2534Input.TabIndex = 4;
             this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(224, 6);
+            // 
+            // clearConsoleToolStripMenuItem
+            // 
+            this.clearConsoleToolStripMenuItem.Name = "clearConsoleToolStripMenuItem";
+            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.clearConsoleToolStripMenuItem.Text = "Clear Console";
+            this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(224, 6);
             // 
             // MainForm
             // 
@@ -365,6 +388,9 @@
         private System.Windows.Forms.ToolStripMenuItem cFFFlashSplicerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allowWriteVariantCodingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showTraceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem clearConsoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }
 

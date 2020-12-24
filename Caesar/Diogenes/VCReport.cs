@@ -36,6 +36,7 @@ namespace Diogenes
             string dVersion = MainForm.GetVersion();
             string cVersion = CaesarContainer.GetCaesarVersionString();
             string connectionData = connection is null ? "(Unavailable)" : connection.FriendlyProfileName;
+            string ecuCbfVersion = ecu.EcuXmlVersion;
 
             report.Append($"ECU Variant: {variant.Qualifier}\r\n");
 
@@ -60,15 +61,7 @@ namespace Diogenes
                 {
                     VCFragment currentFragment = domain.VCFragments[i];
                     VCSubfragment subfragment = currentFragment.GetSubfragmentConfiguration(vcValue);
-                    /*
-                    string[] vcParams = new string[] {
-                        currentFragment.Qualifier,
-                        subfragment is null ? "(?)" : subfragment.NameCTFResolved,
-                        currentFragment.ByteBitPos.ToString(),
-                        currentFragment.BitLength.ToString(),
-                        subfragment is null ? "(?)" : subfragment.SupplementKey,
-                    };
-                    */
+
                     string fragmentValue = subfragment is null ? "(?)" : subfragment.NameCTFResolved;
                     string fragmentSupplementKey = subfragment is null ? "(?)" : subfragment.SupplementKey;
 
@@ -178,6 +171,10 @@ namespace Diogenes
         <tr>
             <td>Client Version</td>
             <td>Diogenes: {dVersion}, Caesar: {cVersion}</td>
+        </tr>
+        <tr>
+            <td>ECU CBF Version</td>
+            <td>{ecuCbfVersion}</td>
         </tr>
         <tr>
             <td>ECU Variant</td>
