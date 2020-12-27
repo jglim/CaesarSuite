@@ -1,3 +1,5 @@
+![CaesarSuite Banner](https://raw.githubusercontent.com/jglim/CaesarSuite/main/docs/resources/caesarsuite-banner.png)
+
 # Caesar Suite
 
 ![Counter](https://raw.githubusercontent.com/jglim/CaesarSuite/main/docs/resources/gh_shield_0.svg)
