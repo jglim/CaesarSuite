@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblConnectionType = new System.Windows.Forms.ToolStripStatusLabel();
@@ -47,18 +48,19 @@
             this.defaultJ2534InterfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eCUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setSecurityLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.cFFFlashSplicerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tvMain = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -115,6 +117,7 @@
             // loadCBFFilesToolStripMenuItem
             // 
             this.loadCBFFilesToolStripMenuItem.Name = "loadCBFFilesToolStripMenuItem";
+            this.loadCBFFilesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.loadCBFFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.loadCBFFilesToolStripMenuItem.Text = "Load CBF Files";
             this.loadCBFFilesToolStripMenuItem.Click += new System.EventHandler(this.loadCBFFilesToolStripMenuItem_Click);
@@ -166,9 +169,11 @@
             // 
             // connectionToolStripMenuItem
             // 
+            this.connectionToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.connectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.debugJ2534ToolStripMenuItem,
             this.j2534InterfacesToolStripMenuItem});
+            this.connectionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
             this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
             this.connectionToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
             this.connectionToolStripMenuItem.Text = "Connection";
@@ -176,7 +181,7 @@
             // debugJ2534ToolStripMenuItem
             // 
             this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
             this.debugJ2534ToolStripMenuItem.Visible = false;
             this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
@@ -186,7 +191,7 @@
             this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.defaultJ2534InterfaceToolStripMenuItem});
             this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
-            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
             this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
             // 
@@ -218,6 +223,18 @@
             this.setSecurityLevelToolStripMenuItem.Text = "Set Security Level (DLL)";
             this.setSecurityLevelToolStripMenuItem.Click += new System.EventHandler(this.setSecurityLevelToolStripMenuItem_Click);
             // 
+            // fixClientAccessPermissionsToolStripMenuItem
+            // 
+            this.fixClientAccessPermissionsToolStripMenuItem.Name = "fixClientAccessPermissionsToolStripMenuItem";
+            this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.fixClientAccessPermissionsToolStripMenuItem.Text = "Fix Client Access Permissions";
+            this.fixClientAccessPermissionsToolStripMenuItem.Click += new System.EventHandler(this.fixClientAccessPermissionsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(224, 6);
+            // 
             // cFFFlashSplicerToolStripMenuItem
             // 
             this.cFFFlashSplicerToolStripMenuItem.Name = "cFFFlashSplicerToolStripMenuItem";
@@ -232,12 +249,10 @@
             this.cFFExportFlashSegmentsToolStripMenuItem.Text = "CFF: Export Flash Segments";
             this.cFFExportFlashSegmentsToolStripMenuItem.Click += new System.EventHandler(this.cFFExportFlashSegmentsToolStripMenuItem_Click);
             // 
-            // fixClientAccessPermissionsToolStripMenuItem
+            // toolStripSeparator3
             // 
-            this.fixClientAccessPermissionsToolStripMenuItem.Name = "fixClientAccessPermissionsToolStripMenuItem";
-            this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.fixClientAccessPermissionsToolStripMenuItem.Text = "Fix Client Access Permissions";
-            this.fixClientAccessPermissionsToolStripMenuItem.Click += new System.EventHandler(this.fixClientAccessPermissionsToolStripMenuItem_Click);
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(224, 6);
             // 
             // showTraceToolStripMenuItem
             // 
@@ -246,6 +261,13 @@
             this.showTraceToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.showTraceToolStripMenuItem.Text = "Show Trace";
             this.showTraceToolStripMenuItem.Click += new System.EventHandler(this.showTraceToolStripMenuItem_Click);
+            // 
+            // clearConsoleToolStripMenuItem
+            // 
+            this.clearConsoleToolStripMenuItem.Name = "clearConsoleToolStripMenuItem";
+            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.clearConsoleToolStripMenuItem.Text = "Clear Console";
+            this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
             // 
             // tvMain
             // 
@@ -314,22 +336,10 @@
             this.txtJ2534Input.TabIndex = 4;
             this.txtJ2534Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtJ2534Input_KeyDown);
             // 
-            // toolStripSeparator3
+            // tmrBlinkConnectionMenu
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(224, 6);
-            // 
-            // clearConsoleToolStripMenuItem
-            // 
-            this.clearConsoleToolStripMenuItem.Name = "clearConsoleToolStripMenuItem";
-            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.clearConsoleToolStripMenuItem.Text = "Clear Console";
-            this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(224, 6);
+            this.tmrBlinkConnectionMenu.Interval = 60;
+            this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
             // 
             // MainForm
             // 
@@ -391,6 +401,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem clearConsoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.Timer tmrBlinkConnectionMenu;
     }
 }
 

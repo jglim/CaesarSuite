@@ -90,6 +90,14 @@ namespace Diogenes
             EcuContacted
         }
 
+        public enum ConnectResponse 
+        {
+            OK,
+            NoValidInterface,
+            UnsupportedProtocol,
+            FailedWithException
+        }
+
         public ECUConnection()
         {
             // create a dummy connection
@@ -164,19 +172,20 @@ namespace Diogenes
             ConnectionStateChangeEvent?.Invoke(connectionState);
         }
 
-        public void Connect(ECUInterfaceSubtype profile, ECU ecuContext)
+        public ConnectResponse Connect(ECUInterfaceSubtype profile, ECU ecuContext)
         {
+            State = ConnectionState.PendingDeviceSelection;
             EcuContext = ecuContext;
             if (ConnectionDevice is null)
             {
-                Console.WriteLine("No interfaces available : please select a J2534 interfaces from the Connection menu");
-                return;
+                Console.WriteLine("No interfaces available : please select a J2534 interface from the Connection menu");
+                return ConnectResponse.NoValidInterface;
             }
 
             if (!profile.Qualifier.StartsWith("HSCAN"))
             {
                 Console.WriteLine("Profile not supported: only HSCAN interfaces are supported.");
-                return;
+                return ConnectResponse.UnsupportedProtocol;
             }
             if (profile.Qualifier.Contains("_UDS_"))
             {
@@ -187,6 +196,7 @@ namespace Diogenes
             if (ConnectionChannel != null)
             {
                 ConnectionChannel.Dispose();
+                ConnectionChannel = null;
             }
             FriendlyProfileName = profile.Qualifier;
 
@@ -213,8 +223,10 @@ namespace Diogenes
             catch (Exception e)
             {
                 Console.WriteLine($"{e.Message}");
+                return ConnectResponse.FailedWithException;
             }
             ConnectionUpdateState();
+            return ConnectResponse.OK;
         }
 
         public void J2534SetFilters(ECUInterfaceSubtype profile)

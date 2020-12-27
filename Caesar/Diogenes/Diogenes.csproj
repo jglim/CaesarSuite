@@ -50,6 +50,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>diogenes-256.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="J2534-Sharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\J2534-Sharp.1.0.0-CI00026\lib\net46\J2534-Sharp.dll</HintPath>
@@ -67,73 +70,82 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ECUConnection.cs" />
-    <Compile Include="FlashSplicer.cs">
+    <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FlashSplicer.Designer.cs">
+    <Compile Include="Forms\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ECUConnection.cs" />
+    <Compile Include="Forms\FlashSplicer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FlashSplicer.Designer.cs">
       <DependentUpon>FlashSplicer.cs</DependentUpon>
     </Compile>
-    <Compile Include="GenericPicker.cs">
+    <Compile Include="Forms\GenericPicker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GenericPicker.Designer.cs">
+    <Compile Include="Forms\GenericPicker.Designer.cs">
       <DependentUpon>GenericPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="PickDiagForm.cs">
+    <Compile Include="Forms\PickDiagForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PickDiagForm.Designer.cs">
+    <Compile Include="Forms\PickDiagForm.Designer.cs">
       <DependentUpon>PickDiagForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="RunDiagForm.cs">
+    <Compile Include="Forms\RunDiagForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RunDiagForm.Designer.cs">
+    <Compile Include="Forms\RunDiagForm.Designer.cs">
       <DependentUpon>RunDiagForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SecurityAccess\DllContext.cs" />
     <Compile Include="SecurityAccess\ExportDefinition.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SecurityLevelForm.cs">
+    <Compile Include="Forms\SecurityLevelForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SecurityLevelForm.Designer.cs">
+    <Compile Include="Forms\SecurityLevelForm.Designer.cs">
       <DependentUpon>SecurityLevelForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TextboxWriter.cs" />
-    <Compile Include="TraceForm.cs">
+    <Compile Include="Forms\TraceForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TraceForm.Designer.cs">
+    <Compile Include="Forms\TraceForm.Designer.cs">
       <DependentUpon>TraceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UDS.cs" />
     <Compile Include="UnmanagedUtility.cs" />
-    <Compile Include="VCForm.cs">
+    <Compile Include="Forms\VCForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VCForm.Designer.cs">
+    <Compile Include="Forms\VCForm.Designer.cs">
       <DependentUpon>VCForm.cs</DependentUpon>
     </Compile>
     <Compile Include="VCReport.cs" />
-    <EmbeddedResource Include="FlashSplicer.resx">
+    <EmbeddedResource Include="Forms\AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FlashSplicer.resx">
       <DependentUpon>FlashSplicer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GenericPicker.resx">
+    <EmbeddedResource Include="Forms\GenericPicker.resx">
       <DependentUpon>GenericPicker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PickDiagForm.resx">
+    <EmbeddedResource Include="Forms\PickDiagForm.resx">
       <DependentUpon>PickDiagForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -146,16 +158,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RunDiagForm.resx">
+    <EmbeddedResource Include="Forms\RunDiagForm.resx">
       <DependentUpon>RunDiagForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SecurityLevelForm.resx">
+    <EmbeddedResource Include="Forms\SecurityLevelForm.resx">
       <DependentUpon>SecurityLevelForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TraceForm.resx">
+    <EmbeddedResource Include="Forms\TraceForm.resx">
       <DependentUpon>TraceForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VCForm.resx">
+    <EmbeddedResource Include="Forms\VCForm.resx">
       <DependentUpon>VCForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
@@ -270,6 +282,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\report.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="diogenes-256.ico" />
+    <None Include="Resources\diogenes.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

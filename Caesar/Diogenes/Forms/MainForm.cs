@@ -677,8 +677,19 @@ namespace Diogenes
                         if (subtype != null)
                         {
                             Console.WriteLine($"Attempting to open a connection to ({ecuName}) with profile '{connectionProfileName}'");
-                            Connection.Connect(subtype, ecu);
-                            TryUdsAuto();
+                            ECUConnection.ConnectResponse response = Connection.Connect(subtype, ecu);
+                            if (response == ECUConnection.ConnectResponse.OK)
+                            {
+                                TryUdsAuto();
+                            }
+                            else if (response == ECUConnection.ConnectResponse.NoValidInterface)
+                            {
+                                BlinkConnectionMenu();
+                            }
+                            else 
+                            {
+                                // uhoh
+                            }
                             break;
                         }
                     }
@@ -749,7 +760,9 @@ namespace Diogenes
         private void ShowAbout() 
         {
             // please change this if you fork the project, thanks!
-            MessageBox.Show($"Diogenes {GetVersion()}\nCaesar {CaesarContainer.GetCaesarVersionString()}\n\nIcons from famfamfam\nhttps://github.com/jglim/CaesarSuite", "About", MessageBoxButtons.OK);
+            // MessageBox.Show($"Diogenes {GetVersion()}\nCaesar {CaesarContainer.GetCaesarVersionString()}\n\nIcons from famfamfam\nhttps://github.com/jglim/CaesarSuite", "About", MessageBoxButtons.OK);
+            AboutForm about = new AboutForm($"Diogenes {GetVersion()} (Caesar {CaesarContainer.GetCaesarVersionString()})");
+            about.ShowDialog();
         }
         public static string GetVersion()
         {
@@ -928,5 +941,35 @@ namespace Diogenes
         {
             LogTextbox?.Clear();
         }
+
+        // originally this was intended to blink the menuitem, but this requires overriding the draw call
+        private void tmrBlinkConnectionMenu_Tick(object sender, EventArgs e)
+        {
+            if (connectionToolStripMenuItem.ForeColor != SystemColors.ControlText)
+            {
+                connectionToolStripMenuItem.ForeColor = SystemColors.ControlText;
+                ConnectionMenuBlinksRemaining--;
+                if (ConnectionMenuBlinksRemaining <= 0)
+                {
+                    ConnectionMenuBlinksRemaining = 0;
+                    tmrBlinkConnectionMenu.Enabled = false;
+                }
+            }
+            else 
+            {
+                if (ConnectionMenuBlinksRemaining > 0) 
+                {
+                    connectionToolStripMenuItem.ForeColor = SystemColors.Control;
+                }
+            }
+        }
+
+        private int ConnectionMenuBlinksRemaining = 0;
+        private void BlinkConnectionMenu() 
+        {
+            ConnectionMenuBlinksRemaining = 8;
+            tmrBlinkConnectionMenu.Enabled = true;
+        }
+
     }
 }
