@@ -7,8 +7,9 @@
 Library and applications to work with Dаіmlеr diagnostics CBF files.
 
 - Caesar : Library to operate on CBF files
-- Trafo: Transforms CBF files into JSON
 - Diogenes: ECU-Coding utility
+- Trafo: Transforms CBF files into JSON
+- UnlockECU: [(External)](https://github.com/jglim/UnlockECU) ECU-Unlocking utility
 
 ![Header Image](https://raw.githubusercontent.com/jglim/CaesarSuite/main/docs/resources/diogenes-2.png)
 
