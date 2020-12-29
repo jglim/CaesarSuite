@@ -118,6 +118,7 @@ namespace Caesar
             // this is unusual as it doesn't use the usual caesar-style bitflag reads
             // for reasons unknown the comparam is attached to the basevariant
             long comparamBaseAddress = BaseAddress + ComParamsOffset;
+            // Console.WriteLine($"Comparam base: 0x{comparamBaseAddress:X} : number of comparams: {ComParamsCount} ");
             reader.BaseStream.Seek(comparamBaseAddress, SeekOrigin.Begin);
             List<long> comparameterOffsets = new List<long>();
             for (int comIndex = 0; comIndex < ComParamsCount; comIndex++) 
@@ -129,19 +130,21 @@ namespace Caesar
             {
                 throw new Exception("Invalid communication parameter : no parent interface");
             }
-            ECUInterface parentEcuInterface = parentEcu.ECUInterfaces[0];
-
 
             foreach (long comparamOffset in comparameterOffsets) 
             {
-                ComParameter param = new ComParameter(reader, comparamOffset, parentEcuInterface);
-                if (param.SubinterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
+                ComParameter param = new ComParameter(reader, comparamOffset, parentEcu.ECUInterfaces);
+
+                // KW2C3PE uses a different parent addressing style
+                int parentIndex = param.ParentInterfaceIndex > 0 ? param.ParentInterfaceIndex : param.SubinterfaceIndex;
+
+                if (param.ParentInterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
                 {
                     throw new Exception("ComParam: tried to assign to nonexistent interface");
                 }
                 else
                 {
-                    parentEcu.ECUInterfaceSubtypes[param.SubinterfaceIndex].CommunicationParameters.Add(param);
+                    parentEcu.ECUInterfaceSubtypes[param.ParentInterfaceIndex].CommunicationParameters.Add(param);
                 }
             }
         }

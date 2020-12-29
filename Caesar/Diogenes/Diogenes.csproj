@@ -70,6 +70,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DiagnosticProtocol\KW2C3PE.cs" />
+    <Compile Include="DiagnosticProtocol\UDS.cs" />
+    <Compile Include="DiagnosticProtocol\UnsupportedProtocol.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,6 +104,7 @@
     <Compile Include="Forms\RunDiagForm.Designer.cs">
       <DependentUpon>RunDiagForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DiagnosticProtocol\BaseProtocol.cs" />
     <Compile Include="SecurityAccess\DllContext.cs" />
     <Compile Include="SecurityAccess\ExportDefinition.cs" />
     <Compile Include="Forms\MainForm.cs">
@@ -124,7 +128,6 @@
     <Compile Include="Forms\TraceForm.Designer.cs">
       <DependentUpon>TraceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UDS.cs" />
     <Compile Include="UnmanagedUtility.cs" />
     <Compile Include="Forms\VCForm.cs">
       <SubType>Form</SubType>

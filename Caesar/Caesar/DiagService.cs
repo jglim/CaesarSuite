@@ -237,7 +237,7 @@ namespace Caesar
                 reader.BaseStream.Seek(comParamTableBaseAddress + (cpIndex * 4), SeekOrigin.Begin);
                 int resultCpOffset = reader.ReadInt32();
                 long cpEntryBaseAddress = comParamTableBaseAddress + resultCpOffset;
-                ComParameter cp = new ComParameter(reader, cpEntryBaseAddress, parentEcu.ECUInterfaces[0]);
+                ComParameter cp = new ComParameter(reader, cpEntryBaseAddress, parentEcu.ECUInterfaces);
                 DiagComParameters.Add(cp);
             }
 

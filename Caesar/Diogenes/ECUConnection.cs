@@ -7,6 +7,7 @@ using SAE.J2534;
 using Caesar;
 using System.Timers;
 using System.Diagnostics;
+using Diogenes.DiagnosticProtocol;
 
 namespace Diogenes
 {
@@ -72,7 +73,12 @@ namespace Diogenes
         public byte[] RxCanIdentifier = new byte[] { 0xDE, 0xAD, 0xBE, 0xEF };
         public ECU EcuContext;
 
-        public bool UDSCapable = false;
+        public int ECUVariantID = 0;
+        public bool VariantIsAvailable = false;
+        public BaseProtocol ConnectionProtocol = null;
+
+
+        //public bool UDSCapable = false;
 
         public StringBuilder CommunicationsLogHighLevel = new StringBuilder();
 
@@ -101,7 +107,7 @@ namespace Diogenes
         public ECUConnection()
         {
             // create a dummy connection
-            FriendlyName = "Simulation";
+            FriendlyName = "SIMULATION";
             FriendlyProfileName = "SIMULATION_PROFILE";
             State = ConnectionState.PendingDeviceSelection;
             ConnectionUpdateState();
@@ -121,6 +127,7 @@ namespace Diogenes
                 FriendlyName = friendlyName;
                 Console.WriteLine($"Initializing new connection to {friendlyName} using {fileName}");
             }
+            SetConnectionDefaults();
 
             ConnectionAPI = APIFactory.GetAPI(fileName);
             State = ConnectionState.PendingDeviceSelection;
@@ -129,6 +136,7 @@ namespace Diogenes
             TesterPresentTimer.Start();
             // RxTimer.Start();
         }
+
 
         private void TesterPresentTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -172,6 +180,13 @@ namespace Diogenes
             ConnectionStateChangeEvent?.Invoke(connectionState);
         }
 
+        public void SetConnectionDefaults() 
+        {
+            ECUVariantID = 0;
+            VariantIsAvailable = false;
+            ConnectionProtocol = null;
+        }
+
         public ConnectResponse Connect(ECUInterfaceSubtype profile, ECU ecuContext)
         {
             State = ConnectionState.PendingDeviceSelection;
@@ -187,10 +202,8 @@ namespace Diogenes
                 Console.WriteLine("Profile not supported: only HSCAN interfaces are supported.");
                 return ConnectResponse.UnsupportedProtocol;
             }
-            if (profile.Qualifier.Contains("_UDS_"))
-            {
-                UDSCapable = true;
-            }
+
+            ConnectionProtocol = BaseProtocol.GetProtocol(profile.Qualifier);
 
             // actually start fixing up the connection
             if (ConnectionChannel != null)
@@ -286,20 +299,6 @@ namespace Diogenes
             Console.WriteLine($"Running diagnostic request : {diag.Qualifier} ({BitUtility.BytesToHex(diag.RequestBytes, true)})");
             byte[] response = SendMessage(diag.RequestBytes);
             return response;
-        }
-
-        public void LogPacket(IEnumerable<byte> packet, bool isSending)
-        {
-            string messageAsString = BitUtility.BytesToHex(packet.ToArray(), true);
-            string prefix = isSending ? "Send" : "Receive";
-            if (UDSCapable)
-            {
-                Console.WriteLine($"{prefix}: [{messageAsString}] ({UDS.GetDescriptionForCommand(packet.ToArray())})");
-            }
-            else
-            {
-                Console.WriteLine($"{prefix}: [{messageAsString}]");
-            }
         }
 
         public byte[] SendMessage(IEnumerable<byte> message, bool quiet = false)
@@ -429,14 +428,25 @@ namespace Diogenes
         {
             try
             {
+                if (FriendlyProfileName != "SIMULATION_PROFILE")
+                {
+                    Console.WriteLine("Cleaning up existing connection");
+                }
+                TesterPresentTimer.Enabled = false;
                 if (ConnectionChannel != null) 
                 {
                     ConnectionChannel.Dispose();
-
+                    ConnectionChannel = null;
                 }
                 if (ConnectionDevice != null) 
                 {
                     ConnectionDevice.Dispose();
+                    ConnectionDevice = null;
+                }
+                if (ConnectionAPI != null) 
+                {
+                    ConnectionAPI.Dispose();
+                    ConnectionAPI = null;
                 }
             }
             catch (Exception ex) 
@@ -444,5 +454,7 @@ namespace Diogenes
                 Console.WriteLine($"Cleanup issues: {ex.Message}");
             }
         }
+
+
     }
 }

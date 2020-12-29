@@ -17,7 +17,7 @@ namespace Diogenes
 {
     public partial class MainForm : Form
     {
-        public ECUConnection Connection;
+        public ECUConnection Connection = null;
 
         public MainForm()
         {
@@ -35,7 +35,7 @@ namespace Diogenes
             LoadContainers();
             UnmanagedUtility.SendMessage(txtJ2534Input.Handle, UnmanagedUtility.EM_SETCUEBANNER, 0, "J2534 Console : Enter hex values (01 23 45 57) and press enter to send a raw J2534 command");
 
-            Connection = new ECUConnection();
+            SetDisconnectedState(false);
         }
 
         private void RedirectConsole()
@@ -167,7 +167,7 @@ namespace Diogenes
                 }
             }
 
-            if ((Connection != null) && (Connection.UDSCapable))
+            if (Connection != null)
             {
                 parentNode.Nodes.Add(diagUnlockingOptions);
             }
@@ -215,7 +215,7 @@ namespace Diogenes
             parentNode.Nodes.Add(rootMetadata);
         }
 
-        private void LoadTree(bool variantFilter = false)
+        private void LoadTree()
         {
             InitializeTree();
             tvMain.Nodes.Clear();
@@ -235,7 +235,7 @@ namespace Diogenes
 
                     foreach (ECUInterfaceSubtype subtype in ecu.ECUInterfaceSubtypes)
                     {
-                        if (variantFilter)
+                        if (Connection?.VariantIsAvailable ?? false)
                         {
                             // interfaces don't matter anymore when we are connected
                             break;
@@ -263,27 +263,46 @@ namespace Diogenes
                         interfaceNode.Expand();
                     }
 
-                    if (!variantFilter)
+                    // offer the ability to switch sessions at all times, in case user runs functions like FN_Reset
+                    TreeNode sessionContainer = new TreeNode("Session", 23, 23);
+                    sessionContainer.Tag = $"Session";
+                    foreach (DiagService ds in ecu.GlobalDiagServices)
                     {
-                        TreeNode sessionContainer = new TreeNode("Session", 23, 23);
-                        sessionContainer.Tag = $"Session";
-
-                        foreach (DiagService ds in ecu.GlobalDiagServices)
+                        if (ds.DataClass_ServiceType == (ushort)DiagService.ServiceType.Session)
                         {
-                            if (ds.DataClass_ServiceType == (ushort)DiagService.ServiceType.Session)
-                            {
-                                TreeNode dsNode = new TreeNode(ds.Qualifier, 12, 12);
-                                dsNode.Tag = ds.Qualifier;
-                                sessionContainer.Nodes.Add(dsNode);
-                            }
+                            TreeNode dsNode = new TreeNode(ds.Qualifier, 12, 12);
+                            dsNode.Tag = ds.Qualifier;
+                            sessionContainer.Nodes.Add(dsNode);
                         }
-                        ecuNode.Nodes.Add(sessionContainer);
                     }
+                    ecuNode.Nodes.Add(sessionContainer);
 
                     foreach (ECUVariant variant in ecu.ECUVariants)
                     {
                         TreeNode ecuVariantNode = new TreeNode(variant.Qualifier, 2, 2);
                         ecuVariantNode.Tag = nameof(ECUVariant);
+
+                        // check if variant should be filtered
+                        if (Connection?.VariantIsAvailable ?? false) 
+                        {
+                            bool foundCorrectVariant = false;
+                            foreach (ECUVariantPattern pattern in variant.VariantPatterns) 
+                            {
+                                if (pattern.VariantID == Connection.ECUVariantID) 
+                                {
+                                    foundCorrectVariant = true;
+                                    break;
+                                }
+                            }
+                            if (!foundCorrectVariant) 
+                            {
+                                continue;
+                            }
+                            ecuVariantNode.ImageIndex = 25;
+                            ecuVariantNode.SelectedImageIndex = 25;
+                            ecuVariantNode.Expand();
+                        }
+
 
                         // exec diag button
                         TreeNode execDiagAtVariant = new TreeNode("Execute Diagnostic Service", 21, 21);
@@ -318,13 +337,6 @@ namespace Diogenes
                         ecuVariantNode.Nodes.Add(backupNode);
 
                         ecuNode.Nodes.Add(ecuVariantNode);
-
-                        if (variantFilter)
-                        {
-                            ecuVariantNode.ImageIndex = 25;
-                            ecuVariantNode.SelectedImageIndex = 25;
-                            ecuVariantNode.Expand();
-                        }
                     }
                     tvMain.Nodes.Add(ecuNode);
                     ecuNode.Expand();
@@ -433,7 +445,7 @@ namespace Diogenes
                     {
                         ExecUserDiagJob(ds.RequestBytes, ds);
                     }
-                    else if ((Connection.UDSCapable) && (ds.RequestBytes.Length == 2) && (ds.RequestBytes[0] == 0x27))
+                    else if ((Connection.ConnectionProtocol.SupportsUnlocking()) && (ds.RequestBytes.Length == 2) && (ds.RequestBytes[0] == 0x27))
                     {
                         // request seed, no need to prompt
                         ExecUserDiagJob(ds.RequestBytes, ds);
@@ -470,7 +482,7 @@ namespace Diogenes
                 }
             }
             // check if the response was an ECU seed
-            if (Connection.UDSCapable && (response.Length >= 2) && (response[0] == 0x67))
+            if (Connection.ConnectionProtocol.SupportsUnlocking() && (response.Length >= 2) && (response[0] == 0x67))
             {
                 if (response.Length == 2)
                 {
@@ -680,11 +692,13 @@ namespace Diogenes
                             ECUConnection.ConnectResponse response = Connection.Connect(subtype, ecu);
                             if (response == ECUConnection.ConnectResponse.OK)
                             {
-                                TryUdsAuto();
+                                ProtocolPostConnect();
                             }
                             else if (response == ECUConnection.ConnectResponse.NoValidInterface)
                             {
                                 BlinkConnectionMenu();
+                                connectionToolStripMenuItem.ShowDropDown();
+                                j2534InterfacesToolStripMenuItem.ShowDropDown();
                             }
                             else 
                             {
@@ -741,19 +755,12 @@ namespace Diogenes
             TreeViewDoubleClickCheckIfVariantDiag(node);
         }
 
-        private void TryUdsAuto()
+        private void ProtocolPostConnect()
         {
-            // try to perform session switch and variant detection if user's okay with it
-            if (Connection.UDSCapable && (MessageBox.Show(
-                "The target appears to be UDS capable. Allow Diogenes to switch session states and detect the variant?",
-                "UDS assist",
-                MessageBoxButtons.YesNo) == DialogResult.Yes)
-                )
+            if (Connection.ConnectionProtocol != null) 
             {
-                if (UDS.TryDetectVariantAndSwitchSession(Connection, Containers))
-                {
-                    LoadTree(true);
-                }
+                Connection.ConnectionProtocol.ConnectionEstablishedHandler(Connection);
+                LoadTree();
             }
         }
 
@@ -858,7 +865,30 @@ namespace Diogenes
             Connection = new ECUConnection(caller.Tag.ToString(), caller.Text);
             Connection.ConnectionStateChangeEvent += ConnectionStateChangedHandler;
             Connection.OpenDevice();
+            // loadtree should not be necessary if the prior state was disconnected
+            // LoadTree();
         }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetDisconnectedState();
+        }
+
+        private void SetDisconnectedState(bool refresh = true) 
+        {
+            // disconnected really means "running in simulation mode"
+            if (Connection != null)
+            {
+                Connection.TryCleanup();
+            }
+            Connection = new ECUConnection();
+            Connection.ConnectionStateChangeEvent += ConnectionStateChangedHandler;
+            if (refresh) 
+            {
+                LoadTree();
+            }
+        }
+
         private void ConnectionStateChangedHandler(string newStateDescription)
         {
             lblConnectionType.Text = newStateDescription;
@@ -882,7 +912,6 @@ namespace Diogenes
                 {
                     Console.WriteLine($"Could not understand provided hex input: '{inText}'");
                 }
-
             }
         }
 
@@ -971,5 +1000,15 @@ namespace Diogenes
             tmrBlinkConnectionMenu.Enabled = true;
         }
 
+        private void connectionToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            disconnectToolStripMenuItem.Enabled = Connection?.ConnectionDevice != null;
+            j2534InterfacesToolStripMenuItem.Enabled = Connection?.ConnectionDevice == null;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SetDisconnectedState();
+        }
     }
 }

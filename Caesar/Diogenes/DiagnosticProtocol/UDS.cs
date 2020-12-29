@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Diogenes
+namespace Diogenes.DiagnosticProtocol
 {
-    public class UDS
+    public class UDS : BaseProtocol
     {
         private static string[] NegativeResponseDescriptions = new string[] { };
         private static Dictionary<int, string> MessageDescriptions = new Dictionary<int, string>();
 
-        public static string[] GetNegativeResponseDescriptions() 
+        private static string[] GetNegativeResponseDescriptions() 
         {
             if (NegativeResponseDescriptions.Length == 0) 
             {
@@ -79,7 +79,7 @@ namespace Diogenes
             return NegativeResponseDescriptions;
         }
 
-        public static Dictionary<int, string> GetMessageDescriptions() 
+        private static Dictionary<int, string> GetMessageDescriptions() 
         {
             if (MessageDescriptions.Count == 0) 
             {
@@ -115,7 +115,8 @@ namespace Diogenes
             return MessageDescriptions;
         }
 
-        public static string GetDescriptionForCommand(byte[] command) 
+
+        public static string GetCommandDescription(byte[] command) 
         {
             if (command.Length == 0) 
             {
@@ -148,80 +149,68 @@ namespace Diogenes
             return "Unknown";
         }
 
-        // try to switch the session and filter the list of containers if a variant match is found
-        public static bool TryDetectVariantAndSwitchSession(ECUConnection connection, List<CaesarContainer> containers) 
+        private static bool IsNegativeResponse(byte[] command)
+        {
+            return ((command.Length > 0) && (command[0] == 0x7F));
+        }
+
+        private static bool EnterDiagnosticSession(ECUConnection connection)
         {
             Console.WriteLine("UDS: Switching session states");
-
             byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x03 });
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x03 };
             if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
             {
                 Console.WriteLine($"Failed to switch session : target responded with [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
+                return false;
             }
-            else
-            {
-                Console.WriteLine("UDS: Querying variant");
-                // this is NOT uds specific (!)
-                byte[] variantQueryResponse = connection.SendMessage(new byte[] { 0x22, 0xF1, 0x00 });
-                return TrySetVariant(variantQueryResponse, containers);
-            }
-            return false;
+            return true;
         }
 
-        public static bool TrySetVariant(byte[] variantQueryResponse, List<CaesarContainer> containers)
+        private static bool GetVariantID(ECUConnection connection, out int variantId) 
         {
+            byte[] variantQueryResponse = connection.SendMessage(new byte[] { 0x22, 0xF1, 0x00 });
             byte[] variantExpectedResponse = new byte[] { 0x62, 0xF1 };
 
             if (!variantQueryResponse.Take(2).SequenceEqual(variantExpectedResponse))
             {
                 Console.WriteLine($"Failed to identify variant (unexpected response) : target responded with [{BitUtility.BytesToHex(variantQueryResponse, true)}]");
+                variantId = 0;
+                return false;
             }
-            else
+            else 
             {
                 // found a variant id, check loaded ecus if any of them have a match
-                int variantId = (variantQueryResponse[3] << 16) | (variantQueryResponse[4] << 8) | variantQueryResponse[5];
-
-                ECUVariant matchingVariant = null;
-                ECU matchingEcu = null;
-                CaesarContainer matchingContainer = null;
-
-                foreach (CaesarContainer container in containers)
-                {
-                    foreach (ECU ecu in container.CaesarECUs)
-                    {
-                        foreach (ECUVariant variant in ecu.ECUVariants)
-                        {
-                            foreach (ECUVariantPattern pattern in variant.VariantPatterns)
-                            {
-                                if (variantId == pattern.VariantID)
-                                {
-                                    matchingVariant = variant;
-                                    matchingEcu = ecu;
-                                    matchingContainer = container;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (matchingVariant != null)
-                {
-                    // if a match was found, clean up the tree to show relevant content only
-                    matchingEcu.ECUVariants = new List<ECUVariant>() { matchingEcu.ECUVariants.Find(x => x.Qualifier == matchingVariant.Qualifier) };
-                    matchingContainer.CaesarECUs = new List<ECU>() { matchingContainer.CaesarECUs.Find(x => x.Qualifier == matchingEcu.Qualifier) };
-                    containers = new List<CaesarContainer>() { containers.Find(x => x.FileChecksum == matchingContainer.FileChecksum) };
-                    Console.WriteLine($"Variant has been successfully configured as {matchingVariant.Qualifier}");
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine($"No matching variants found. Please check if the loaded CBF files are valid for your target. \n\nVariant ID: {variantId}");
-                }
+                variantId = (variantQueryResponse[3] << 16) | (variantQueryResponse[4] << 8) | variantQueryResponse[5];
+                return true;
             }
-            return false;
         }
 
+
+        public override void ConnectionEstablishedHandler(ECUConnection connection)
+        {
+            if (!EnterDiagnosticSession(connection))
+            {
+                return;
+            }
+            if (GetVariantID(connection, out int variantId))
+            {
+                connection.VariantIsAvailable = true;
+                connection.ECUVariantID = variantId;
+            }
+            else 
+            {
+                return;
+            }
+        }
+        public override string GetProtocolName()
+        {
+            return "UDS";
+        }
+
+        public override bool SupportsUnlocking()
+        {
+            return true;
+        }
     }
 }
