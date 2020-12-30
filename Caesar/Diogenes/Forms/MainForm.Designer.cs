@@ -46,6 +46,7 @@
             this.debugJ2534ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.j2534InterfacesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultJ2534InterfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eCUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setSecurityLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fixClientAccessPermissionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,7 +62,7 @@
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
-            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -184,7 +185,7 @@
             // debugJ2534ToolStripMenuItem
             // 
             this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
             this.debugJ2534ToolStripMenuItem.Visible = false;
             this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
@@ -194,7 +195,7 @@
             this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.defaultJ2534InterfaceToolStripMenuItem});
             this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
-            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
             this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
             // 
@@ -203,6 +204,13 @@
             this.defaultJ2534InterfaceToolStripMenuItem.Name = "defaultJ2534InterfaceToolStripMenuItem";
             this.defaultJ2534InterfaceToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.defaultJ2534InterfaceToolStripMenuItem.Text = "Default J2534 Interface";
+            // 
+            // disconnectToolStripMenuItem
+            // 
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
             // eCUToolStripMenuItem
             // 
@@ -214,6 +222,7 @@
             this.cFFExportFlashSegmentsToolStripMenuItem,
             this.toolStripSeparator3,
             this.showTraceToolStripMenuItem,
+            this.copyConsoleToolStripMenuItem,
             this.clearConsoleToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
@@ -344,12 +353,12 @@
             this.tmrBlinkConnectionMenu.Interval = 60;
             this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
             // 
-            // disconnectToolStripMenuItem
+            // copyConsoleToolStripMenuItem
             // 
-            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.disconnectToolStripMenuItem.Text = "Disconnect";
-            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
+            this.copyConsoleToolStripMenuItem.Name = "copyConsoleToolStripMenuItem";
+            this.copyConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.copyConsoleToolStripMenuItem.Text = "Copy Console";
+            this.copyConsoleToolStripMenuItem.Click += new System.EventHandler(this.copyConsoleToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -414,6 +423,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.Timer tmrBlinkConnectionMenu;
         private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyConsoleToolStripMenuItem;
     }
 }
 

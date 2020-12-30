@@ -14,11 +14,13 @@ namespace Diogenes
         private Timer timer;
         private StringBuilder sb = new StringBuilder();
         private bool dirty = false;
+        private readonly object WriteLock = new object();
+
         public TextboxWriter(TextBox inputTextbox)
         {
             InputTextbox = inputTextbox;
             timer = new Timer();
-            timer.Interval = 50;
+            timer.Interval = 30;
             timer.Tick += Timer_Tick;
             timer.Enabled = true;
         }
@@ -35,16 +37,23 @@ namespace Diogenes
             }
         }
 
+        // fix append for crossthread : https://stackoverflow.com/questions/12645351/stringbuilder-tostring-throw-an-index-out-of-range-exception
         public override void Write(char value)
         {
-            sb.Append(value);
-            dirty = true;
+            lock (WriteLock)
+            {
+                sb.Append(value);
+                dirty = true;
+            }
         }
 
         public override void Write(string value)
         {
-            sb.Append(value);
-            dirty = true;
+            lock (WriteLock)
+            {
+                sb.Append(value);
+                dirty = true;
+            }
         }
 
         public void Clear()

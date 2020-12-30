@@ -67,8 +67,6 @@ namespace Diogenes.DiagnosticProtocol
                 variantId = idFor1A87;
                 return true;
             }
-
-            Console.WriteLine($"Failed to identify variant.");
             variantId = 0;
             return false;
         }
@@ -83,9 +81,11 @@ namespace Diogenes.DiagnosticProtocol
             {
                 connection.VariantIsAvailable = true;
                 connection.ECUVariantID = variantId;
+                Console.WriteLine($"Variant has been successfully configured as {(variantId & 0xFFFF):X4}");
             }
             else
             {
+                Console.WriteLine("KW2C3PE: Could not identify variant (1A86, 1A87)");
                 return;
             }
         }

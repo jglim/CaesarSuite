@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Caesar;
 
-namespace Diogenes
+namespace Diogenes.SecurityAccess
 {
     public class DllContext
     {

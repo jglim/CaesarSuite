@@ -121,6 +121,7 @@
     <Compile Include="Forms\SecurityLevelForm.Designer.cs">
       <DependentUpon>SecurityLevelForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SecurityAccess\SecurityAutoLogin.cs" />
     <Compile Include="TextboxWriter.cs" />
     <Compile Include="Forms\TraceForm.cs">
       <SubType>Form</SubType>

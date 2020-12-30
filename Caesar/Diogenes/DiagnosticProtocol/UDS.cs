@@ -197,6 +197,7 @@ namespace Diogenes.DiagnosticProtocol
             {
                 connection.VariantIsAvailable = true;
                 connection.ECUVariantID = variantId;
+                Console.WriteLine($"Variant has been successfully configured as {(variantId & 0xFFFF):X4}");
             }
             else 
             {

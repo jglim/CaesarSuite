@@ -106,8 +106,11 @@ namespace Caesar
         public List<List<DiagPreparation>> OutputPreparations = new List<List<DiagPreparation>>();
         public List<ComParameter> DiagComParameters = new List<ComParameter>();
 
+        public ECU ParentECU;
+
         public DiagService(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu) 
         {
+            ParentECU = parentEcu;
             PoolIndex = poolIndex;
             BaseAddress = baseAddress;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);

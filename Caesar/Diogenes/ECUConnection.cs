@@ -61,6 +61,7 @@ namespace Diogenes
         public API ConnectionAPI;
         public Device ConnectionDevice;
         public Channel ConnectionChannel;
+        public string DriverPath = "";
 
         public delegate void ConnectionStateChanged(string newStateDescription);
         public ConnectionStateChanged ConnectionStateChangeEvent;
@@ -115,9 +116,11 @@ namespace Diogenes
 
         public ECUConnection(string fileName, string friendlyName)
         {
+            DriverPath = fileName;
+
             // apparently AVDI embeds their hardware identifier in the device's name and path, which might be regarded as sensitive when sharing
             // this redacts it (somewhat) to help save some time for testers
-            if (friendlyName.Contains("AVDI-PT"))
+            if (DriverIsAVDI())
             {
                 FriendlyName = "AVDI-PT";
                 Console.WriteLine($"Initializing new connection to {friendlyName}");
@@ -222,24 +225,44 @@ namespace Diogenes
                 Console.WriteLine($"Target voltage : {ConnectionChannel.MeasureBatteryVoltage()} mV");
                 ConnectionChannel.DefaultTxFlag = TxFlag.ISO15765_FRAME_PAD;
 
-                // this chunk is repeated twice, seems to be required for some j2534 devices, and doesn't harm preexisting, working devices
                 J2534SetFilters(profile);
                 J2534SetConfig(profile);
                 J2534FlushBuffers();
 
-                J2534SetFilters(profile);
-                J2534SetConfig(profile);
-                J2534FlushBuffers();
 
-                State = ConnectionState.ChannelConnectedPendingEcuContact;
             }
             catch (Exception e)
             {
-                Console.WriteLine($"{e.Message}");
+                Console.WriteLine($"Connection failed with exception : {e.Message}");
                 return ConnectResponse.FailedWithException;
             }
+
+            // this chunk is repeated for AVDI devices; OpenPort2 does not care, Scanmatik refuses to continue if reconfigured without clearing prior filters
+            // wrap the second attempt in a separate try block, so that we can suppress any potential filter errors
+            if (DriverIsAVDI())
+            {
+                try
+                {
+                    ConnectionChannel.ClearMsgFilters();
+                    J2534SetFilters(profile);
+                    J2534SetConfig(profile);
+                    J2534FlushBuffers();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"AVDI Second config exception suppressed: {ex.Message}");
+                }
+            }
+            
+            State = ConnectionState.ChannelConnectedPendingEcuContact;
+
             ConnectionUpdateState();
             return ConnectResponse.OK;
+        }
+
+        public bool DriverIsAVDI() 
+        {
+            return DriverPath.ToUpper().EndsWith("ABRPT32.DLL");
         }
 
         public void J2534SetFilters(ECUInterfaceSubtype profile)
@@ -256,7 +279,6 @@ namespace Diogenes
             MessageFilter filter = new MessageFilter();
 
             // Apparently in the EIS series, the RX identifier is !! NOT !! CanIdentifier+8 per ISO15765, so the automatic config in J2534-Sharp will fail
-            //filter.StandardISO15765(CanIdentifier);
 
             // manually configure a ISO15765 filter
             filter.FilterType = Filter.FLOW_CONTROL_FILTER;
@@ -368,6 +390,7 @@ namespace Diogenes
                 }
 
                 GetMessageResults readResult = ConnectionChannel.GetMessage();
+
                 if (readResult.Result == ResultCode.STATUS_NOERROR)
                 {
                     foreach (Message row in readResult.Messages)

@@ -12,6 +12,7 @@ using System.IO;
 using Diogenes.Properties;
 using System.Runtime.InteropServices;
 using SAE.J2534;
+using Diogenes.SecurityAccess;
 
 namespace Diogenes
 {
@@ -167,10 +168,7 @@ namespace Diogenes
                 }
             }
 
-            if (Connection != null)
-            {
-                parentNode.Nodes.Add(diagUnlockingOptions);
-            }
+            parentNode.Nodes.Add(diagUnlockingOptions);
             parentNode.Nodes.Add(diagStoredData);
             parentNode.Nodes.Add(diagData);
             parentNode.Nodes.Add(diagFunction);
@@ -440,12 +438,14 @@ namespace Diogenes
                 {
                     DiagService ds = foundVariant.DiagServices[int.Parse(node.Tag.ToString())];
 
+                    bool connectionSupportsUnlocking = Connection?.ConnectionProtocol.SupportsUnlocking() ?? false;
+
                     // can we help to skip the modal if the ds doesn't require additional user input? common for data, stored data
                     if ((ds.DataClass_ServiceType == (int)DiagService.ServiceType.StoredData) || (ds.DataClass_ServiceType == (int)DiagService.ServiceType.Data))
                     {
                         ExecUserDiagJob(ds.RequestBytes, ds);
                     }
-                    else if ((Connection.ConnectionProtocol.SupportsUnlocking()) && (ds.RequestBytes.Length == 2) && (ds.RequestBytes[0] == 0x27))
+                    else if (connectionSupportsUnlocking && (ds.RequestBytes.Length == 2) && (ds.RequestBytes[0] == 0x27))
                     {
                         // request seed, no need to prompt
                         ExecUserDiagJob(ds.RequestBytes, ds);
@@ -484,19 +484,7 @@ namespace Diogenes
             // check if the response was an ECU seed
             if (Connection.ConnectionProtocol.SupportsUnlocking() && (response.Length >= 2) && (response[0] == 0x67))
             {
-                if (response.Length == 2)
-                {
-                    Console.WriteLine($"Security level has been successfully changed to 0x{(response[1] - 1):X}");
-                }
-                else
-                {
-                    byte[] seedValue = response.Skip(2).ToArray();
-                    string seedValueAsString = BitUtility.BytesToHex(seedValue, true);
-                    if (MessageBox.Show($"Received a seed value of {seedValueAsString}. \r\nCopy to clipboard?", "Security Access", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        Clipboard.SetText(seedValueAsString);
-                    }
-                }
+                SecurityAutoLogin.ReceiveSecurityResponse(response, diagService.ParentECU, Connection);
             }
         }
 
@@ -703,6 +691,7 @@ namespace Diogenes
                             else 
                             {
                                 // uhoh
+                                Console.WriteLine($"ECU connection was unsuccessful : {response}");
                             }
                             break;
                         }
@@ -1009,6 +998,11 @@ namespace Diogenes
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SetDisconnectedState();
+        }
+
+        private void copyConsoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(txtLog.Text);
         }
     }
 }
