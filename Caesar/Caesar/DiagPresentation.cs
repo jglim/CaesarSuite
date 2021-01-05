@@ -164,7 +164,6 @@ namespace Caesar
             {
                 return "BitOffset was outside byte boundary (skipped)";
             }
-
             int dataType = GetDataType();
             string humanReadableType = $"UnhandledType:{dataType}";
             string parsedValue = BitUtility.BytesToHex(workingBytes, true);
@@ -218,50 +217,51 @@ namespace Caesar
             {
                 return 20;
             }
+
+            // does the value have scale structures attached to it? 
+            // supposed to parse scale struct and check if we can return 20
             if (ScaleTableOffset != -1)
             {
-                // scale value
-                // integer
-                return (ScaleTableOffset == -1) ? 6 : 20;
-                // supposed to parse scale struct and check if we can return 20
+                return 20; // scaled value
             }
             else
             {
                 if (unk5 != -1)
                 {
-                    // hexdump raw
-                    return 18;
+                    return 18; // hexdump raw
                 }
                 if (unk17 != -1)
                 {
-                    // hexdump raw
-                    return 18;
+                    return 18; // hexdump raw
                 }
                 if (unk19 != -1)
                 {
-                    // hexdump raw
-                    return 18;
+                    return 18; // hexdump raw
                 }
                 if (unk22 != -1)
                 {
-                    // hexdump raw
-                    return 18;
+                    return 18; // hexdump raw
                 }
                 if (unk1b != -1)
                 {
                     if (unk1b == 6)
                     {
-                        // ascii dump
-                        return 17;
+                        return 17; // ascii dump
                     }
                     else if (unk1b == 7)
                     {
-                        return 22;
+                        return 22; // ?? haven't seen this one around
                     }
                     else if (unk1b == 8)
                     {
-                        // integer
-                        result = 6;
+                        result = 6; // integer
+                    }
+                    else if (unk1b == 5) 
+                    {
+                        // UNSIGNED integer (i haven't seen a const for uint around, sticking it into a regular int for now)
+                        // this will be an issue for 32-bit+ uints
+                        // see DT_STO_Zaehler_Programmierversuche_Reprogramming and DT_STO_ID_Aktive_Diagnose_Information_Version
+                        result = 6; 
                     }
                 }
                 else 
@@ -273,19 +273,12 @@ namespace Caesar
                     }
                     if ((unk1e == 1) || (unk1e == 2))
                     {
-                        result = 5;
+                        result = 5; // ?? haven't seen this one around
                     }
                     else 
                     {
-                        result = 2;
+                        result = 2; // ?? haven't seen this one around
                     }
-                }
-
-                // jg: this isn't official, but if it is a single byte at this point, it's probably an unsigned 1byte
-                // see UDS DT_STO* for examples (e.g. variant query)
-                if ((result == -1)  && (TypeLength_1a == 1))
-                {
-                    result = 18;
                 }
                 return result;
             }
@@ -296,7 +289,7 @@ namespace Caesar
             Console.WriteLine("Presentation: ");
             Console.WriteLine($"{nameof(Qualifier)}: {Qualifier}");
 
-            /*
+            
             //Console.WriteLine($"{nameof(Description_CTF)}: {Description_CTF}");
             Console.WriteLine($"{nameof(ScaleTableOffset)}: {ScaleTableOffset}");
             Console.WriteLine($"{nameof(ScaleCountMaybe)}: {ScaleCountMaybe}");
@@ -341,7 +334,7 @@ namespace Caesar
 
             Console.WriteLine($"{nameof(unk25)}: {unk25}");
             Console.WriteLine($"{nameof(unk26)}: {unk26}");
-            */
+            /**/
 
 
             Console.WriteLine($"{nameof(DescriptionString)}: {DescriptionString}");

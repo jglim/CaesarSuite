@@ -55,6 +55,7 @@
             this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tvMain = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
@@ -62,7 +63,8 @@
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
-            this.copyConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uDSHexEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -221,6 +223,8 @@
             this.cFFFlashSplicerToolStripMenuItem,
             this.cFFExportFlashSegmentsToolStripMenuItem,
             this.toolStripSeparator3,
+            this.uDSHexEditorToolStripMenuItem,
+            this.toolStripSeparator5,
             this.showTraceToolStripMenuItem,
             this.copyConsoleToolStripMenuItem,
             this.clearConsoleToolStripMenuItem});
@@ -273,6 +277,13 @@
             this.showTraceToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.showTraceToolStripMenuItem.Text = "Show Trace";
             this.showTraceToolStripMenuItem.Click += new System.EventHandler(this.showTraceToolStripMenuItem_Click);
+            // 
+            // copyConsoleToolStripMenuItem
+            // 
+            this.copyConsoleToolStripMenuItem.Name = "copyConsoleToolStripMenuItem";
+            this.copyConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.copyConsoleToolStripMenuItem.Text = "Copy Console";
+            this.copyConsoleToolStripMenuItem.Click += new System.EventHandler(this.copyConsoleToolStripMenuItem_Click);
             // 
             // clearConsoleToolStripMenuItem
             // 
@@ -353,12 +364,17 @@
             this.tmrBlinkConnectionMenu.Interval = 60;
             this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
             // 
-            // copyConsoleToolStripMenuItem
+            // uDSHexEditorToolStripMenuItem
             // 
-            this.copyConsoleToolStripMenuItem.Name = "copyConsoleToolStripMenuItem";
-            this.copyConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.copyConsoleToolStripMenuItem.Text = "Copy Console";
-            this.copyConsoleToolStripMenuItem.Click += new System.EventHandler(this.copyConsoleToolStripMenuItem_Click);
+            this.uDSHexEditorToolStripMenuItem.Name = "uDSHexEditorToolStripMenuItem";
+            this.uDSHexEditorToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.uDSHexEditorToolStripMenuItem.Text = "UDS Hex Editor";
+            this.uDSHexEditorToolStripMenuItem.Click += new System.EventHandler(this.uDSHexEditorToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
             // 
             // MainForm
             // 
@@ -424,6 +440,8 @@
         private System.Windows.Forms.Timer tmrBlinkConnectionMenu;
         private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyConsoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uDSHexEditorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
     }
 }
 

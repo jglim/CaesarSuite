@@ -1004,5 +1004,22 @@ namespace Diogenes
         {
             Clipboard.SetText(txtLog.Text);
         }
+
+        private void uDSHexEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Connection.ConnectionProtocol is null)
+            {
+                MessageBox.Show("Please initiate contact with a target first.");
+                return;
+            }
+            string protocolName = Connection.ConnectionProtocol.GetProtocolName();
+            if (protocolName != "UDS")
+            {
+                MessageBox.Show($"Only UDS targets are officially supported (current protocol: {protocolName}). \r\n\r\n" +
+                    $"The editor will still open, however please ensure that the ECU accepts UDS-like read and write commands");
+            }
+            UDSHexEditor editor = new UDSHexEditor(Connection); 
+            editor.ShowDialog();
+        }
     }
 }
