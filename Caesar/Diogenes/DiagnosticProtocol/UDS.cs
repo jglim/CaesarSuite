@@ -166,6 +166,19 @@ namespace Diogenes.DiagnosticProtocol
             }
             return true;
         }
+        
+        private static bool ExitDiagnosticSession(ECUConnection connection)
+        {
+            Console.WriteLine("UDS: Switching session states");
+            byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x01 });
+            byte[] sessionExpectedResponse = new byte[] { 0x50, 0x01 };
+            if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
+            {
+                Console.WriteLine($"Failed to switch session : target responded with [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
+                return false;
+            }
+            return true;
+        }
 
         private static bool GetVariantID(ECUConnection connection, out int variantId) 
         {
