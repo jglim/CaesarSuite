@@ -24,7 +24,7 @@ namespace Diogenes.DiagnosticProtocol
         
         private static bool ExitDiagnosticSession(ECUConnection connection)
         {
-            Console.WriteLine("UDS: Switching session states");
+            Console.WriteLine("KW2C3PE: Switching session states");
             byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x81 });
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x81 };
             if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
