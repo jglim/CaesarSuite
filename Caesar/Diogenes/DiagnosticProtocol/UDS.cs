@@ -217,6 +217,17 @@ namespace Diogenes.DiagnosticProtocol
                 return;
             }
         }
+
+        public override void SendTesterPresent(ECUConnection connection)
+        {
+            connection.SendMessage(new byte[] { 0x3E, 0x00 }, true);
+        }
+
+        public override void ConnectionClosingHandler(ECUConnection connection)
+        {
+            ExitDiagnosticSession(connection);
+        }
+
         public override string GetProtocolName()
         {
             return "UDS";

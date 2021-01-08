@@ -9,7 +9,16 @@ namespace Diogenes.DiagnosticProtocol
 {
     public class BaseProtocol
     {
-        public virtual void ConnectionEstablishedHandler(ECUConnection connection) 
+        public virtual void ConnectionEstablishedHandler(ECUConnection connection)
+        {
+
+        }
+        public virtual void ConnectionClosingHandler(ECUConnection connection)
+        {
+
+        }
+
+        public virtual void SendTesterPresent(ECUConnection connection) 
         {
         
         }

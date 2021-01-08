@@ -111,6 +111,7 @@
       <DependentUpon>RunDiagForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DiagnosticProtocol\BaseProtocol.cs" />
+    <Compile Include="Preferences.cs" />
     <Compile Include="SecurityAccess\DllContext.cs" />
     <Compile Include="SecurityAccess\ExportDefinition.cs" />
     <Compile Include="Forms\MainForm.cs">
@@ -148,6 +149,7 @@
     <Compile Include="Forms\VCForm.Designer.cs">
       <DependentUpon>VCForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="VariantCoding.cs" />
     <Compile Include="VCReport.cs" />
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>

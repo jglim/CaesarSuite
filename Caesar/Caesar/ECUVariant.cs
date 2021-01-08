@@ -144,7 +144,7 @@ namespace Caesar
                 }
                 else
                 {
-                    parentEcu.ECUInterfaceSubtypes[param.ParentInterfaceIndex].CommunicationParameters.Add(param);
+                    parentEcu.ECUInterfaceSubtypes[parentIndex].CommunicationParameters.Add(param);
                 }
             }
         }

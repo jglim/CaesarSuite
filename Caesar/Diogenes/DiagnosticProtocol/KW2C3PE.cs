@@ -102,6 +102,18 @@ namespace Diogenes.DiagnosticProtocol
                 return;
             }
         }
+
+        public override void SendTesterPresent(ECUConnection connection)
+        {
+            // looks like 3E 01 for KW2C3PE 
+            connection.SendMessage(new byte[] { 0x3E, 0x01 }, true);
+        }
+
+        public override void ConnectionClosingHandler(ECUConnection connection)
+        {
+            ExitDiagnosticSession(connection);
+        }
+
         public override string GetProtocolName()
         {
             return "KW2C3PE";

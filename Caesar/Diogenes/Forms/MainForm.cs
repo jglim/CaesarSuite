@@ -443,12 +443,12 @@ namespace Diogenes
                     // can we help to skip the modal if the ds doesn't require additional user input? common for data, stored data
                     if ((ds.DataClass_ServiceType == (int)DiagService.ServiceType.StoredData) || (ds.DataClass_ServiceType == (int)DiagService.ServiceType.Data))
                     {
-                        ExecUserDiagJob(ds.RequestBytes, ds);
+                        Connection.ExecUserDiagJob(ds.RequestBytes, ds);
                     }
                     else if (connectionSupportsUnlocking && (ds.RequestBytes.Length == 2) && (ds.RequestBytes[0] == 0x27))
                     {
                         // request seed, no need to prompt
-                        ExecUserDiagJob(ds.RequestBytes, ds);
+                        Connection.ExecUserDiagJob(ds.RequestBytes, ds);
                     }
                     else
                     {
@@ -463,184 +463,25 @@ namespace Diogenes
             RunDiagForm runDiagForm = new RunDiagForm(ds);
             if (runDiagForm.ShowDialog() == DialogResult.OK)
             {
-                ExecUserDiagJob(runDiagForm.Result, ds);
+                Connection.ExecUserDiagJob(runDiagForm.Result, ds);
             }
         }
 
-        private void ExecUserDiagJob(byte[] request, DiagService diagService)
-        {
-            Console.WriteLine($"\r\nRunning: {diagService.Qualifier}");
-            byte[] response = Connection.SendMessage(request);
-            foreach (List<DiagPreparation> wtf in diagService.OutputPreparations)
-            {
-                foreach (DiagPreparation outputPreparation in wtf)
-                {
-                    //outputPreparation.PrintDebug();
-                    DiagPresentation presentation = outputPreparation.ParentECU.GlobalPresentations[outputPreparation.PresPoolIndex];
-                    // presentation.PrintDebug();
-                    Console.WriteLine($"    -> {presentation.InterpretData(response, outputPreparation)}");
-                }
-            }
-            // check if the response was an ECU seed
-            if (Connection.ConnectionProtocol.SupportsUnlocking() && (response.Length >= 2) && (response[0] == 0x67))
-            {
-                SecurityAutoLogin.ReceiveSecurityResponse(response, diagService.ParentECU, Connection);
-            }
-        }
 
         private void treeViewSelectVariantCoding(TreeNode node) 
         {
             string domainName = node.Text;
             string variantName = node.Parent.Text;
             string ecuName = node.Parent.Parent.Text;
-            Console.WriteLine($"Starting VC Dialog for {ecuName} ({variantName}) with domain as {domainName}");
 
+            Console.WriteLine($"Starting VC Dialog for {ecuName} ({variantName}) with domain as {domainName}");
             CaesarContainer container = Containers.Find(x => x.GetECUVariantByName(variantName) != null);
+
+            // prompt the user for vc changes via VCForm
             VCForm vcForm = new VCForm(container, ecuName, variantName, domainName, Connection);
             if (vcForm.ShowDialog() == DialogResult.OK)
             {
-                Console.WriteLine($"Operator requesting for VC: {BitUtility.BytesToHex(vcForm.VCValue, true)}");
-
-                RunDiagForm runDiagForm = new RunDiagForm(vcForm.WriteService);
-
-                // again, this is a best guess (second largest optional value is usually the SCN at 16 bytes)
-                DiagPreparation largestOutPrep = VCForm.GetLargestPreparation(vcForm.WriteService.InputPreparations);
-
-                /*
-                 test: med40
-
-                    jg: dumping pres
-                    jg: q: SID_RQ pos byte: 0 size bytes: 1 modecfg:323 fieldtype: IntegerType dump: 2E 00 00 00
-                    jg: q: RecordDataIdentifier pos byte: 1 size bytes: 2 modecfg:324 fieldtype: IntegerType dump: 01 10 00 00
-                    jg: q: #0 pos byte: 33 size bytes: 16 modecfg:6430 fieldtype: BitDumpType dump: 
-                    jg: q: #1 pos byte: 49 size bytes: 1 modecfg:6423 fieldtype: IntegerType dump: 
-                    jg: q: #2 pos byte: 50 size bytes: 1 modecfg:6423 fieldtype: IntegerType dump: 
-                    jg: q: #3 pos byte: 51 size bytes: 1 modecfg:6423 fieldtype: IntegerType dump: 
-                    jg: q: #4 pos byte: 52 size bytes: 1 modecfg:6423 fieldtype: IntegerType dump: 
-                    jg: q: #5 pos byte: 3 size bytes: 50 modecfg:6410 fieldtype: ExtendedBitDumpType dump: 
-                    jg: done dumping pres
-
-                 */
-
-
-                // construct a write command from presentations: fill up the VC value first, fill up all available dumps, then inherit the last values (fingerprints, scn) from the read command
-                byte[] vcParameter = vcForm.VCValue;
-                byte[] writeCommand = vcForm.WriteService.RequestBytes;
-                byte[] priorReadCommand = vcForm.UnfilteredReadValue;
-
-                // start with a list of all values that we will have to fill
-                List<DiagPreparation> preparationsToProcess = new List<DiagPreparation>(vcForm.WriteService.InputPreparations);
-
-                // fill up vc
-                DiagPreparation vcPrep = preparationsToProcess.Find(x => x.FieldType == DiagPreparation.InferredDataType.ExtendedBitDumpType);
-                if (vcPrep is null)
-                {
-                    MessageBox.Show("VC: Could not find the VC ExtendedBitDump prep, stopping early to save your ECU.", "VC Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                int vcPrepSizeInBytes = vcPrep.SizeInBits / 8;
-                int vcPrepBytePosition = vcPrep.BitPosition / 8;
-                if (vcPrepSizeInBytes < vcParameter.Length)
-                {
-                    MessageBox.Show("VC: VC string is longer than the parameter can fit, stopping early to save your ECU.", "VC Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                // zero out the destination buffer for the param that we intend to write since there's a possibility that our param is shorter than the actual prep's size
-                for (int i = vcPrepBytePosition; i < (vcPrepBytePosition + vcPrepSizeInBytes); i++)
-                {
-                    writeCommand[i] = 0;
-                }
-                // copy the parameter in
-                Array.ConstrainedCopy(vcParameter, 0, writeCommand, vcPrepBytePosition, vcParameter.Length);
-                preparationsToProcess.Remove(vcPrep);
-
-                // merge prefilled values such as the (SID_RQ, id..)
-                List<DiagPreparation> prefilledValues = new List<DiagPreparation>();
-                foreach (DiagPreparation prep in preparationsToProcess)
-                {
-                    if (prep.Dump.Length > 0)
-                    {
-                        prefilledValues.Add(prep);
-                        if (prep.FieldType == DiagPreparation.InferredDataType.IntegerType)
-                        {
-                            byte[] fixedDump = prep.Dump.Take(prep.SizeInBits / 8).Reverse().ToArray();
-                            Array.ConstrainedCopy(vcParameter, 0, writeCommand, vcPrepBytePosition, vcParameter.Length);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Skipping prefill for {prep.Qualifier} as the data type {prep.FieldType} is unsupported.");
-                        }
-                    }
-                }
-
-                // "mark" the constants as done
-                foreach (DiagPreparation prep in prefilledValues)
-                {
-                    preparationsToProcess.Remove(prep);
-                }
-
-                // at this point, whatever that's left in preparationsToProcess are stuff that are variable, but should be copied verbatim from the original read request (e.g. fingerprints, scn)
-                // log the assumptions, show it the operator just in case
-                StringBuilder assumptionsMade = new StringBuilder();
-                if (preparationsToProcess.Count > 0)
-                {
-                    if (writeCommand.Length != priorReadCommand.Length)
-                    {
-                        MessageBox.Show("There are some preparations that do not have a default value (e.g. fingerprint, scn). \r\n" +
-                            "The input and output values do not have matching lengths, which means that the automatic assumption may be wrong. \r\n" +
-                            "Please be very careful when proceeding.", "Warning");
-                    }
-
-                    foreach (DiagPreparation prep in preparationsToProcess)
-                    {
-                        int bytePosition = prep.BitPosition / 8;
-                        int byteLength = prep.SizeInBits / 8;
-                        Array.ConstrainedCopy(priorReadCommand, bytePosition, writeCommand, bytePosition, byteLength);
-                        assumptionsMade.Append($"{prep.Qualifier} : {BitUtility.BytesToHex(priorReadCommand.Skip(bytePosition).Take(byteLength).ToArray(), true)}\r\n");
-                    }
-                }
-
-                /*
-                // lazy me dumping the values
-                for (int i = 0; i < vcForm.WriteService.InputPreparations.Count; i++)
-                {
-                    DiagPreparation prep = vcForm.WriteService.InputPreparations[i];
-                    Console.WriteLine($"debug: q: {prep.Qualifier} pos byte: {(prep.BitPosition / 8)} size bytes: {(prep.SizeInBits / 8)} modecfg:{prep.ModeConfig:X} fieldtype: {prep.FieldType} dump: {BitUtility.BytesToHex(prep.Dump, true)}");
-                }
-                */
-
-                // we are done preparing the command, if we are confident we can send the command straight to the ECU, else, let the user review
-                if (assumptionsMade.Length > 0) 
-                {
-                    if (MessageBox.Show("Some assumptions were made when preparing the write parameters. \r\n\r\n" +
-                        "You may wish to review them by selecting Cancel, or select OK to execute the write command immediately.\r\n\r\n" + assumptionsMade.ToString(),
-                        "Review assumptions", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
-                    {
-                        ExecVCWrite(runDiagForm.Result, vcForm.WriteService);
-                    }
-                    else
-                    {
-                        runDiagForm.Result = writeCommand;
-                        if (runDiagForm.ShowDialog() == DialogResult.OK)
-                        {
-                            ExecVCWrite(runDiagForm.Result, vcForm.WriteService);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ExecVCWrite(byte[] request, DiagService service)
-        {
-            bool allowVcWrite = allowWriteVariantCodingToolStripMenuItem.Checked;
-            if (allowVcWrite)
-            {
-                ExecUserDiagJob(request, service);
-            }
-            else
-            {
-                MessageBox.Show("This VC write action has to be manually enabled under \r\nFile >  Allow Write Variant Coding\r\nPlease make sure that you understand the risks before doing so.", 
-                    "Accidental Brick Protection");
+                VariantCoding.DoVariantCoding(Connection, vcForm, allowWriteVariantCodingToolStripMenuItem.Checked);
             }
         }
 
@@ -944,6 +785,7 @@ namespace Diogenes
         private void allowWriteVariantCodingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             allowWriteVariantCodingToolStripMenuItem.Checked = !allowWriteVariantCodingToolStripMenuItem.Checked;
+            Preferences.SetValue(Preferences.PreferenceKey.AllowVC, allowWriteVariantCodingToolStripMenuItem.Checked ? "true" : "false");
         }
 
         private void showTraceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1020,6 +862,64 @@ namespace Diogenes
             }
             UDSHexEditor editor = new UDSHexEditor(Connection); 
             editor.ShowDialog();
+        }
+
+        private void preferencesToolStripMenuItem1_DropDownOpening(object sender, EventArgs e)
+        {
+            RefreshPreferencesDropdown();
+        }
+
+        private void RefreshPreferencesDropdown()
+        {
+            /*
+             
+            AllowVC,
+            EnableSCNZero,
+            EnableFingerprintClone,
+            FingerprintValue,
+
+            */
+            // VC safety switch
+            allowWriteVariantCodingToolStripMenuItem.Checked = Preferences.GetValue(Preferences.PreferenceKey.AllowVC) == "true";
+
+            // scn mode
+            bool scnZero = Preferences.GetValue(Preferences.PreferenceKey.EnableSCNZero) == "true";
+            writeZerosVediamoToolStripMenuItem.Checked = scnZero;
+            useLastSCNToolStripMenuItem.Checked = !writeZerosVediamoToolStripMenuItem.Checked;
+
+            // fingerprint mode
+            bool fingerprintClone = Preferences.GetValue(Preferences.PreferenceKey.EnableFingerprintClone) == "true";
+            useLastFingerprintToolStripMenuItem.Checked = fingerprintClone;
+            customValueToolStripMenuItem.Checked = !fingerprintClone;
+
+            // fingerprint custom value
+            uint customFingerprint = uint.Parse(Preferences.GetValue(Preferences.PreferenceKey.FingerprintValue));
+            customValueToolStripMenuItem.Text = $"Custom Value: {customFingerprint}";
+        }
+
+        private void useLastSCNToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Preferences.SetValue(Preferences.PreferenceKey.EnableSCNZero, "false");
+            RefreshPreferencesDropdown();
+        }
+
+        private void writeZerosVediamoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Preferences.SetValue(Preferences.PreferenceKey.EnableSCNZero, "true");
+            RefreshPreferencesDropdown();
+        }
+
+        private void useLastFingerprintToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Preferences.SetValue(Preferences.PreferenceKey.EnableFingerprintClone, "true");
+            RefreshPreferencesDropdown();
+        }
+
+        private void customValueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Preferences.SetValue(Preferences.PreferenceKey.EnableFingerprintClone, "false");
+            // prompt for new fingerprint value
+            RefreshPreferencesDropdown();
         }
     }
 }

@@ -37,8 +37,6 @@
             this.loadCBFFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unloadExistingFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.allowWriteVariantCodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,6 +52,8 @@
             this.cFFFlashSplicerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.uDSHexEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,8 +63,14 @@
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
-            this.uDSHexEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.preferencesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.fingerprintModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sCNModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allowWriteVariantCodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useLastFingerprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.customValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useLastSCNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.writeZerosVediamoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -95,7 +101,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.connectionToolStripMenuItem,
-            this.eCUToolStripMenuItem});
+            this.eCUToolStripMenuItem,
+            this.preferencesToolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -109,8 +116,6 @@
             this.loadCBFFilesToolStripMenuItem,
             this.unloadExistingFilesToolStripMenuItem,
             this.toolStripSeparator1,
-            this.allowWriteVariantCodingToolStripMenuItem,
-            this.preferencesToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
@@ -122,52 +127,40 @@
             // 
             this.loadCBFFilesToolStripMenuItem.Name = "loadCBFFilesToolStripMenuItem";
             this.loadCBFFilesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.loadCBFFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.loadCBFFilesToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.loadCBFFilesToolStripMenuItem.Text = "Load CBF Files";
             this.loadCBFFilesToolStripMenuItem.Click += new System.EventHandler(this.loadCBFFilesToolStripMenuItem_Click);
             // 
             // unloadExistingFilesToolStripMenuItem
             // 
             this.unloadExistingFilesToolStripMenuItem.Name = "unloadExistingFilesToolStripMenuItem";
-            this.unloadExistingFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.unloadExistingFilesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.U)));
+            this.unloadExistingFilesToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.unloadExistingFilesToolStripMenuItem.Text = "Unload Existing Files";
             this.unloadExistingFilesToolStripMenuItem.Click += new System.EventHandler(this.unloadExistingFilesToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(213, 6);
-            // 
-            // allowWriteVariantCodingToolStripMenuItem
-            // 
-            this.allowWriteVariantCodingToolStripMenuItem.Name = "allowWriteVariantCodingToolStripMenuItem";
-            this.allowWriteVariantCodingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.allowWriteVariantCodingToolStripMenuItem.Text = "Allow Write Variant Coding";
-            this.allowWriteVariantCodingToolStripMenuItem.Click += new System.EventHandler(this.allowWriteVariantCodingToolStripMenuItem_Click);
-            // 
-            // preferencesToolStripMenuItem
-            // 
-            this.preferencesToolStripMenuItem.Enabled = false;
-            this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.preferencesToolStripMenuItem.Text = "Preferences";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(252, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.aboutToolStripMenuItem.Text = "About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(213, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(252, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -187,7 +180,7 @@
             // debugJ2534ToolStripMenuItem
             // 
             this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
             this.debugJ2534ToolStripMenuItem.Visible = false;
             this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
@@ -197,7 +190,7 @@
             this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.defaultJ2534InterfaceToolStripMenuItem});
             this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
-            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
             this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
             // 
@@ -210,7 +203,7 @@
             // disconnectToolStripMenuItem
             // 
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
             this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
@@ -269,6 +262,18 @@
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(224, 6);
+            // 
+            // uDSHexEditorToolStripMenuItem
+            // 
+            this.uDSHexEditorToolStripMenuItem.Name = "uDSHexEditorToolStripMenuItem";
+            this.uDSHexEditorToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.uDSHexEditorToolStripMenuItem.Text = "UDS Hex Editor";
+            this.uDSHexEditorToolStripMenuItem.Click += new System.EventHandler(this.uDSHexEditorToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
             // 
             // showTraceToolStripMenuItem
             // 
@@ -364,17 +369,69 @@
             this.tmrBlinkConnectionMenu.Interval = 60;
             this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
             // 
-            // uDSHexEditorToolStripMenuItem
+            // preferencesToolStripMenuItem1
             // 
-            this.uDSHexEditorToolStripMenuItem.Name = "uDSHexEditorToolStripMenuItem";
-            this.uDSHexEditorToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.uDSHexEditorToolStripMenuItem.Text = "UDS Hex Editor";
-            this.uDSHexEditorToolStripMenuItem.Click += new System.EventHandler(this.uDSHexEditorToolStripMenuItem_Click);
+            this.preferencesToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fingerprintModeToolStripMenuItem,
+            this.sCNModeToolStripMenuItem,
+            this.allowWriteVariantCodingToolStripMenuItem});
+            this.preferencesToolStripMenuItem1.Name = "preferencesToolStripMenuItem1";
+            this.preferencesToolStripMenuItem1.Size = new System.Drawing.Size(80, 20);
+            this.preferencesToolStripMenuItem1.Text = "Preferences";
+            this.preferencesToolStripMenuItem1.DropDownOpening += new System.EventHandler(this.preferencesToolStripMenuItem1_DropDownOpening);
             // 
-            // toolStripSeparator5
+            // fingerprintModeToolStripMenuItem
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
+            this.fingerprintModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.useLastFingerprintToolStripMenuItem,
+            this.customValueToolStripMenuItem});
+            this.fingerprintModeToolStripMenuItem.Name = "fingerprintModeToolStripMenuItem";
+            this.fingerprintModeToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.fingerprintModeToolStripMenuItem.Text = "Fingerprint Mode";
+            // 
+            // sCNModeToolStripMenuItem
+            // 
+            this.sCNModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.useLastSCNToolStripMenuItem,
+            this.writeZerosVediamoToolStripMenuItem});
+            this.sCNModeToolStripMenuItem.Name = "sCNModeToolStripMenuItem";
+            this.sCNModeToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.sCNModeToolStripMenuItem.Text = "SCN Mode";
+            // 
+            // allowWriteVariantCodingToolStripMenuItem
+            // 
+            this.allowWriteVariantCodingToolStripMenuItem.Name = "allowWriteVariantCodingToolStripMenuItem";
+            this.allowWriteVariantCodingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.allowWriteVariantCodingToolStripMenuItem.Text = "Allow Write Variant Coding";
+            this.allowWriteVariantCodingToolStripMenuItem.Click += new System.EventHandler(this.allowWriteVariantCodingToolStripMenuItem_Click);
+            // 
+            // useLastFingerprintToolStripMenuItem
+            // 
+            this.useLastFingerprintToolStripMenuItem.Name = "useLastFingerprintToolStripMenuItem";
+            this.useLastFingerprintToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.useLastFingerprintToolStripMenuItem.Text = "Use Last Fingerprint";
+            this.useLastFingerprintToolStripMenuItem.Click += new System.EventHandler(this.useLastFingerprintToolStripMenuItem_Click);
+            // 
+            // customValueToolStripMenuItem
+            // 
+            this.customValueToolStripMenuItem.Name = "customValueToolStripMenuItem";
+            this.customValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.customValueToolStripMenuItem.Text = "Custom Value";
+            this.customValueToolStripMenuItem.Click += new System.EventHandler(this.customValueToolStripMenuItem_Click);
+            // 
+            // useLastSCNToolStripMenuItem
+            // 
+            this.useLastSCNToolStripMenuItem.Name = "useLastSCNToolStripMenuItem";
+            this.useLastSCNToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.useLastSCNToolStripMenuItem.Text = "Use Last SCN";
+            this.useLastSCNToolStripMenuItem.Click += new System.EventHandler(this.useLastSCNToolStripMenuItem_Click);
+            // 
+            // writeZerosVediamoToolStripMenuItem
+            // 
+            this.writeZerosVediamoToolStripMenuItem.Name = "writeZerosVediamoToolStripMenuItem";
+            this.writeZerosVediamoToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.writeZerosVediamoToolStripMenuItem.Text = "Write Zeros (Vediamo)";
+            this.writeZerosVediamoToolStripMenuItem.Click += new System.EventHandler(this.writeZerosVediamoToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -416,7 +473,6 @@
         private System.Windows.Forms.ToolStripMenuItem loadCBFFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem unloadExistingFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem connectionToolStripMenuItem;
@@ -432,7 +488,6 @@
         private System.Windows.Forms.ToolStripMenuItem cFFExportFlashSegmentsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fixClientAccessPermissionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cFFFlashSplicerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem allowWriteVariantCodingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showTraceToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem clearConsoleToolStripMenuItem;
@@ -442,6 +497,14 @@
         private System.Windows.Forms.ToolStripMenuItem copyConsoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uDSHexEditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem fingerprintModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem useLastFingerprintToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem customValueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sCNModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem useLastSCNToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem writeZerosVediamoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem allowWriteVariantCodingToolStripMenuItem;
     }
 }
 

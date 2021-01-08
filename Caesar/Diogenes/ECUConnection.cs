@@ -8,6 +8,7 @@ using Caesar;
 using System.Timers;
 using System.Diagnostics;
 using Diogenes.DiagnosticProtocol;
+using Diogenes.SecurityAccess;
 
 namespace Diogenes
 {
@@ -147,7 +148,10 @@ namespace Diogenes
             if (State > ConnectionState.DeviceSelectedPendingChannelConnection)
             {
                 // TesterPresent, expects 0x7E, 0x00
-                SendMessage(new byte[] { 0x3E, 0x00 }, true);
+                if (ConnectionProtocol != null) 
+                {
+                    ConnectionProtocol.SendTesterPresent(this);
+                }
             }
         }
 
@@ -323,6 +327,27 @@ namespace Diogenes
             return response;
         }
 
+        public void ExecUserDiagJob(byte[] request, DiagService diagService)
+        {
+            Console.WriteLine($"\r\nRunning: {diagService.Qualifier}");
+            byte[] response = SendMessage(request);
+            foreach (List<DiagPreparation> wtf in diagService.OutputPreparations)
+            {
+                foreach (DiagPreparation outputPreparation in wtf)
+                {
+                    //outputPreparation.PrintDebug();
+                    DiagPresentation presentation = outputPreparation.ParentECU.GlobalPresentations[outputPreparation.PresPoolIndex];
+                    // presentation.PrintDebug();
+                    Console.WriteLine($"    -> {presentation.InterpretData(response, outputPreparation)}");
+                }
+            }
+            // check if the response was an ECU seed
+            if (ConnectionProtocol.SupportsUnlocking() && (response.Length >= 2) && (response[0] == 0x67))
+            {
+                SecurityAutoLogin.ReceiveSecurityResponse(response, diagService.ParentECU, this);
+            }
+        }
+
         public byte[] SendMessage(IEnumerable<byte> message, bool quiet = false)
         {
             byte[] response = Array.Empty<byte>();
@@ -447,7 +472,7 @@ namespace Diogenes
             return response;
         }
 
-        public void TryCleanup() 
+        public void TryCleanup()
         {
             try
             {
@@ -455,9 +480,12 @@ namespace Diogenes
                 {
                     Console.WriteLine("Cleaning up existing connection");
                 }
-                TesterPresentTimer.Enabled = false;
                 if (ConnectionChannel != null) 
                 {
+                    if (ConnectionProtocol != null)
+                    {
+                        ConnectionProtocol?.ConnectionClosingHandler(this);
+                    }
                     ConnectionChannel.Dispose();
                     ConnectionChannel = null;
                 }
@@ -471,6 +499,8 @@ namespace Diogenes
                     ConnectionAPI.Dispose();
                     ConnectionAPI = null;
                 }
+                TesterPresentTimer.Stop();
+                TesterPresentTimer.Enabled = false;
             }
             catch (Exception ex) 
             {
