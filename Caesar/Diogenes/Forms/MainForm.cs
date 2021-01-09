@@ -636,6 +636,16 @@ namespace Diogenes
                 LoadTree();
             }
         }
+        
+        private void loadCBFFiles_DragEnter(object sender, DragEventArgs e)
+        {
+            //Filtering for .cbf
+        }
+
+        private void loadCBFFiles_DragDrop(object sender, DragEventArgs e)
+        {
+            //LoadTree();
+        }
 
         private void setSecurityLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
