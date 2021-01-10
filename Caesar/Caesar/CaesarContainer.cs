@@ -28,15 +28,8 @@ namespace Caesar
                 int cffHeaderSize = reader.ReadInt32();
                 byte[] cffHeaderData = reader.ReadBytes(cffHeaderSize);
 
-                uint computedChecksum = CaesarReader.ComputeFileChecksumLazy(fileBytes);
-                uint providedChecksum = ReadFileChecksum(fileBytes);
-                
-                if (computedChecksum != providedChecksum)
-                {
-                    Console.WriteLine($"WARNING: Checksum mismatch : computed/provided: {computedChecksum:X8}/{providedChecksum:X8}");
-                }
-
-                FileChecksum = computedChecksum;
+                VerifyChecksum(fileBytes, out uint checksum);
+                FileChecksum = checksum;
 
                 ReadCFFDefinition(reader);
                 // language is the highest priority since all our strings come from it
@@ -46,6 +39,19 @@ namespace Caesar
 
         }
 
+        public static bool VerifyChecksum(byte[] fileBytes, out uint checksum) 
+        {
+            uint computedChecksum = CaesarReader.ComputeFileChecksumLazy(fileBytes);
+            uint providedChecksum = ReadFileChecksum(fileBytes);
+            checksum = providedChecksum;
+            if (computedChecksum != providedChecksum)
+            {
+                Console.WriteLine($"WARNING: Checksum mismatch : computed/provided: {computedChecksum:X8}/{providedChecksum:X8}");
+                return false;
+            }
+            return true;
+        }
+
         public static string GetCaesarVersionString()
         {
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -53,7 +59,7 @@ namespace Caesar
             return fvi.FileVersion;
         }
 
-        public uint ReadFileChecksum(byte[] fileBytes) 
+        public static uint ReadFileChecksum(byte[] fileBytes) 
         {
             return BitConverter.ToUInt32(fileBytes, fileBytes.Length - 4);
         }
