@@ -632,8 +632,22 @@ namespace Diogenes
             ofd.Multiselect = false;
             if (ofd.ShowDialog() == DialogResult.OK) 
             {
-                Containers.Add(new CaesarContainer(File.ReadAllBytes(ofd.FileName)));
+                TryLoadFile(ofd.FileName);
+            }
+        }
+        
+
+        private void TryLoadFile(string fileName)
+        {
+            byte[] fileBytes = File.ReadAllBytes(fileName);
+            if (CaesarContainer.VerifyChecksum(fileBytes, out uint checksum))
+            {
+                Containers.Add(new CaesarContainer(fileBytes));
                 LoadTree();
+            }
+            else 
+            {
+                Console.WriteLine($"File {Path.GetFileName(fileName)} was not loaded as the checksum is invalid");
             }
         }
 
@@ -920,6 +934,23 @@ namespace Diogenes
             Preferences.SetValue(Preferences.PreferenceKey.EnableFingerprintClone, "false");
             // prompt for new fingerprint value
             RefreshPreferencesDropdown();
+        }
+
+        private void tvMain_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void tvMain_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+            {
+                TryLoadFile(file);
+            }
         }
     }
 }

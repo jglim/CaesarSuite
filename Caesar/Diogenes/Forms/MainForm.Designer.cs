@@ -57,20 +57,20 @@
             this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.preferencesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.fingerprintModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useLastFingerprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.customValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sCNModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useLastSCNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.writeZerosVediamoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allowWriteVariantCodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tvMain = new System.Windows.Forms.TreeView();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
-            this.preferencesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.fingerprintModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sCNModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.allowWriteVariantCodingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.useLastFingerprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.customValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.useLastSCNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.writeZerosVediamoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -180,7 +180,7 @@
             // debugJ2534ToolStripMenuItem
             // 
             this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
             this.debugJ2534ToolStripMenuItem.Visible = false;
             this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
@@ -190,7 +190,7 @@
             this.j2534InterfacesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.defaultJ2534InterfaceToolStripMenuItem});
             this.j2534InterfacesToolStripMenuItem.Name = "j2534InterfacesToolStripMenuItem";
-            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.j2534InterfacesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.j2534InterfacesToolStripMenuItem.Text = "J2534 Interfaces";
             this.j2534InterfacesToolStripMenuItem.DropDownOpening += new System.EventHandler(this.j2534InterfacesToolStripMenuItem_DropDownOpening);
             // 
@@ -203,7 +203,7 @@
             // disconnectToolStripMenuItem
             // 
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
             this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
@@ -297,8 +297,73 @@
             this.clearConsoleToolStripMenuItem.Text = "Clear Console";
             this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
             // 
+            // preferencesToolStripMenuItem1
+            // 
+            this.preferencesToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fingerprintModeToolStripMenuItem,
+            this.sCNModeToolStripMenuItem,
+            this.allowWriteVariantCodingToolStripMenuItem});
+            this.preferencesToolStripMenuItem1.Name = "preferencesToolStripMenuItem1";
+            this.preferencesToolStripMenuItem1.Size = new System.Drawing.Size(80, 20);
+            this.preferencesToolStripMenuItem1.Text = "Preferences";
+            this.preferencesToolStripMenuItem1.DropDownOpening += new System.EventHandler(this.preferencesToolStripMenuItem1_DropDownOpening);
+            // 
+            // fingerprintModeToolStripMenuItem
+            // 
+            this.fingerprintModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.useLastFingerprintToolStripMenuItem,
+            this.customValueToolStripMenuItem});
+            this.fingerprintModeToolStripMenuItem.Name = "fingerprintModeToolStripMenuItem";
+            this.fingerprintModeToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.fingerprintModeToolStripMenuItem.Text = "Fingerprint Mode";
+            // 
+            // useLastFingerprintToolStripMenuItem
+            // 
+            this.useLastFingerprintToolStripMenuItem.Name = "useLastFingerprintToolStripMenuItem";
+            this.useLastFingerprintToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.useLastFingerprintToolStripMenuItem.Text = "Use Last Fingerprint";
+            this.useLastFingerprintToolStripMenuItem.Click += new System.EventHandler(this.useLastFingerprintToolStripMenuItem_Click);
+            // 
+            // customValueToolStripMenuItem
+            // 
+            this.customValueToolStripMenuItem.Name = "customValueToolStripMenuItem";
+            this.customValueToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.customValueToolStripMenuItem.Text = "Custom Value";
+            this.customValueToolStripMenuItem.Click += new System.EventHandler(this.customValueToolStripMenuItem_Click);
+            // 
+            // sCNModeToolStripMenuItem
+            // 
+            this.sCNModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.useLastSCNToolStripMenuItem,
+            this.writeZerosVediamoToolStripMenuItem});
+            this.sCNModeToolStripMenuItem.Name = "sCNModeToolStripMenuItem";
+            this.sCNModeToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.sCNModeToolStripMenuItem.Text = "SCN Mode";
+            // 
+            // useLastSCNToolStripMenuItem
+            // 
+            this.useLastSCNToolStripMenuItem.Name = "useLastSCNToolStripMenuItem";
+            this.useLastSCNToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.useLastSCNToolStripMenuItem.Text = "Use Last SCN";
+            this.useLastSCNToolStripMenuItem.Click += new System.EventHandler(this.useLastSCNToolStripMenuItem_Click);
+            // 
+            // writeZerosVediamoToolStripMenuItem
+            // 
+            this.writeZerosVediamoToolStripMenuItem.Name = "writeZerosVediamoToolStripMenuItem";
+            this.writeZerosVediamoToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.writeZerosVediamoToolStripMenuItem.Text = "Write Zeros (Vediamo)";
+            this.writeZerosVediamoToolStripMenuItem.Click += new System.EventHandler(this.writeZerosVediamoToolStripMenuItem_Click);
+            // 
+            // allowWriteVariantCodingToolStripMenuItem
+            // 
+            this.allowWriteVariantCodingToolStripMenuItem.Name = "allowWriteVariantCodingToolStripMenuItem";
+            this.allowWriteVariantCodingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.allowWriteVariantCodingToolStripMenuItem.Text = "Allow Write Variant Coding";
+            this.allowWriteVariantCodingToolStripMenuItem.Click += new System.EventHandler(this.allowWriteVariantCodingToolStripMenuItem_Click);
+            // 
             // tvMain
             // 
+            this.tvMain.AllowDrop = true;
             this.tvMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -307,6 +372,8 @@
             this.tvMain.Name = "tvMain";
             this.tvMain.Size = new System.Drawing.Size(1117, 480);
             this.tvMain.TabIndex = 2;
+            this.tvMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.tvMain_DragDrop);
+            this.tvMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.tvMain_DragEnter);
             this.tvMain.DoubleClick += new System.EventHandler(this.tvMain_DoubleClick);
             // 
             // txtLog
@@ -368,70 +435,6 @@
             // 
             this.tmrBlinkConnectionMenu.Interval = 60;
             this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
-            // 
-            // preferencesToolStripMenuItem1
-            // 
-            this.preferencesToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fingerprintModeToolStripMenuItem,
-            this.sCNModeToolStripMenuItem,
-            this.allowWriteVariantCodingToolStripMenuItem});
-            this.preferencesToolStripMenuItem1.Name = "preferencesToolStripMenuItem1";
-            this.preferencesToolStripMenuItem1.Size = new System.Drawing.Size(80, 20);
-            this.preferencesToolStripMenuItem1.Text = "Preferences";
-            this.preferencesToolStripMenuItem1.DropDownOpening += new System.EventHandler(this.preferencesToolStripMenuItem1_DropDownOpening);
-            // 
-            // fingerprintModeToolStripMenuItem
-            // 
-            this.fingerprintModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.useLastFingerprintToolStripMenuItem,
-            this.customValueToolStripMenuItem});
-            this.fingerprintModeToolStripMenuItem.Name = "fingerprintModeToolStripMenuItem";
-            this.fingerprintModeToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.fingerprintModeToolStripMenuItem.Text = "Fingerprint Mode";
-            // 
-            // sCNModeToolStripMenuItem
-            // 
-            this.sCNModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.useLastSCNToolStripMenuItem,
-            this.writeZerosVediamoToolStripMenuItem});
-            this.sCNModeToolStripMenuItem.Name = "sCNModeToolStripMenuItem";
-            this.sCNModeToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.sCNModeToolStripMenuItem.Text = "SCN Mode";
-            // 
-            // allowWriteVariantCodingToolStripMenuItem
-            // 
-            this.allowWriteVariantCodingToolStripMenuItem.Name = "allowWriteVariantCodingToolStripMenuItem";
-            this.allowWriteVariantCodingToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.allowWriteVariantCodingToolStripMenuItem.Text = "Allow Write Variant Coding";
-            this.allowWriteVariantCodingToolStripMenuItem.Click += new System.EventHandler(this.allowWriteVariantCodingToolStripMenuItem_Click);
-            // 
-            // useLastFingerprintToolStripMenuItem
-            // 
-            this.useLastFingerprintToolStripMenuItem.Name = "useLastFingerprintToolStripMenuItem";
-            this.useLastFingerprintToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.useLastFingerprintToolStripMenuItem.Text = "Use Last Fingerprint";
-            this.useLastFingerprintToolStripMenuItem.Click += new System.EventHandler(this.useLastFingerprintToolStripMenuItem_Click);
-            // 
-            // customValueToolStripMenuItem
-            // 
-            this.customValueToolStripMenuItem.Name = "customValueToolStripMenuItem";
-            this.customValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.customValueToolStripMenuItem.Text = "Custom Value";
-            this.customValueToolStripMenuItem.Click += new System.EventHandler(this.customValueToolStripMenuItem_Click);
-            // 
-            // useLastSCNToolStripMenuItem
-            // 
-            this.useLastSCNToolStripMenuItem.Name = "useLastSCNToolStripMenuItem";
-            this.useLastSCNToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.useLastSCNToolStripMenuItem.Text = "Use Last SCN";
-            this.useLastSCNToolStripMenuItem.Click += new System.EventHandler(this.useLastSCNToolStripMenuItem_Click);
-            // 
-            // writeZerosVediamoToolStripMenuItem
-            // 
-            this.writeZerosVediamoToolStripMenuItem.Name = "writeZerosVediamoToolStripMenuItem";
-            this.writeZerosVediamoToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.writeZerosVediamoToolStripMenuItem.Text = "Write Zeros (Vediamo)";
-            this.writeZerosVediamoToolStripMenuItem.Click += new System.EventHandler(this.writeZerosVediamoToolStripMenuItem_Click);
             // 
             // MainForm
             // 
