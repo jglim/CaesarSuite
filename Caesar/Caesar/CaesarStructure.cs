@@ -152,6 +152,8 @@ namespace Caesar
             CaesarTypes.Add(new byte[] { 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 0, 0, 0 }); // UNK36
         }
 
+        // this is an artifact from implementing the reverse-engineered code as-is; since Caesar loads all objects in a greedy strategy (for serialization), 
+        // use of ReadCBFWithOffset should be discontinued
         public static int ReadCBFWithOffset(int memberIndex, StructureName structureName, byte[] input)
         {
             int byteOffset = CaesarStructure.GetCBFOffset(memberIndex, structureName, input);

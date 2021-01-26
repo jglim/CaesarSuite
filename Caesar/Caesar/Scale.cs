@@ -27,7 +27,7 @@ namespace Caesar
         public int USCount;
         public int OffsetUS;
 
-        public int UnkB;
+        public int EnumDescription;
         public int UnkC;
 
         public Scale(BinaryReader reader, long baseAddress) 
@@ -52,7 +52,7 @@ namespace Caesar
             USCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             OffsetUS = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
-            UnkB = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            EnumDescription = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
             UnkC = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
         }
@@ -71,7 +71,7 @@ namespace Caesar
 
             Console.WriteLine($"{nameof(USCount)} : {USCount}");
             Console.WriteLine($"{nameof(OffsetUS)} : {OffsetUS}");
-            Console.WriteLine($"{nameof(UnkB)} : {UnkB}");
+            Console.WriteLine($"{nameof(EnumDescription)} : {EnumDescription}");
             Console.WriteLine($"{nameof(UnkC)} : {UnkC}");
         }
     }

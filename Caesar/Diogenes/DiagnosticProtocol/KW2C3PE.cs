@@ -84,6 +84,18 @@ namespace Diogenes.DiagnosticProtocol
             return false;
         }
 
+        public override List<DTCContext> ReportDtcsByStatusMask(ECUConnection connection, ECUVariant variant, byte inMask = 0)
+        {
+            // FIXME : KW2C3PE probably uses a different set of commands at 0x18
+            return base.ReportDtcsByStatusMask(connection, variant, inMask);
+        }
+
+        public override bool GetDtcSnapshot(DTC dtc, ECUConnection connection, out byte[] snapshotBytes)
+        {
+            // FIXME
+            return base.GetDtcSnapshot(dtc, connection, out snapshotBytes);
+        }
+
         public override void ConnectionEstablishedHandler(ECUConnection connection)
         {
             if (!EnterDiagnosticSession(connection))
@@ -109,10 +121,16 @@ namespace Diogenes.DiagnosticProtocol
             connection.SendMessage(new byte[] { 0x3E, 0x01 }, true);
         }
 
+        public override bool IsResponseToTesterPresent(byte[] inBuffer)
+        {
+            return inBuffer.SequenceEqual(new byte[] { 0x7E, 0x01 });
+        }
+
         public override void ConnectionClosingHandler(ECUConnection connection)
         {
             ExitDiagnosticSession(connection);
         }
+
 
         public override string GetProtocolName()
         {

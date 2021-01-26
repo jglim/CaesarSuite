@@ -41,7 +41,6 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.debugJ2534ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.j2534InterfacesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultJ2534InterfaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,10 +52,13 @@
             this.cFFExportFlashSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.uDSHexEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.diagnosticTroubleCodesDTCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewECUMetadataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.showTraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.identifyECUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fingerprintModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLastFingerprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -168,7 +170,6 @@
             // 
             this.connectionToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.connectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.debugJ2534ToolStripMenuItem,
             this.j2534InterfacesToolStripMenuItem,
             this.disconnectToolStripMenuItem});
             this.connectionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -176,14 +177,6 @@
             this.connectionToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
             this.connectionToolStripMenuItem.Text = "Connection";
             this.connectionToolStripMenuItem.DropDownOpening += new System.EventHandler(this.connectionToolStripMenuItem_DropDownOpening);
-            // 
-            // debugJ2534ToolStripMenuItem
-            // 
-            this.debugJ2534ToolStripMenuItem.Name = "debugJ2534ToolStripMenuItem";
-            this.debugJ2534ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
-            this.debugJ2534ToolStripMenuItem.Text = "Debug: J2534";
-            this.debugJ2534ToolStripMenuItem.Visible = false;
-            this.debugJ2534ToolStripMenuItem.Click += new System.EventHandler(this.debugJ2534ToolStripMenuItem_Click);
             // 
             // j2534InterfacesToolStripMenuItem
             // 
@@ -217,10 +210,13 @@
             this.cFFExportFlashSegmentsToolStripMenuItem,
             this.toolStripSeparator3,
             this.uDSHexEditorToolStripMenuItem,
+            this.diagnosticTroubleCodesDTCToolStripMenuItem,
+            this.viewECUMetadataToolStripMenuItem,
             this.toolStripSeparator5,
             this.showTraceToolStripMenuItem,
             this.copyConsoleToolStripMenuItem,
-            this.clearConsoleToolStripMenuItem});
+            this.clearConsoleToolStripMenuItem,
+            this.identifyECUToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.eCUToolStripMenuItem.Text = "Tools";
@@ -228,74 +224,96 @@
             // setSecurityLevelToolStripMenuItem
             // 
             this.setSecurityLevelToolStripMenuItem.Name = "setSecurityLevelToolStripMenuItem";
-            this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.setSecurityLevelToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.setSecurityLevelToolStripMenuItem.Text = "Set Security Level (DLL)";
             this.setSecurityLevelToolStripMenuItem.Click += new System.EventHandler(this.setSecurityLevelToolStripMenuItem_Click);
             // 
             // fixClientAccessPermissionsToolStripMenuItem
             // 
             this.fixClientAccessPermissionsToolStripMenuItem.Name = "fixClientAccessPermissionsToolStripMenuItem";
-            this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.fixClientAccessPermissionsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.fixClientAccessPermissionsToolStripMenuItem.Text = "Fix Client Access Permissions";
             this.fixClientAccessPermissionsToolStripMenuItem.Click += new System.EventHandler(this.fixClientAccessPermissionsToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(224, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(238, 6);
             // 
             // cFFFlashSplicerToolStripMenuItem
             // 
             this.cFFFlashSplicerToolStripMenuItem.Name = "cFFFlashSplicerToolStripMenuItem";
-            this.cFFFlashSplicerToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.cFFFlashSplicerToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.cFFFlashSplicerToolStripMenuItem.Text = "CFF: Flash Splicer";
             this.cFFFlashSplicerToolStripMenuItem.Click += new System.EventHandler(this.cFFFlashSplicerToolStripMenuItem_Click);
             // 
             // cFFExportFlashSegmentsToolStripMenuItem
             // 
             this.cFFExportFlashSegmentsToolStripMenuItem.Name = "cFFExportFlashSegmentsToolStripMenuItem";
-            this.cFFExportFlashSegmentsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.cFFExportFlashSegmentsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.cFFExportFlashSegmentsToolStripMenuItem.Text = "CFF: Export Flash Segments";
             this.cFFExportFlashSegmentsToolStripMenuItem.Click += new System.EventHandler(this.cFFExportFlashSegmentsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(224, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(238, 6);
             // 
             // uDSHexEditorToolStripMenuItem
             // 
             this.uDSHexEditorToolStripMenuItem.Name = "uDSHexEditorToolStripMenuItem";
-            this.uDSHexEditorToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.uDSHexEditorToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.uDSHexEditorToolStripMenuItem.Text = "UDS Hex Editor";
             this.uDSHexEditorToolStripMenuItem.Click += new System.EventHandler(this.uDSHexEditorToolStripMenuItem_Click);
+            // 
+            // diagnosticTroubleCodesDTCToolStripMenuItem
+            // 
+            this.diagnosticTroubleCodesDTCToolStripMenuItem.Name = "diagnosticTroubleCodesDTCToolStripMenuItem";
+            this.diagnosticTroubleCodesDTCToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.diagnosticTroubleCodesDTCToolStripMenuItem.Text = "Diagnostic Trouble Codes (DTC)";
+            this.diagnosticTroubleCodesDTCToolStripMenuItem.Click += new System.EventHandler(this.diagnosticTroubleCodesDTCToolStripMenuItem_Click);
+            // 
+            // viewECUMetadataToolStripMenuItem
+            // 
+            this.viewECUMetadataToolStripMenuItem.Name = "viewECUMetadataToolStripMenuItem";
+            this.viewECUMetadataToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.viewECUMetadataToolStripMenuItem.Text = "View ECU Metadata";
+            this.viewECUMetadataToolStripMenuItem.Click += new System.EventHandler(this.viewECUMetadataToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(238, 6);
             // 
             // showTraceToolStripMenuItem
             // 
             this.showTraceToolStripMenuItem.Name = "showTraceToolStripMenuItem";
             this.showTraceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Q)));
-            this.showTraceToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.showTraceToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.showTraceToolStripMenuItem.Text = "Show Trace";
             this.showTraceToolStripMenuItem.Click += new System.EventHandler(this.showTraceToolStripMenuItem_Click);
             // 
             // copyConsoleToolStripMenuItem
             // 
             this.copyConsoleToolStripMenuItem.Name = "copyConsoleToolStripMenuItem";
-            this.copyConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.copyConsoleToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.copyConsoleToolStripMenuItem.Text = "Copy Console";
             this.copyConsoleToolStripMenuItem.Click += new System.EventHandler(this.copyConsoleToolStripMenuItem_Click);
             // 
             // clearConsoleToolStripMenuItem
             // 
             this.clearConsoleToolStripMenuItem.Name = "clearConsoleToolStripMenuItem";
-            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.clearConsoleToolStripMenuItem.Text = "Clear Console";
             this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
+            // 
+            // identifyECUToolStripMenuItem
+            // 
+            this.identifyECUToolStripMenuItem.Name = "identifyECUToolStripMenuItem";
+            this.identifyECUToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.identifyECUToolStripMenuItem.Text = "Identify ECU";
+            this.identifyECUToolStripMenuItem.Visible = false;
+            this.identifyECUToolStripMenuItem.Click += new System.EventHandler(this.identifyECUToolStripMenuItem_Click);
             // 
             // preferencesToolStripMenuItem1
             // 
@@ -483,7 +501,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem eCUToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setSecurityLevelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem debugJ2534ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem j2534InterfacesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defaultJ2534InterfaceToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -508,6 +525,9 @@
         private System.Windows.Forms.ToolStripMenuItem useLastSCNToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem writeZerosVediamoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allowWriteVariantCodingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem diagnosticTroubleCodesDTCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewECUMetadataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem identifyECUToolStripMenuItem;
     }
 }
 

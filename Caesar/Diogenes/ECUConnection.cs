@@ -62,6 +62,8 @@ namespace Diogenes
         public API ConnectionAPI;
         public Device ConnectionDevice;
         public Channel ConnectionChannel;
+        public Simulation.SimulatedDevice SimulationChannel;
+
         public string DriverPath = "";
 
         public delegate void ConnectionStateChanged(string newStateDescription);
@@ -73,22 +75,21 @@ namespace Diogenes
         public ConnectionState State;
         public byte[] CanIdentifier = new byte[] { 0xDE, 0xAD, 0xBE, 0xEF };
         public byte[] RxCanIdentifier = new byte[] { 0xDE, 0xAD, 0xBE, 0xEF };
+        public int InternalTimeout = 2000;
         public ECU EcuContext;
 
         public int ECUVariantID = 0;
         public bool VariantIsAvailable = false;
         public BaseProtocol ConnectionProtocol = null;
 
-
-        //public bool UDSCapable = false;
-
+        // this should really go into a dedicated logger
         public StringBuilder CommunicationsLogHighLevel = new StringBuilder();
 
         // constant 2000 ms as recomended by the ISO 15765-3 standard (§6.3.3).
-        // strangely it times out too quickly
         Timer TesterPresentTimer = new Timer(2000);
 
-        public volatile bool TransactionInProgress = false;
+        // holds out-of-order, non testerpresent bytes since packets (apparently) can be received in any order
+        Queue<byte[]> OutOfOrderBytesList = new Queue<byte[]>();
 
         public enum ConnectionState
         {
@@ -109,7 +110,7 @@ namespace Diogenes
         public ECUConnection()
         {
             // create a dummy connection
-            FriendlyName = "SIMULATION";
+            FriendlyName = "Simulation";
             FriendlyProfileName = "SIMULATION_PROFILE";
             State = ConnectionState.PendingDeviceSelection;
             ConnectionUpdateState();
@@ -118,29 +119,54 @@ namespace Diogenes
         public ECUConnection(string fileName, string friendlyName)
         {
             DriverPath = fileName;
+            InternalTimeout = 2000;
 
-            // apparently AVDI embeds their hardware identifier in the device's name and path, which might be regarded as sensitive when sharing
-            // this redacts it (somewhat) to help save some time for testers
-            if (DriverIsAVDI())
+            if (!IsSimulation())
             {
-                FriendlyName = "AVDI-PT";
-                Console.WriteLine($"Initializing new connection to {friendlyName}");
+                // apparently AVDI embeds their hardware identifier in the device's name and path, which might be regarded as sensitive when sharing
+                // this redacts it (somewhat) to help save some time for testers
+                if (DriverIsAVDI())
+                {
+                    FriendlyName = "AVDI-PT";
+                    Console.WriteLine($"Initializing new connection to {friendlyName}");
+                }
+                else
+                {
+                    FriendlyName = friendlyName;
+                    Console.WriteLine($"Initializing new connection to {friendlyName} using {fileName}");
+                }
+                ConnectionAPI = APIFactory.GetAPI(fileName);
             }
-            else
+            else 
             {
-                FriendlyName = friendlyName;
-                Console.WriteLine($"Initializing new connection to {friendlyName} using {fileName}");
+                FriendlyName = "Simulation";
+                ConnectionAPI = null;
             }
+
             SetConnectionDefaults();
-
-            ConnectionAPI = APIFactory.GetAPI(fileName);
             State = ConnectionState.PendingDeviceSelection;
             ConnectionUpdateState();
             TesterPresentTimer.Elapsed += TesterPresentTimer_Elapsed;
             TesterPresentTimer.Start();
-            // RxTimer.Start();
         }
 
+        public bool IsSimulation() 
+        {
+            return DriverPath == "SIMULATION";
+        }
+
+        public static List<Tuple<string, string>> GetAvailableJ2534NamesAndDrivers() 
+        {
+            List<Tuple<string, string>> result = new List<Tuple<string, string>>();
+            foreach (APIInfo apiInfo in APIFactory.GetAPIList())
+            {
+                result.Add(new Tuple<string, string>(apiInfo.Name, apiInfo.Filename));
+            }
+#if DEBUG
+            result.Add(new Tuple<string, string>("Simulation", "SIMULATION"));
+#endif
+            return result;
+        }
 
         private void TesterPresentTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -148,7 +174,7 @@ namespace Diogenes
             if (State > ConnectionState.DeviceSelectedPendingChannelConnection)
             {
                 // TesterPresent, expects 0x7E, 0x00
-                if (ConnectionProtocol != null) 
+                if (ConnectionProtocol != null)
                 {
                     ConnectionProtocol.SendTesterPresent(this);
                 }
@@ -157,13 +183,16 @@ namespace Diogenes
 
         public void OpenDevice()
         {
-            try
+            if (!IsSimulation())
             {
-                ConnectionDevice = ConnectionAPI.GetDevice();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                try
+                {
+                    ConnectionDevice = ConnectionAPI.GetDevice();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             State = ConnectionState.DeviceSelectedPendingChannelConnection;
             ConnectionUpdateState();
@@ -171,6 +200,12 @@ namespace Diogenes
 
         private void ConnectionUpdateState()
         {
+            if (IsSimulation())
+            {
+                ConnectionStateChangeEvent?.Invoke($"Operating in simulation mode");
+                return;
+            }
+
             string connectionState = "No interface selected (disconnected)";
             if (ConnectionDevice != null)
             {
@@ -198,10 +233,14 @@ namespace Diogenes
         {
             State = ConnectionState.PendingDeviceSelection;
             EcuContext = ecuContext;
-            if (ConnectionDevice is null)
+
+            if (!IsSimulation())
             {
-                Console.WriteLine("No interfaces available : please select a J2534 interface from the Connection menu");
-                return ConnectResponse.NoValidInterface;
+                if (ConnectionDevice is null)
+                {
+                    Console.WriteLine("No interfaces available : please select a J2534 interface from the Connection menu");
+                    return ConnectResponse.NoValidInterface;
+                }
             }
 
             if (!profile.Qualifier.StartsWith("HSCAN"))
@@ -220,46 +259,54 @@ namespace Diogenes
             }
             FriendlyProfileName = profile.Qualifier;
 
-            try
+            if (IsSimulation()) 
             {
-                // only ISO15765 is supported
-                // CAN_ID_BOTH : accepts 11-bit and 29-bit CAN messages
-                // baudrate is specified by the ECU
-                ConnectionChannel = ConnectionDevice.GetChannel(Protocol.ISO15765, (Baud)profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_BAUDRATE), ConnectFlag.CAN_ID_BOTH);
-                Console.WriteLine($"Target voltage : {ConnectionChannel.MeasureBatteryVoltage()} mV");
-                ConnectionChannel.DefaultTxFlag = TxFlag.ISO15765_FRAME_PAD;
-
-                J2534SetFilters(profile);
-                J2534SetConfig(profile);
-                J2534FlushBuffers();
-
-
+                SimulationChannel = new Simulation.Simulated_CRD3();
+                Console.WriteLine("Connected (Simulation)");
             }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Connection failed with exception : {e.Message}");
-                return ConnectResponse.FailedWithException;
-            }
-
-            // this chunk is repeated for AVDI devices; OpenPort2 does not care, Scanmatik refuses to continue if reconfigured without clearing prior filters
-            // wrap the second attempt in a separate try block, so that we can suppress any potential filter errors
-            if (DriverIsAVDI())
+            else 
             {
                 try
                 {
-                    ConnectionChannel.ClearMsgFilters();
-                    J2534SetFilters(profile);
+                    // only ISO15765 is supported
+                    // CAN_ID_BOTH : accepts 11-bit and 29-bit CAN messages
+                    // baudrate is specified by the ECU
+                    ConnectionChannel = ConnectionDevice.GetChannel(Protocol.ISO15765, (Baud)profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_BAUDRATE), ConnectFlag.CAN_ID_BOTH);
+                    Console.WriteLine($"Target voltage : {ConnectionChannel.MeasureBatteryVoltage()} mV");
+                    ConnectionChannel.DefaultTxFlag = TxFlag.ISO15765_FRAME_PAD;
+
+                    SetCANIdentifiers(profile);
+                    J2534SetFilters();
                     J2534SetConfig(profile);
                     J2534FlushBuffers();
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Console.WriteLine($"AVDI Second config exception suppressed: {ex.Message}");
+                    Console.WriteLine($"Connection failed with exception : {e.Message}");
+                    return ConnectResponse.FailedWithException;
+                }
+
+                // this chunk is repeated for AVDI devices; OpenPort2 does not care, Scanmatik refuses to continue if reconfigured without clearing prior filters
+                // wrap the second attempt in a separate try block, so that we can suppress any potential filter errors
+                if (DriverIsAVDI())
+                {
+                    try
+                    {
+                        ConnectionChannel.ClearMsgFilters();
+                        SetCANIdentifiers(profile);
+                        J2534SetFilters();
+                        J2534SetConfig(profile);
+                        J2534FlushBuffers();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"AVDI Second config exception suppressed: {ex.Message}");
+                    }
                 }
             }
             
+            
             State = ConnectionState.ChannelConnectedPendingEcuContact;
-
             ConnectionUpdateState();
             return ConnectResponse.OK;
         }
@@ -269,19 +316,26 @@ namespace Diogenes
             return DriverPath.ToUpper().EndsWith("ABRPT32.DLL");
         }
 
-        public void J2534SetFilters(ECUInterfaceSubtype profile)
+        // this (and the overloaded variant) will be an issue when operating in gateway mode;
+        // gateway mode will likely require the two separate can ids to be defined
+        public void SetCANIdentifiers(ECUInterfaceSubtype profile)
         {
-            // setup ecu filter (mimicking vediamo's behavior)
-
+            SetCANIdentifiers(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_REQUEST_CANIDENTIFIER), profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_RESPONSE_CANIDENTIFIER));
+        }
+        public void SetCANIdentifiers(int canIdentifier, int rxCanIdentifier)
+        {
             // convert the CBF's identifier integers to byte arrays
-            CanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_REQUEST_CANIDENTIFIER));
-            RxCanIdentifier = BitConverter.GetBytes(profile.GetComParameterValue(ECUInterfaceSubtype.ParamName.CP_RESPONSE_CANIDENTIFIER));
+            CanIdentifier = BitConverter.GetBytes(canIdentifier);
+            RxCanIdentifier = BitConverter.GetBytes(rxCanIdentifier);
             // input byte data is in big-endian
             Array.Reverse(CanIdentifier);
             Array.Reverse(RxCanIdentifier);
+        }
 
+        public void J2534SetFilters()
+        {
+            // setup ecu filter (mimicking vediamo's behavior)
             MessageFilter filter = new MessageFilter();
-
             // Apparently in the EIS series, the RX identifier is !! NOT !! CanIdentifier+8 per ISO15765, so the automatic config in J2534-Sharp will fail
 
             // manually configure a ISO15765 filter
@@ -291,6 +345,7 @@ namespace Diogenes
             filter.FlowControl = CanIdentifier; // TX address
             filter.TxFlags = TxFlag.ISO15765_FRAME_PAD;
 
+            ConnectionChannel.ClearMsgFilters();
             ConnectionChannel.StartMsgFilter(filter);
         }
 
@@ -329,7 +384,7 @@ namespace Diogenes
 
         public void ExecUserDiagJob(byte[] request, DiagService diagService)
         {
-            Console.WriteLine($"\r\nRunning: {diagService.Qualifier}");
+            Console.WriteLine($"\r\n{diagService.Qualifier}");
             byte[] response = SendMessage(request);
             foreach (List<DiagPreparation> wtf in diagService.OutputPreparations)
             {
@@ -338,7 +393,7 @@ namespace Diogenes
                     //outputPreparation.PrintDebug();
                     DiagPresentation presentation = outputPreparation.ParentECU.GlobalPresentations[outputPreparation.PresPoolIndex];
                     // presentation.PrintDebug();
-                    Console.WriteLine($"    -> {presentation.InterpretData(response, outputPreparation)}");
+                    Console.WriteLine($"{presentation.InterpretData(response, outputPreparation)}");
                 }
             }
             // check if the response was an ECU seed
@@ -348,24 +403,28 @@ namespace Diogenes
             }
         }
 
-        public byte[] SendMessage(IEnumerable<byte> message, bool quiet = false)
+        public byte[] SendMessage(IEnumerable<byte> message, bool testerPresenceRequest = false)
         {
+            LogWrite(message);
+            if (IsSimulation()) 
+            {
+                if (SimulationChannel is null) 
+                {
+                    throw new Exception("Simulation channel was not initialized");
+                }
+                byte[] simResponse = SimulationChannel.ReceiveRequest(message);
+                LogRead(simResponse);
+                return simResponse;
+            }
+
             byte[] response = Array.Empty<byte>();
 
-            // hack: "quiet" is almost always for tester presence, this prevents tester presence from interrupting existing transactions
-            if (TransactionInProgress && quiet) 
-            {
-                return response;
-            }
-            TransactionInProgress = true;
-
-            CommunicationsLogHighLevel.Append($"W {BitUtility.BytesToHex(message.ToArray(), true)}\r\n");
 
             // prepare data to send
             List<byte> packet = new List<byte>(CanIdentifier);
             packet.AddRange(message);
             string messageAsString = BitUtility.BytesToHex(message.ToArray(), true);
-            if (!quiet)
+            if (!testerPresenceRequest)
             {
                 // LogPacket(message, true);
             }
@@ -373,13 +432,11 @@ namespace Diogenes
             if (ConnectionDevice is null)
             {
                 Console.WriteLine($"[!] Attempted to write into an invalid device, data: {messageAsString}");
-                TransactionInProgress = false;
                 return response;
             }
             if (ConnectionChannel is null) 
             {
                 Console.WriteLine($"[!] Attempted to write into an invalid channel, data: {messageAsString}");
-                TransactionInProgress = false;
                 return response;
             }
 
@@ -391,14 +448,32 @@ namespace Diogenes
             catch (Exception ex) 
             {
                 Console.WriteLine($"[!] Exception while sending {messageAsString} : {ex.Message}");
-                TransactionInProgress = false;
                 return response;
             }
 
-            // reset the heartbeat timer
+            // reset the heartbeat timer; I don't know the actual behavior per the spec
             TesterPresentTimer.Stop();
             TesterPresentTimer.Start();
 
+            // this loop catches 7F xx 78 reqeuests from the ecu, where it needs more time to complete an action
+            bool responseIsValid = false;
+            while (!responseIsValid)
+            {
+                response = ReadResponse(messageAsString, testerPresenceRequest);
+                responseIsValid = !IsECURequestingForWait(response);
+            }
+
+            return response;
+        }
+
+        public byte[] ReadResponse(string originalMessageAsStringForDebug, bool testerPresenceRequest) 
+        {
+            byte[] response = Array.Empty<byte>();
+            // before reading from ecu, check if there were out-of-order responses that were stored
+            if (OutOfOrderBytesList.Count > 0)
+            {
+                return OutOfOrderBytesList.Dequeue();
+            }
 
             // read response from ecu
             Stopwatch sw = new Stopwatch();
@@ -409,7 +484,7 @@ namespace Diogenes
             {
                 if (sw.ElapsedMilliseconds > 2500) // is this P2_TIMEOUT? initially picked 2000 since that is the minimum for tester presence 
                 {
-                    Console.WriteLine($"[!] Internally timed out: {messageAsString}");
+                    Console.WriteLine($"[!] Internally timed out: {originalMessageAsStringForDebug}");
                     sw.Stop();
                     break;
                 }
@@ -445,20 +520,45 @@ namespace Diogenes
                             continue;
                         }
 
-                        if (!quiet)
-                        {
-                            // LogPacket(rxMessageBody, false);
-                        }
                         response = rxMessageBody;
-                        waitingForPacket = false;
-                        break;
+
+                        LogRead(response);
+                        // if it's a tester presence response, skip it and retry for another packet
+                        if (ConnectionProtocol.IsResponseToTesterPresent(response))
+                        {
+                            // if it is a TP request, we can exit now
+                            if (testerPresenceRequest)
+                            {
+                                return Array.Empty<byte>();
+                            }
+                            else
+                            {
+                                // accidentally received an out-of-order TP response, silently discard it
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            // TP receiving someone else's valid command, push it back into the queue and exit
+                            if (testerPresenceRequest)
+                            {
+                                OutOfOrderBytesList.Enqueue(response);
+                                return Array.Empty<byte>();
+                            }
+                            else
+                            {
+                                // received a packet normally, check in parent caller if the ECU was asking us to wait
+                                waitingForPacket = false;
+                                break;
+                            }
+                        }
                         //Console.WriteLine($"ECU:  {BitUtility.BytesToHex(messageBody, true)}");
                     }
                 }
-                else if (readResult.Result == ResultCode.BUFFER_EMPTY) 
+                else if (readResult.Result == ResultCode.BUFFER_EMPTY)
                 {
                     // nothing in the mailbox, try again
-                    Console.WriteLine($"[!] Retrying: empty buffer: {readResult.Result} for request {BitUtility.BytesToHex(message.ToArray())}");
+                    Console.WriteLine($"[!] Retrying: empty buffer: {readResult.Result} for request {originalMessageAsStringForDebug}");
                 }
                 else
                 {
@@ -466,10 +566,33 @@ namespace Diogenes
                     break;
                 }
             }
-            CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(response.ToArray(), true)}\r\n");
-            
-            TransactionInProgress = false;
             return response;
+        }
+
+        public bool IsECURequestingForWait(byte[] response)
+        {
+            if ((response.Length == 3) && (response[0] == 0x7F) && (response[2] == 0x78))
+            {
+                if ((ConnectionProtocol.GetProtocolName() == "UDS") || (ConnectionProtocol.GetProtocolName() == "KW2C3PE"))
+                {
+                    // ecu requesting for more time
+                    return true;
+                }
+                else 
+                {
+                    Console.WriteLine("Received NR that looks like a wait request, but the current protocol does not seem to support it.");
+                }
+            }
+            return false;
+        }
+
+        public void LogRead(IEnumerable<byte> inBuffer)
+        {
+            CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(inBuffer.ToArray(), true)}\r\n");
+        }
+        public void LogWrite(IEnumerable<byte> inBuffer)
+        {
+            CommunicationsLogHighLevel.Append($"W {BitUtility.BytesToHex(inBuffer.ToArray(), true)}\r\n");
         }
 
         public void TryCleanup()

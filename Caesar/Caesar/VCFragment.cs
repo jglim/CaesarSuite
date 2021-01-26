@@ -19,7 +19,7 @@ namespace Caesar
         public int ByteOrder;
         public int RawBitLength;
         public int IttOffset;
-        public int MeaningA_Presentation;
+        public int InfoPoolIndex;
         public int MeaningB;
         public int MeaningC;
         public int CCFHandle;
@@ -38,11 +38,13 @@ namespace Caesar
 
         public static readonly byte[] FragmentLengthTable = new byte[] { 0, 1, 4, 8, 0x10, 0x20, 0x40 };
         public VCDomain ParentDomain;
+        public ECU ParentECU;
 
-        public VCFragment(BinaryReader reader, VCDomain parentDomain, long fragmentTable, int fragmentIndex, CTFLanguage language) 
+        public VCFragment(BinaryReader reader, VCDomain parentDomain, long fragmentTable, int fragmentIndex, CTFLanguage language, ECU parentEcu) 
         {
             // see DIOpenVarCodeFrag
             ParentDomain = parentDomain;
+            ParentECU = parentEcu;
 
             long fragmentTableEntry = fragmentTable + (10 * fragmentIndex);
             reader.BaseStream.Seek(fragmentTableEntry, SeekOrigin.Begin);
@@ -65,7 +67,7 @@ namespace Caesar
             ByteOrder = CaesarReader.ReadBitflagUInt16(ref fragmentBitflags, reader);
             RawBitLength = CaesarReader.ReadBitflagInt32(ref fragmentBitflags, reader);
             IttOffset = CaesarReader.ReadBitflagInt32(ref fragmentBitflags, reader);
-            MeaningA_Presentation = CaesarReader.ReadBitflagInt32(ref fragmentBitflags, reader, -1);
+            InfoPoolIndex = CaesarReader.ReadBitflagInt32(ref fragmentBitflags, reader, -1);
             MeaningB = CaesarReader.ReadBitflagInt32(ref fragmentBitflags, reader, -1);
             MeaningC = CaesarReader.ReadBitflagInt32(ref fragmentBitflags, reader, -1);
             CCFHandle = CaesarReader.ReadBitflagInt16(ref fragmentBitflags, reader, -1);
@@ -160,7 +162,10 @@ namespace Caesar
 
                 using (BinaryReader poolReader = new BinaryReader(new MemoryStream(infoPool))) 
                 {
-                    poolReader.BaseStream.Seek(ecu.Info_EntrySize * MeaningA_Presentation, SeekOrigin.Begin);
+                    DiagPresentation pres = ParentECU.GlobalInternalPresentations[InfoPoolIndex];
+                    /*
+                    // depreciate use of ReadCBFWithOffset
+                    poolReader.BaseStream.Seek(ecu.Info_EntrySize * InfoPoolIndex, SeekOrigin.Begin);
                     int presentationStructOffset = poolReader.ReadInt32();
                     int presentationStructSize = poolReader.ReadInt32();
 
@@ -178,10 +183,11 @@ namespace Caesar
                     else 
                     {
                         BitLength = CaesarStructure.ReadCBFWithOffset(0x21, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // ???
-
                     }
+                    */
+                    BitLength = pres.TypeLength_1a > 0 ? pres.TypeLength_1a : pres.TypeLengthBytesMaybe_21;
                     // if value was specified in bytes, convert to bits
-                    if (presentationMode == 0)
+                    if (pres.Type_1c == 0)
                     {
                         BitLength *= 8;
                     }
@@ -235,7 +241,7 @@ namespace Caesar
                 Console.WriteLine($"{nameof(ByteOrder)} : {ByteOrder}");
                 Console.WriteLine($"{nameof(RawBitLength)} : {RawBitLength}");
                 Console.WriteLine($"{nameof(IttOffset)} : {IttOffset}");
-                Console.WriteLine($"{nameof(MeaningA_Presentation)} : {MeaningA_Presentation}");
+                Console.WriteLine($"{nameof(InfoPoolIndex)} : {InfoPoolIndex}");
                 Console.WriteLine($"{nameof(MeaningB)} : {MeaningB}");
                 Console.WriteLine($"{nameof(MeaningC)} : {MeaningC}");
                 Console.WriteLine($"{nameof(CCFHandle)} : {CCFHandle}");

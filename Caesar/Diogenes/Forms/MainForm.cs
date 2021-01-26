@@ -11,7 +11,6 @@ using Caesar;
 using System.IO;
 using Diogenes.Properties;
 using System.Runtime.InteropServices;
-using SAE.J2534;
 using Diogenes.SecurityAccess;
 
 namespace Diogenes
@@ -54,9 +53,14 @@ namespace Diogenes
                 {
                     CaesarContainer cbfContainer = new CaesarContainer(File.ReadAllBytes(file));
                     Containers.Add(cbfContainer);
+                    //PostInitDebug(cbfContainer);
                 }
             }
             LoadTree();
+        }
+
+        private void PostInitDebug(CaesarContainer cbfContainer) 
+        {
         }
 
         private void InitializeTree()
@@ -596,8 +600,6 @@ namespace Diogenes
 
         private void ShowAbout() 
         {
-            // please change this if you fork the project, thanks!
-            // MessageBox.Show($"Diogenes {GetVersion()}\nCaesar {CaesarContainer.GetCaesarVersionString()}\n\nIcons from famfamfam\nhttps://github.com/jglim/CaesarSuite", "About", MessageBoxButtons.OK);
             AboutForm about = new AboutForm($"Diogenes {GetVersion()} (Caesar {CaesarContainer.GetCaesarVersionString()})");
             about.ShowDialog();
         }
@@ -635,7 +637,6 @@ namespace Diogenes
                 TryLoadFile(ofd.FileName);
             }
         }
-        
 
         private void TryLoadFile(string fileName)
         {
@@ -687,16 +688,13 @@ namespace Diogenes
             ToolStripItem defaultItem = j2534InterfacesToolStripMenuItem.DropDownItems.Add("(No devices found)");
             defaultItem.Enabled = false;
 
-            foreach (APIInfo apiInfo in APIFactory.GetAPIList()) 
+            foreach (Tuple<string,string> device in ECUConnection.GetAvailableJ2534NamesAndDrivers()) 
             {
                 defaultItem.Visible = false;
-                // Console.WriteLine($"Found {apiInfo.Name} from {apiInfo.Filename}");
-                ToolStripItem newItem = j2534InterfacesToolStripMenuItem.DropDownItems.Add(apiInfo.Name);
-                newItem.Tag = apiInfo.Filename;
+                ToolStripItem newItem = j2534InterfacesToolStripMenuItem.DropDownItems.Add(device.Item1);
+                newItem.Tag = device.Item2;
                 newItem.Click += J2534InterfaceItem_Click;
             }
-
-            // Console.WriteLine("Completed enumeration of J2534 devices");
         }
 
         private void J2534InterfaceItem_Click(object sender, EventArgs e)
@@ -885,14 +883,6 @@ namespace Diogenes
 
         private void RefreshPreferencesDropdown()
         {
-            /*
-             
-            AllowVC,
-            EnableSCNZero,
-            EnableFingerprintClone,
-            FingerprintValue,
-
-            */
             // VC safety switch
             allowWriteVariantCodingToolStripMenuItem.Checked = Preferences.GetValue(Preferences.PreferenceKey.AllowVC) == "true";
 
@@ -950,6 +940,73 @@ namespace Diogenes
             foreach (string file in files)
             {
                 TryLoadFile(file);
+            }
+        }
+
+        // maybe this should belong in ECUConnection
+        private ECUVariant GetCurrentVariantInstance()
+        {
+            if (!(Connection?.VariantIsAvailable ?? false))
+            {
+                return null;
+            }
+
+            foreach (CaesarContainer container in Containers)
+            {
+                foreach (ECU ecu in container.CaesarECUs)
+                {
+                    foreach (ECUVariant variant in ecu.ECUVariants)
+                    {
+                        foreach (ECUVariantPattern pattern in variant.VariantPatterns)
+                        {
+                            if (pattern.VariantID == Connection.ECUVariantID)
+                            {
+                                return variant;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private void diagnosticTroubleCodesDTCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Connection.ConnectionProtocol is null)
+            {
+                MessageBox.Show("Please initiate contact with a target first.");
+                return;
+            }
+            if (Connection.ConnectionProtocol.GetProtocolName() != "UDS")
+            {
+                MessageBox.Show("Sorry, only UDS is supported at this time.");
+                // return was removed from here, to allow for kw2c3pe debugging
+            }
+            if (!(Connection?.VariantIsAvailable ?? false))
+            {
+                MessageBox.Show("DTCs require the variant to be identified first");
+                return;
+            }
+            ECUVariant currentVariant = GetCurrentVariantInstance();
+
+            DTCForm dtcForm = new DTCForm(Connection, currentVariant);
+            dtcForm.ShowDialog();
+        }
+
+        private void viewECUMetadataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ECUMetadata.ShowMetadataModal(Connection);
+        }
+
+        private void identifyECUToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ECUIdentification.TryReadChassisNumber(Connection, out string vin))
+            {
+                Console.WriteLine($"VIN: {vin}");
+            }
+            else
+            {
+                Console.WriteLine($"Target could not be identified");
             }
         }
     }

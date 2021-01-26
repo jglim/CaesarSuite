@@ -22,16 +22,16 @@ namespace Caesar
         public int SubsectionB_Offset;
         public int ComParamsCount; // C
         public int ComParamsOffset;
-        public int SubsectionD_Count; // D
-        public int SubsectionD_Offset;
+        public int DiagServiceCode_Count; // D : DSC
+        public int DiagServiceCode_Offset;
         public int DiagServicesCount; // E
         public int DiagServicesOffset;
-        public int SubsectionF_Count; // F
-        public int SubsectionF_Offset;
-        public int SubsectionG_Count; // G
-        public int SubsectionG_Offset;
-        public int SubsectionH_Count; // H
-        public int SubsectionH_Offset;
+        public int DTC_Count; // F
+        public int DTC_Offset;
+        public int EnvironmentCtx_Count; // G
+        public int EnvironmentCtx_Offset;
+        public int Xref_Count; // H
+        public int Xref_Offset;
         public int VCDomainsCount; // I
         public int VCDomainsOffset;
 
@@ -40,18 +40,26 @@ namespace Caesar
 
         public List<int> VCDomainPoolOffsets = new List<int>();
         public List<int> DiagServicesPoolOffsets = new List<int>();
+        public List<Tuple<int, int, int>> DTCsPoolOffsetsWithBounds = new List<Tuple<int, int, int>>();
+        public List<int> EnvironmentContextsPoolOffsets = new List<int>();
 
         public List<VCDomain> VCDomains = new List<VCDomain>();
         public List<ECUVariantPattern> VariantPatterns = new List<ECUVariantPattern>();
         public DiagService[] DiagServices = new DiagService[] { };
+        public DTC[] DTCs = new DTC[] { };
+        public DiagService[] EnvironmentContexts = new DiagService[] { };
+        //public EnvironmentContext[] EnvironmentContexts = new EnvironmentContext[] { };
+        public int[] Xrefs = new int[] { };
 
         public long BaseAddress;
+        public ECU ParentECU;
 
         public ECUVariant(BinaryReader reader, ECU parentEcu, CTFLanguage language, long baseAddress, int blockSize)
         {
             // int __usercall DIIFindVariantByECUID@<eax>(ECU_VARIANT *a1@<ebx>, _DWORD *a2, int a3, __int16 a4, int a5)
 
             BaseAddress = baseAddress;
+            ParentECU = parentEcu;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             byte[] variantBytes = reader.ReadBytes(blockSize);
 
@@ -73,16 +81,16 @@ namespace Caesar
                 SubsectionB_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 5 
                 ComParamsCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 6 
                 ComParamsOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader); // 7 
-                SubsectionD_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 8 
-                SubsectionD_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 9 
+                DiagServiceCode_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 8 
+                DiagServiceCode_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 9 
                 DiagServicesCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 10 
                 DiagServicesOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 11 
-                SubsectionF_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 12 
-                SubsectionF_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 13 
-                SubsectionG_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 14 
-                SubsectionG_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 15 
-                SubsectionH_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 16 
-                SubsectionH_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 17 
+                DTC_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 12 
+                DTC_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 13 
+                EnvironmentCtx_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 14
+                EnvironmentCtx_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 15 
+                Xref_Count = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 16
+                Xref_Offset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 17 
 
                 VCDomainsCount = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 18 
                 VCDomainsOffset = CaesarReader.ReadBitflagInt32(ref bitFlags, variantReader);  // 19 
@@ -90,30 +98,72 @@ namespace Caesar
                 NegativeResponseName = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, variantReader);
                 UnkByte = CaesarReader.ReadBitflagInt8(ref bitFlags, variantReader);  // 20 byte
 
+                // vcdomain
                 VCDomainPoolOffsets = new List<int>();
                 variantReader.BaseStream.Seek(VCDomainsOffset, SeekOrigin.Begin);
                 for (int variantCodingIndex = 0; variantCodingIndex < VCDomainsCount; variantCodingIndex++)
                 {
                     VCDomainPoolOffsets.Add(variantReader.ReadInt32());
                 }
-
+                // diagnostic services
                 DiagServicesPoolOffsets = new List<int>();
                 variantReader.BaseStream.Seek(DiagServicesOffset, SeekOrigin.Begin);
                 for (int diagIndex = 0; diagIndex < DiagServicesCount; diagIndex++)
                 {
                     DiagServicesPoolOffsets.Add(variantReader.ReadInt32());
                 }
-
-
+                // DTCs
+                //DTCsPoolOffsets = new List<int>();
+                DTCsPoolOffsetsWithBounds = new List<Tuple<int, int, int>>();
+                variantReader.BaseStream.Seek(DTC_Offset, SeekOrigin.Begin);
+                for (int dtcIndex = 0; dtcIndex < DTC_Count; dtcIndex++)
+                {
+                    int actualIndex = variantReader.ReadInt32();
+                    int xrefStart = variantReader.ReadInt32(); 
+                    int xrefCount = variantReader.ReadInt32(); // stitch with table H : int __cdecl DIECUGetNumberOfEnvForAllErrors(DI_ECUINFO *ecuh, int a2, int a3)
+                    //DTCsPoolOffsets.Add(actualIndex); // todo: depreciate this
+                    DTCsPoolOffsetsWithBounds.Add(new Tuple<int, int, int>(actualIndex, xrefStart, xrefCount));
+                }
+                // EnvCtxs
+                EnvironmentContextsPoolOffsets = new List<int>();
+                variantReader.BaseStream.Seek(EnvironmentCtx_Offset, SeekOrigin.Begin);
+                for (int envIndex = 0; envIndex < EnvironmentCtx_Count; envIndex++)
+                {
+                    EnvironmentContextsPoolOffsets.Add(variantReader.ReadInt32());
+                }
             }
 
             CreateVCDomains(reader, parentEcu, language);
             CreateDiagServices(reader, parentEcu, language);
             CreateVariantPatterns(reader);
             CreateComParameters(reader, parentEcu);
+            CreateDTCs(reader, parentEcu, language);
+            CreateEnvironmentContexts(reader, parentEcu, language);
+            CreateXrefs(reader, parentEcu, language);
+            //PrintDebug();
         }
 
-        public void CreateComParameters(BinaryReader reader, ECU parentEcu) 
+        // this function is parked here since the values are drawn from EnvironmentContexts // Xref_Count and Xref_Offset;
+        public List<DiagService> GetEnvironmentContextsForDTC(DTC inDtc)
+        {
+            List<DiagService> ctxList = new List<DiagService>();
+
+            for (int i = inDtc.XrefStart; i < (inDtc.XrefStart + inDtc.XrefCount); i++) 
+            {
+                foreach (DiagService envToTest in EnvironmentContexts) 
+                {
+                    int xref = Xrefs[i];
+                    if (envToTest.PoolIndex == xref)
+                    {
+                        ctxList.Add(envToTest);
+                        break;
+                    }
+                }
+            }
+            return ctxList;
+        }
+
+        public void CreateComParameters(BinaryReader reader, ECU parentEcu)
         {
             // this is unusual as it doesn't use the usual caesar-style bitflag reads
             // for reasons unknown the comparam is attached to the basevariant
@@ -121,7 +171,7 @@ namespace Caesar
             // Console.WriteLine($"Comparam base: 0x{comparamBaseAddress:X} : number of comparams: {ComParamsCount} ");
             reader.BaseStream.Seek(comparamBaseAddress, SeekOrigin.Begin);
             List<long> comparameterOffsets = new List<long>();
-            for (int comIndex = 0; comIndex < ComParamsCount; comIndex++) 
+            for (int comIndex = 0; comIndex < ComParamsCount; comIndex++)
             {
                 comparameterOffsets.Add(reader.ReadInt32() + comparamBaseAddress);
             }
@@ -131,7 +181,7 @@ namespace Caesar
                 throw new Exception("Invalid communication parameter : no parent interface");
             }
 
-            foreach (long comparamOffset in comparameterOffsets) 
+            foreach (long comparamOffset in comparameterOffsets)
             {
                 ComParameter param = new ComParameter(reader, comparamOffset, parentEcu.ECUInterfaces);
 
@@ -211,7 +261,7 @@ namespace Caesar
         {
             // unlike variant domains, storing references to the parent objects in the ecu is preferable since this is relatively larger
             //DiagServices = new List<DiagService>();
-            
+
             // computationally expensive, 40ish % runtime is spent here
             DiagServices = new DiagService[DiagServicesPoolOffsets.Count];
 
@@ -222,6 +272,62 @@ namespace Caesar
                     if (diagSvc.PoolIndex == DiagServicesPoolOffsets[i])
                     {
                         DiagServices[i] = diagSvc;
+                    }
+                }
+            }
+        }
+        private void CreateDTCs(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        {
+            DTCs = new DTC[DTCsPoolOffsetsWithBounds.Count];
+
+            foreach (DTC dtc in parentEcu.GlobalDTCs)
+            {
+                for (int i = 0; i < DTCsPoolOffsetsWithBounds.Count; i++)
+                {
+                    if (dtc.PoolIndex == DTCsPoolOffsetsWithBounds[i].Item1)
+                    {
+                        // this is only valid on the assumption that DTC instances are unique (e.g. not shared from a base variant)
+                        dtc.XrefStart = DTCsPoolOffsetsWithBounds[i].Item2;
+                        dtc.XrefCount = DTCsPoolOffsetsWithBounds[i].Item3;
+                        DTCs[i] = dtc;
+                    }
+                }
+            }
+        }
+        private void CreateXrefs(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        {
+            Xrefs = new int[Xref_Count];
+            reader.BaseStream.Seek(BaseAddress + Xref_Offset, SeekOrigin.Begin);
+            for (int i = 0; i < Xref_Count; i++)
+            {
+                Xrefs[i] = reader.ReadInt32();
+            }
+        }
+        private void CreateEnvironmentContexts(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        {
+            /*
+            EnvironmentContexts = new EnvironmentContext[EnvironmentContextsPoolOffsets.Count];
+
+            foreach (EnvironmentContext env in parentEcu.GlobalEnvironmentContexts)
+            {
+                for (int i = 0; i < EnvironmentContextsPoolOffsets.Count; i++)
+                {
+                    if (env.PoolIndex == EnvironmentContextsPoolOffsets[i])
+                    {
+                        EnvironmentContexts[i] = env;
+                    }
+                }
+            }
+            */
+            EnvironmentContexts = new DiagService[EnvironmentContextsPoolOffsets.Count];
+
+            foreach (DiagService env in parentEcu.GlobalEnvironmentContexts)
+            {
+                for (int i = 0; i < EnvironmentContextsPoolOffsets.Count; i++)
+                {
+                    if (env.PoolIndex == EnvironmentContextsPoolOffsets[i])
+                    {
+                        EnvironmentContexts[i] = env;
                     }
                 }
             }
@@ -246,16 +352,16 @@ namespace Caesar
             Console.WriteLine($"{nameof(SubsectionB_Offset)} : {SubsectionB_Offset}");
             Console.WriteLine($"{nameof(ComParamsCount)} : {ComParamsCount}");
             Console.WriteLine($"{nameof(ComParamsOffset)} : {ComParamsOffset}");
-            Console.WriteLine($"{nameof(SubsectionD_Count)} : {SubsectionD_Count}");
-            Console.WriteLine($"{nameof(SubsectionD_Offset)} : {SubsectionD_Offset}");
+            Console.WriteLine($"{nameof(DiagServiceCode_Count)} : {DiagServiceCode_Count}");
+            Console.WriteLine($"{nameof(DiagServiceCode_Offset)} : {DiagServiceCode_Offset}");
             Console.WriteLine($"{nameof(DiagServicesCount)} : {DiagServicesCount}");
             Console.WriteLine($"{nameof(DiagServicesOffset)} : {DiagServicesOffset}");
-            Console.WriteLine($"{nameof(SubsectionF_Count)} : {SubsectionF_Count}");
-            Console.WriteLine($"{nameof(SubsectionF_Offset)} : {SubsectionF_Offset}");
-            Console.WriteLine($"{nameof(SubsectionG_Count)} : {SubsectionG_Count}");
-            Console.WriteLine($"{nameof(SubsectionG_Offset)} : {SubsectionG_Offset}");
-            Console.WriteLine($"{nameof(SubsectionH_Count)} : {SubsectionH_Count}");
-            Console.WriteLine($"{nameof(SubsectionH_Offset)} : {SubsectionH_Offset}");
+            Console.WriteLine($"{nameof(DTC_Count)} : {DTC_Count}");
+            Console.WriteLine($"{nameof(DTC_Offset)} : {DTC_Offset}");
+            Console.WriteLine($"{nameof(EnvironmentCtx_Count)} : {EnvironmentCtx_Count}");
+            Console.WriteLine($"{nameof(EnvironmentCtx_Offset)} : {EnvironmentCtx_Offset}");
+            Console.WriteLine($"{nameof(Xref_Count)} : {Xref_Count}");
+            Console.WriteLine($"{nameof(Xref_Offset)} : {Xref_Offset}");
             Console.WriteLine($"{nameof(VCDomainsCount)} : {VCDomainsCount}");
             Console.WriteLine($"{nameof(VCDomainsOffset)} : {VCDomainsOffset}");
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Caesar.DTC;
 
 namespace Diogenes.DiagnosticProtocol
 {
@@ -47,7 +48,7 @@ namespace Diogenes.DiagnosticProtocol
                 NegativeResponseDescriptions[0x31] = "Request Out Of Range";
                 NegativeResponseDescriptions[0x33] = "Security Access Denied";
                 NegativeResponseDescriptions[0x35] = "Invalid Key";
-                NegativeResponseDescriptions[0x36] = "exceed Number Of Attempts";
+                NegativeResponseDescriptions[0x36] = "Exceed Number Of Attempts";
                 NegativeResponseDescriptions[0x37] = "Required Time Delay Not Expired";
                 NegativeResponseDescriptions[0x70] = "Upload Download Not Accepted";
                 NegativeResponseDescriptions[0x71] = "Transfer Data Suspended";
@@ -111,7 +112,6 @@ namespace Diogenes.DiagnosticProtocol
                 MessageDescriptions.Add(0x37, "Request Transfer Exit");
                 MessageDescriptions.Add(0x38, "Request File Transfer");
             }
-
             return MessageDescriptions;
         }
 
@@ -199,6 +199,162 @@ namespace Diogenes.DiagnosticProtocol
             }
         }
 
+        public override List<DTCContext> ReportDtcsByStatusMask(ECUConnection connection, ECUVariant variant, byte inMask = 0)
+        {
+            List<DTCContext> dtcCtx = new List<DTCContext>();
+
+            byte mask = (byte)(DTCStatusByte.TestFailedAtRequestTime |
+                DTCStatusByte.TestFailedAtCurrentCycle |
+                DTCStatusByte.PendingDTC |
+                DTCStatusByte.ConfirmedDTC |
+                DTCStatusByte.TestFailedSinceLastClear);
+            byte[] request = new byte[] { 0x19, 0x02, inMask == 0 ? mask : inMask };
+            byte[] expectedResponse = new byte[] { 0x59, 0x02 };
+
+            byte[] response = connection.SendMessage(request);
+            if (!response.Take(expectedResponse.Length).SequenceEqual(expectedResponse))
+            {
+                return new List<DTCContext>();
+            }
+
+            for (int i = 3; i < response.Length; i += 4)
+            {
+                byte[] dtcRow = new byte[4];
+                Array.ConstrainedCopy(response, i, dtcRow, 0, 4);
+                string dtcIdentifier = BitUtility.BytesToHex(dtcRow.Take(3).ToArray(), false);
+
+                DTC foundDtc = DTC.FindDTCById(dtcIdentifier, variant);
+                if (foundDtc is null)
+                {
+                    Console.WriteLine($"DTC: No matching DTC available for {dtcIdentifier}");
+                }
+                dtcCtx.Add(new DTCContext() { DTC = foundDtc, StatusByte = dtcRow[3], EnvironmentContext = new List<string[]>() });
+            }
+            return dtcCtx;
+        }
+
+        public override bool GetDtcSnapshot(DTC dtc, ECUConnection connection, out byte[] snapshotBytes)
+        {
+            byte[] identifier = BitUtility.BytesFromHex(dtc.Qualifier.Substring(1));
+
+            // apparently the existing dtc's mask should be ignored, use FF instead
+            byte[] request = new byte[] { 0x19, 0x06, identifier[0], identifier[1], identifier[2], 0xFF };
+            byte[] expectedResponse = new byte[] { 0x59, 0x06 };
+
+            byte[] response = connection.SendMessage(request);
+            if (response.Take(expectedResponse.Length).SequenceEqual(expectedResponse))
+            {
+                snapshotBytes = response;
+                return true;
+            }
+            else
+            {
+                snapshotBytes = new byte[] { };
+                return false;
+            }
+        }
+
+        public override ECUMetadata QueryECUMetadata(ECUConnection connection)
+        {
+            ECUMetadata metadata = new ECUMetadata();
+            if (ReadDataByIdentifier(connection, 0xF100, out byte[] diagInfoRaw))
+            {
+                byte session = diagInfoRaw[3];
+                byte gateway = diagInfoRaw[0];
+                uint variant = (uint)((diagInfoRaw[1] << 8) | diagInfoRaw[2]);
+                metadata.GatewayMode = gateway == 2;
+                metadata.VariantID = variant;
+            }
+
+            if (ReadDataByIdentifier(connection, 0xF111, out byte[] hardwareId))
+            {
+                metadata.HardwarePartNumber = Encoding.ASCII.GetString(hardwareId);
+            }
+            if (ReadDataByIdentifier(connection, 0xF150, out byte[] hardwareVersion))
+            {
+                metadata.HardwareVersion = $"{hardwareVersion[0]:D2}/{hardwareVersion[1]:D2}.{hardwareVersion[2]:D2}";
+            }
+            if (ReadDataByIdentifier(connection, 0xF154, out byte[] hardwareVendor))
+            {
+                metadata.VendorID = hardwareVendor[1]; // first byte for vendor is usually discarded; value does not fit BE
+            }
+            if (ReadDataByIdentifier(connection, 0xF153, out byte[] bootVersion))
+            {
+                metadata.BootVersion = $"{bootVersion[0]:D2}/{bootVersion[1]:D2}.{bootVersion[2]:D2}";
+            }
+            if (ReadDataByIdentifier(connection, 0xF18C, out byte[] serialNumber))
+            {
+                metadata.SerialNumber = Encoding.ASCII.GetString(serialNumber);
+            }
+            if (ReadDataByIdentifier(connection, 0xF190, out byte[] vinOriginal))
+            {
+                metadata.ChassisNumberOriginal = Encoding.ASCII.GetString(vinOriginal);
+            }
+            if (ReadDataByIdentifier(connection, 0xF1A0, out byte[] vinCurrent))
+            {
+                metadata.ChassisNumberCurrent = Encoding.ASCII.GetString(vinCurrent);
+            }
+
+            // read flash blocks, normally code/data/flash
+
+            if (ReadDataByIdentifier(connection, 0xF121, out byte[] fwIdentifier))
+            {
+                ReadDataByIdentifier(connection, 0xF151, out byte[] aggregateFwVersion);
+                ReadDataByIdentifier(connection, 0xF155, out byte[] aggregateSupplierIdent);
+                ReadDataByIdentifier(connection, 0xF15B, out byte[] aggregateFingerprint);
+
+                int versionWidth = 3;
+                int vendorWidth = 2;
+                int fingerprintWidth = 10;
+                int pnWidth = 10;
+
+                if (fwIdentifier.Length % pnWidth != 0) 
+                {
+                    Console.WriteLine("[!] Block PartNumber is not boundary aligned");
+                }
+                int blockCount = fwIdentifier.Length / pnWidth;
+
+                metadata.FlashMetadata = new List<ECUFlashMetadata>();
+                for (int i = 0; i < blockCount; i++)
+                {
+                    byte[] localPn = fwIdentifier.Skip(i * pnWidth).Take(pnWidth).ToArray();
+                    byte[] localFwVersion = aggregateFwVersion.Skip(i * versionWidth).Take(versionWidth).ToArray();
+                    byte[] localSupplierIdent = aggregateSupplierIdent.Skip(i * vendorWidth).Take(vendorWidth).ToArray();
+                    byte[] localFingerprint = aggregateFingerprint.Skip(i * fingerprintWidth).Take(fingerprintWidth).ToArray();
+
+                    ECUFlashMetadata flashMetadata = new ECUFlashMetadata();
+                    flashMetadata.Index = i;
+                    flashMetadata.PartNumber = Encoding.ASCII.GetString(localPn);
+                    flashMetadata.Version = $"{localFwVersion[0]:D2}/{localFwVersion[1]:D2}.{localFwVersion[2]:D2}";
+                    flashMetadata.VendorID = localSupplierIdent[1];
+                    flashMetadata.StatusID = localFingerprint[0];
+                    flashMetadata.LastFlashVendor = localFingerprint[2];
+                    flashMetadata.FlashDate = $"{localFingerprint[3]:D2}-{localFingerprint[4]:D2}-{localFingerprint[5]:D2}"; // no idea what sort of date format; all 3 fields can hold values above 12
+                    flashMetadata.FlashFingerprint = BitUtility.BytesToHex(localFingerprint.Skip(6).ToArray());
+                    metadata.FlashMetadata.Add(flashMetadata);
+                }
+            }
+
+            return metadata;
+        }
+
+        private static bool ReadDataByIdentifier(ECUConnection connection, ushort identifier, out byte[] buffer)
+        {
+            buffer = new byte[] { };
+            byte identifierMsb = (byte)((identifier >> 8) & 0xFF);
+            byte identifierLsb = (byte)(identifier & 0xFF);
+            byte[] response = connection.SendMessage(new byte[] { 0x22, identifierMsb, identifierLsb });
+            if (response.Length < 3) 
+            {
+                return false;
+            }
+            if (response[0] != 0x62) 
+            {
+                return false;
+            }
+            buffer = response.Skip(3).ToArray();
+            return true;
+        }
 
         public override void ConnectionEstablishedHandler(ECUConnection connection)
         {
@@ -221,6 +377,11 @@ namespace Diogenes.DiagnosticProtocol
         public override void SendTesterPresent(ECUConnection connection)
         {
             connection.SendMessage(new byte[] { 0x3E, 0x00 }, true);
+        }
+
+        public override bool IsResponseToTesterPresent(byte[] inBuffer)
+        {
+            return inBuffer.SequenceEqual(new byte[] { 0x7E, 0x00 });
         }
 
         public override void ConnectionClosingHandler(ECUConnection connection)

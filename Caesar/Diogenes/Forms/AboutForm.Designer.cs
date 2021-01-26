@@ -107,6 +107,7 @@ namespace Diogenes
             "Made possible with the help and support of these projects and individuals:",
             "Mark James : http://www.famfamfam.com/about/",
             "Brian Humlicek : https://github.com/BrianHumlicek/J2534-Sharp/",
+            "s30shiro (しーちゃん) : http://blog.livedoor.jp/s30shiro/",
             "@N0cynym (@N0cynym)",
             "@Feezex (Сергей)",
             "@rnd-ash (Ashcon Mohseninia)"});

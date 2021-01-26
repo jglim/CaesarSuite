@@ -103,9 +103,9 @@ namespace Diogenes
             this.lblDescCmdWrite.AutoSize = true;
             this.lblDescCmdWrite.Location = new System.Drawing.Point(5, 213);
             this.lblDescCmdWrite.Name = "lblDescCmdWrite";
-            this.lblDescCmdWrite.Size = new System.Drawing.Size(145, 13);
+            this.lblDescCmdWrite.Size = new System.Drawing.Size(147, 13);
             this.lblDescCmdWrite.TabIndex = 9;
-            this.lblDescCmdWrite.Text = "WriteMemoryByAddress (hex)";
+            this.lblDescCmdWrite.Text = "WriteMemoryByAddress (Hex)";
             // 
             // nudWriteCmd
             // 

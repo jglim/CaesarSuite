@@ -145,6 +145,9 @@ namespace Caesar
                         byte[] poolBytes = ParentECU.ReadECUInfoPool(reader);
                         using (BinaryReader poolReader = new BinaryReader(new MemoryStream(poolBytes)))
                         {
+                            DiagPresentation pres = ParentECU.GlobalInternalPresentations[InfoPoolIndex];
+                            /*
+                            // depreciate use of ReadCBFWithOffset
                             poolReader.BaseStream.Seek(ParentECU.Info_EntrySize * InfoPoolIndex, SeekOrigin.Begin);
 
                             int presentationStructOffset = poolReader.ReadInt32();
@@ -163,8 +166,11 @@ namespace Caesar
                             {
                                 resultBitSize = CaesarStructure.ReadCBFWithOffset(0x21, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // ???
                             }
+                            */
+                            resultBitSize = pres.TypeLength_1a > 0 ? pres.TypeLength_1a : pres.TypeLengthBytesMaybe_21;
+
                             // if value was specified in bytes, convert to bits
-                            if (presentationMode == 0)
+                            if (pres.Type_1c == 0)
                             {
                                 resultBitSize *= 8;
                             }
@@ -177,15 +183,19 @@ namespace Caesar
 
                         using (BinaryReader poolReader = new BinaryReader(new MemoryStream(presPool)))
                         {
+                            DiagPresentation pres = ParentECU.GlobalPresentations[PresPoolIndex];
+                            /*
+                            // depreciate use of ReadCBFWithOffset
                             poolReader.BaseStream.Seek(ParentECU.Presentations_EntrySize * PresPoolIndex, SeekOrigin.Begin);
                             int presentationStructOffset = poolReader.ReadInt32();
                             int presentationStructSize = poolReader.ReadInt32();
 
                             reader.BaseStream.Seek(presentationStructOffset + ParentECU.Presentations_BlockOffset, SeekOrigin.Begin);
                             byte[] presentationStruct = reader.ReadBytes(presentationStructSize);
-
+                            
                             int presentationMode = CaesarStructure.ReadCBFWithOffset(0x1C, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // PRESS_Type
                             int presentationLength = CaesarStructure.ReadCBFWithOffset(0x1A, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // PRESS_TypeLength
+                            
                             if (presentationLength > 0)
                             {
                                 resultBitSize = presentationLength;
@@ -194,41 +204,15 @@ namespace Caesar
                             {
                                 resultBitSize = CaesarStructure.ReadCBFWithOffset(0x21, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // ???
                             }
+                            */
+
+                            resultBitSize = pres.TypeLength_1a > 0 ? pres.TypeLength_1a : pres.TypeLengthBytesMaybe_21;
+
                             // if value was specified in bytes, convert to bits
-                            if (presentationMode == 0)
+                            if (pres.Type_1c == 0)
                             {
                                 resultBitSize *= 8;
                             }
-
-                            /*
-                            // no idea how negative requests are registered; their params seem empty? 
-                            // usually 7F XX XX
-                            if (qualifier == "PRES_NR_Request1")
-                            {
-                                Console.WriteLine($"NR: {qualifier}");
-                                for (int i = 1; i < 39; i++)
-                                {
-                                    int readout = CaesarStructure.ReadCBFWithOffset(i, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct);
-                                    Console.Write($"{i:X}: {readout:X}, ");
-                                }
-                                Console.WriteLine("\n------------");
-                            }
-                            */
-
-
-                            /*
-                            // dbg: identifying struct members
-                            if (qualifier.ToLower().Contains("byte"))
-                            {
-                                Console.WriteLine($"{qualifier}");
-                                for (int i = 1; i < 0x1D; i++) 
-                                {
-                                    int readout = CaesarStructure.ReadCBFWithOffset(i, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct);
-                                    Console.Write($"{i:X}: {readout}, ");
-                                }
-                                Console.WriteLine("\n------------");
-                            }
-                            */
                         }
                     }
                     else 

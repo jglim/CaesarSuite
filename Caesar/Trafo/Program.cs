@@ -61,7 +61,7 @@ namespace Trafo
                     var variantRow = new { VariantName = variant.Qualifier, VarcodingDomains = domainList };
                     variantList.Add(variantRow);
                 }
-                var ecuRow = new { ECUName = ecu.Qualifier, ECUDescription = ecu.ECUDescriptionTranslated, ECUVariants = variantList };
+                var ecuRow = new { ECUName = ecu.Qualifier, ECUDescription = ecu.ECUDescription, ECUVariants = variantList };
                 ecuList.Add(ecuRow);
             }
 

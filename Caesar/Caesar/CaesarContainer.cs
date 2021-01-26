@@ -16,6 +16,8 @@ namespace Caesar
 
         public uint FileChecksum;
 
+        // fixup serialization/deserialization:
+        // language strings should be properties; resolve to actual string only when called
         public CaesarContainer(byte[] fileBytes)
         {
             FileBytes = fileBytes;
@@ -36,7 +38,6 @@ namespace Caesar
                 ReadCTF(reader);
                 ReadECU(reader);
             }
-
         }
 
         public static bool VerifyChecksum(byte[] fileBytes, out uint checksum) 
@@ -63,7 +64,6 @@ namespace Caesar
         {
             return BitConverter.ToUInt32(fileBytes, fileBytes.Length - 4);
         }
-
 
         public ECUVariant GetECUVariantByName(string name)
         {
@@ -133,7 +133,6 @@ namespace Caesar
                 int offsetToActualEcuEntry = fileReader.ReadInt32();
                 CaesarECUs.Add(new ECU(fileReader, GetLanguage(), CaesarCFFHeader, ecuTableOffset + offsetToActualEcuEntry, this));
             }
-
         }
 
         void ReadCTF(BinaryReader fileReader) 
@@ -144,8 +143,6 @@ namespace Caesar
             {
                 throw new NotImplementedException("No idea how to handle nonexistent ctf header");
             }
-            // Console.WriteLine($"ctf header relative to definitions: {nameof(CaesarCFFHeader.nCtfHeaderRpos)} : 0x{CaesarCFFHeader.nCtfHeaderRpos:X}");
-
             long ctfOffset = CaesarCFFHeader.BaseAddress + CaesarCFFHeader.CtfOffset;
             CaesarCTFHeader = new CTFHeader(fileReader, ctfOffset, CaesarCFFHeader.CffHeaderSize);
         }
@@ -153,7 +150,6 @@ namespace Caesar
 
         void ReadCFFDefinition(BinaryReader fileReader)
         {
-
             CaesarCFFHeader = new CFFHeader(fileReader);
             // CaesarCFFHeader.PrintDebug();
 
@@ -178,7 +174,6 @@ namespace Caesar
                 Console.WriteLine($"{nameof(formOffsetTableSize)} : 0x{formOffsetTableSize:X}\n\n");
             }
             */
-            
         }
 
         public string GetFileSize() 

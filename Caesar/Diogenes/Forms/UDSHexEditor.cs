@@ -8,8 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-
-using System.Windows.Forms.Integration;
 using Be.Windows.Forms;
 using Caesar;
 using System.Globalization;
@@ -68,6 +66,13 @@ namespace Diogenes
                         ioDigitCount
                     );
 
+            GenericLoader loader = new GenericLoader();
+            loader.Text = "Reading from ECU";
+            loader.SetProgressMax((int)(destinationAddress - sourceAddress));
+            loader.SetProgressValue(0);
+            loader.TopMost = true;
+            loader.Show();
+            Application.DoEvents();
 
             byte[] memoryBuffer = new byte[bufferSize];
             uint readCursor = sourceAddress;
@@ -76,6 +81,10 @@ namespace Diogenes
 
             while (readCursor < destinationAddress)
             {
+                loader.Text = $"Reading from ECU : 0x{readCursor:X8}";
+                loader.SetProgressValue((int)(readCursor - sourceAddress));
+                Application.DoEvents();
+
                 uint remainder = destinationAddress - readCursor;
                 int readSize = strideWidth;
                 if (readSize > remainder) 
@@ -83,9 +92,7 @@ namespace Diogenes
                     readSize = (int)remainder;
                 }
                 List<byte> readCommand = CreateReadCommand(readCmd, alfid, readCursor, addressWidth, readSize);
-                //byte[] response = 
 
-                //MessageBox.Show($"cmd: {BitUtility.BytesToHex(readCommand.ToArray(), true)}, width: {readSize}, remainder: {remainder}");
                 byte[] response = Connection.SendMessage(readCommand);
                 if (response[0] == positiveResponse)
                 {
@@ -100,11 +107,11 @@ namespace Diogenes
                 bufferCursor += readSize;
             }
 
+            loader.Close();
+            Application.DoEvents();
+
             OriginalBuffer = memoryBuffer;
-            /*
-            HexboxBuffer = new byte[memoryBuffer.Length];
-            Array.ConstrainedCopy(memoryBuffer, 0, HexboxBuffer, 0, memoryBuffer.Length);
-            */
+
             Hexbox.LineInfoOffset = sourceAddress;
             Hexbox.ByteProvider = new DynamicByteProvider(OriginalBuffer);
 
@@ -132,7 +139,6 @@ namespace Diogenes
             byte alfid = GetAddressAndLengthFormatIdentifier(
                         addressWidth,
                         ioDigitCount
-
                     );
             List<byte> writeCommand = new List<byte>();
             writeCommand.Add(writeCmd); // command
@@ -303,7 +309,6 @@ namespace Diogenes
                 if (!BytearrayEqual(dataToWrite, originalData))
                 {
                     List<byte> writeCommand = CreateWriteCommand(writeCmd, writeCursor, addressWidth, dataToWrite);
-                    // MessageBox.Show($"cmd: {BitUtility.BytesToHex(writeCommand.ToArray(), true)}, width: {writeSizeChunk}, remainder: {remainder}");
 
                     byte[] response = Connection.SendMessage(writeCommand);
                     if (response[0] != positiveResponse)
@@ -311,8 +316,6 @@ namespace Diogenes
                         hasBadWrites = true;
                     }
                 }
-
-
                 writeCursor += (uint)writeSizeChunk;
                 bufferCursor += writeSizeChunk;
             }

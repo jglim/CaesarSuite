@@ -158,6 +158,7 @@ namespace Diogenes
 <body>
     <h1 class=""pull-right"">Diogenes</h1>
     <h1>{ecuName}</h1>
+
     <hr>
     <table>
         <tr>
@@ -186,6 +187,7 @@ namespace Diogenes
         </tr>
     </table>
 
+    {connection.ConnectionProtocol.QueryECUMetadata(connection).GetHtmlTable(connection)}
     {tableBuilder}
 
     <hr>

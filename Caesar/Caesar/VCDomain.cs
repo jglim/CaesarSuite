@@ -63,7 +63,7 @@ namespace Caesar
                 VCFragments = new List<VCFragment>();
                 for (int fragmentIndex = 0; fragmentIndex < FragmentCount; fragmentIndex++)
                 {
-                    VCFragment fragment = new VCFragment(reader, this, FragmentTableOffset, fragmentIndex, language);
+                    VCFragment fragment = new VCFragment(reader, this, FragmentTableOffset, fragmentIndex, language, parentEcu);
                     VCFragments.Add(fragment);
                 }
                 // ValidateFragmentCoverage();

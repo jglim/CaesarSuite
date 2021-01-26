@@ -10,7 +10,7 @@ namespace Diogenes.DiagnosticProtocol
     {
         public override void ConnectionEstablishedHandler(ECUConnection connection)
         {
-            Console.WriteLine("The current protocol is unsupported. Most functions will not be available.");
+            //Console.WriteLine("The current protocol is unsupported. Most functions will not be available.");
         }
 
         public override string GetProtocolName()

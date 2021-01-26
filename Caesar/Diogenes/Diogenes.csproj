@@ -79,6 +79,10 @@
     <Compile Include="DiagnosticProtocol\KW2C3PE.cs" />
     <Compile Include="DiagnosticProtocol\UDS.cs" />
     <Compile Include="DiagnosticProtocol\UnsupportedProtocol.cs" />
+    <Compile Include="ECUIdentification.cs" />
+    <Compile Include="Reports\DTCReport.cs" />
+    <Compile Include="ECUFlashMetadata.cs" />
+    <Compile Include="ECUMetadata.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,11 +90,23 @@
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ECUConnection.cs" />
+    <Compile Include="Forms\DTCForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DTCForm.Designer.cs">
+      <DependentUpon>DTCForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FlashSplicer.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FlashSplicer.Designer.cs">
       <DependentUpon>FlashSplicer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GenericLoader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GenericLoader.Designer.cs">
+      <DependentUpon>GenericLoader.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\GenericPicker.cs">
       <SubType>Form</SubType>
@@ -129,6 +145,8 @@
       <DependentUpon>SecurityLevelForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SecurityAccess\SecurityAutoLogin.cs" />
+    <Compile Include="Simulation\SimulatedDevice.cs" />
+    <Compile Include="Simulation\Simulated_CRD3.cs" />
     <Compile Include="TextboxWriter.cs" />
     <Compile Include="Forms\TraceForm.cs">
       <SubType>Form</SubType>
@@ -150,12 +168,18 @@
       <DependentUpon>VCForm.cs</DependentUpon>
     </Compile>
     <Compile Include="VariantCoding.cs" />
-    <Compile Include="VCReport.cs" />
+    <Compile Include="Reports\VCReport.cs" />
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DTCForm.resx">
+      <DependentUpon>DTCForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FlashSplicer.resx">
       <DependentUpon>FlashSplicer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GenericLoader.resx">
+      <DependentUpon>GenericLoader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\GenericPicker.resx">
       <DependentUpon>GenericPicker.cs</DependentUpon>

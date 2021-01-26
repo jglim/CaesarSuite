@@ -107,10 +107,12 @@ namespace Caesar
         public List<ComParameter> DiagComParameters = new List<ComParameter>();
 
         public ECU ParentECU;
+        public CTFLanguage Language;
 
         public DiagService(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu) 
         {
             ParentECU = parentEcu;
+            Language = language;
             PoolIndex = poolIndex;
             BaseAddress = baseAddress;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
@@ -211,16 +213,19 @@ namespace Caesar
             OutputPreparations = new List<List<DiagPreparation>>();
             long outPresBaseAddress = BaseAddress + W_OutPres_Offset;
 
+            // FIXME: run it through the entire dbr cbf directory, check if any file actually has more than 1 item in ResultPresentationSet
             for (int presIndex = 0; presIndex < W_OutPres_Count; presIndex++)
             {
                 reader.BaseStream.Seek(outPresBaseAddress + (presIndex * 8), SeekOrigin.Begin);
-                int resultPresentationCount = reader.ReadInt32();
+                // FIXME
+                int resultPresentationCount = reader.ReadInt32(); // index? if true, will fix the "wtf" list<list<diagprep>>
                 int resultPresentationOffset = reader.ReadInt32();
 
                 List<DiagPreparation> ResultPresentationSet = new List<DiagPreparation>();
                 for (int presInnerIndex = 0; presInnerIndex < resultPresentationCount; presInnerIndex++)
                 {
                     long presentationTableOffset = outPresBaseAddress + resultPresentationOffset;
+
                     reader.BaseStream.Seek(presentationTableOffset + (presIndex * 10), SeekOrigin.Begin);
 
                     int prepEntryOffset = reader.ReadInt32(); // file: 0 (DW)
@@ -310,6 +315,15 @@ namespace Caesar
 
         }
 
+        public string GetDescription()
+        {
+            return Language.GetString(Description_CTF);
+        }
+        public string GetName()
+        {
+            return Language.GetString(Name_CTF);
+        }
+
         public long GetCALInt16Offset(BinaryReader reader) 
         {
             reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
@@ -332,6 +346,7 @@ namespace Caesar
             }
         }
 
+
         public void PrintDebug() 
         {
             Console.WriteLine($"{Qualifier} - ReqBytes: {RequestBytes_Count}, P: {P_Count}, Q: {Q_Count}, R: {R_Count}, S: {S_Count}, ComParams: {T_ComParam_Count}, Preparation: {U_prep_Count}, V: {V_Count}, OutPres: {W_OutPres_Count}, X: {X_Count}, Y: {Y_Count}, Z: {Z_Count}, DSC {DiagServiceCodeCount}, field50: {field50}");
@@ -340,3 +355,81 @@ namespace Caesar
         }
     }
 }
+
+
+
+
+/*
+// originally EnvironmentContext, removed because of overlap
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Caesar
+{
+    public class EnvironmentContext
+    {
+        // see : const char *__cdecl DIGetComfortErrorCode(DI_ECUINFO *ecuh, unsigned int dtcIndex)
+        public string Qualifier;
+
+        public long BaseAddress;
+        public int PoolIndex;
+        public int Name_CTF;
+        public int Description_CTF;
+        public int ServiceTypeMaybe;
+        public int AccessLevelType_Maybe;
+        public int AccessLevelType_Maybe2;
+        public int PresentationTableCount;
+        public int PresentationTableOffset;
+        public int PresentationTableRowSize_Maybe; // see diagservice for similar layout, seems unused (uint16)
+
+        public ECU ParentECU;
+        CTFLanguage Language;
+
+        public EnvironmentContext(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu)
+        {
+            ParentECU = parentEcu;
+            PoolIndex = poolIndex;
+            BaseAddress = baseAddress;
+            Language = language;
+            reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
+
+            // layout seems very similar to DiagService
+            ulong bitflags = reader.ReadUInt32();
+            ulong bitflagsExtended = reader.ReadUInt32();
+
+            Qualifier = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
+            Name_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
+            Description_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
+
+            ServiceTypeMaybe = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
+            AccessLevelType_Maybe = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
+            AccessLevelType_Maybe2 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
+
+            // doesn't seem to be set for any files in my library
+            for (int i = 0; i < 14; i++) 
+            {
+                if (CaesarReader.CheckAndAdvanceBitflag(ref bitflags))
+                {
+                    throw new Exception("Sorry, The parser for EnvironmentContext has encountered an unknown bitflag; please open an issue and indicate your CBF file name.");
+                }
+            }
+
+            // these describe the table to the presentation
+            PresentationTableCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            PresentationTableOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            PresentationTableRowSize_Maybe = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
+
+            // ... looks like DiagService?!
+        }
+
+        public void PrintDebug()
+        {
+            Console.WriteLine(Qualifier);
+        }
+    }
+}
+*/

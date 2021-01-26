@@ -52,6 +52,7 @@
     <Compile Include="BitUtility.cs" />
     <Compile Include="CaesarContainer.cs" />
     <Compile Include="DiagPresentation.cs" />
+    <Compile Include="DTC.cs" />
     <Compile Include="Flash\CaesarFlashContainer.cs" />
     <Compile Include="CaesarReader.cs" />
     <Compile Include="CaesarStructure.cs" />

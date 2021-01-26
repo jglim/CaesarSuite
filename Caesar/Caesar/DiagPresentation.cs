@@ -38,11 +38,11 @@ namespace Caesar
         public int unk1b;
         public int Type_1c;
         public int unk1d;
-        public int unk1e;
+        public int EnumType_unk1e;
         public int unk1f;
         public int unk20;
 
-        public int unk21;
+        public int TypeLengthBytesMaybe_21;
         public int unk22;
         public int unk23;
         public int unk24;
@@ -54,6 +54,7 @@ namespace Caesar
 
         public long BaseAddress;
         public int PresentationIndex;
+        public CTFLanguage Language;
         public List<Scale> Scales = new List<Scale>();
 
         // 0x05 [6,   4,4,4,4,  4,4,4,4,  4,4,4,4,  2,2,2,4,      4,4,4,4,   4,4,4,4,   4,4,1,1,  1,1,1,4,     4,4,2,4,   4,4],
@@ -62,6 +63,7 @@ namespace Caesar
         {
             BaseAddress = baseAddress;
             PresentationIndex = presentationsIndex;
+            Language = language;
 
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             ulong bitflags = reader.ReadUInt32();
@@ -105,13 +107,13 @@ namespace Caesar
             Type_1c = CaesarReader.ReadBitflagInt8(ref bitflags, reader, -1);
 
             unk1d = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
-            unk1e = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
+            EnumType_unk1e = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
             unk1f = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
             unk20 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
             bitflags = extendedBitflags;
 
-            unk21 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            TypeLengthBytesMaybe_21 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             unk22 = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
             unk23 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             unk24 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -137,11 +139,20 @@ namespace Caesar
             }
         }
 
-        public string InterpretData(byte[] inBytes, DiagPreparation inPreparation)
+        public string InterpretData(byte[] inBytes, DiagPreparation inPreparation, bool describe = true)
         {
             // might be relevant: DMPrepareSingleDatum, DMPresentSingleDatum
 
+            bool isDebugBuild = false;
+#if DEBUG
+            isDebugBuild = true;
+#endif
+
+            string descriptionPrefix = describe ? $"{DescriptionString}: " : "";
             byte[] workingBytes = inBytes.Skip(inPreparation.BitPosition / 8).Take(TypeLength_1a).ToArray();
+
+            bool isEnumType = (EnumType_unk1e == 0) && ((Type_1c == 1) || (ScaleCountMaybe > 1));
+
             if (workingBytes.Length != TypeLength_1a)
             {
                 return $"InBytes [{BitUtility.BytesToHex(workingBytes)}] length mismatch (expecting {TypeLength_1a})";
@@ -155,8 +166,14 @@ namespace Caesar
                 byte selectedByte = inBytes[bytesToSkip];
 
                 int selectedBit = (selectedByte >> bitsToSkip) & 1;
-
-                return $"{DescriptionString}: {selectedBit} {DisplayedUnitString} (BitType)";
+                if (isEnumType && (Scales.Count > selectedBit))
+                {
+                    return $"{descriptionPrefix}{Language.GetString(Scales[selectedBit].EnumDescription)} {DisplayedUnitString}";
+                }
+                else 
+                {
+                    return $"{descriptionPrefix}{selectedBit} {DisplayedUnitString}";
+                }
             }
 
             // everything else should be aligned to byte boundaries
@@ -165,32 +182,36 @@ namespace Caesar
                 return "BitOffset was outside byte boundary (skipped)";
             }
             int dataType = GetDataType();
+            int rawIntInterpretation = 0;
+
             string humanReadableType = $"UnhandledType:{dataType}";
             string parsedValue = BitUtility.BytesToHex(workingBytes, true);
             if ((dataType == 6 || (dataType == 20)))
             {
                 // parse as a regular int (BE)
-                int result = 0;
 
                 for (int i = 0; i < workingBytes.Length; i++) 
                 {
-                    result <<= 8;
-                    result |= workingBytes[i];
+                    rawIntInterpretation <<= 8;
+                    rawIntInterpretation |= workingBytes[i];
                 }
 
                 humanReadableType = "IntegerType";
 
-                parsedValue = result.ToString();
+                parsedValue = rawIntInterpretation.ToString();
                 if (dataType == 20) 
                 {
                     humanReadableType = "ScaledType";
 
-                    double valueToScale = result;
-                    foreach (Scale scale in Scales) 
-                    {
-                        valueToScale *= scale.MultiplyFactor;
-                        valueToScale += scale.AddConstOffset;
-                    }
+                    double valueToScale = rawIntInterpretation;
+
+                    // if there's only one scale, use it as-is
+                    // if there's more than one, use the first scale as an interim solution;
+                    // the results of stacking scales does not make sense
+                    // there might be a better, non-hardcoded (0) solution to this, and perhaps with a sig-fig specifier
+
+                    valueToScale *= Scales[0].MultiplyFactor;
+                    valueToScale += Scales[0].AddConstOffset;
 
                     parsedValue = valueToScale.ToString("0.000000");
                 }
@@ -205,7 +226,33 @@ namespace Caesar
                 parsedValue = Encoding.UTF8.GetString(workingBytes);
             }
 
-            return $"{DescriptionString}: {parsedValue} {DisplayedUnitString} ({humanReadableType})";
+            if (isEnumType && (rawIntInterpretation < Scales.Count))
+            {
+                return $"{descriptionPrefix}{Language.GetString(Scales[rawIntInterpretation].EnumDescription)} {DisplayedUnitString}";
+                // this bit below for troubleshooting problematic presentations
+                /*
+                if (rawIntInterpretation < Scales.Count)
+                {
+                    return $"{descriptionPrefix}{Language.GetString(Scales[rawIntInterpretation].EnumDescription)} {DisplayedUnitString}";
+                }
+                else 
+                {
+                    // seems like an enum-like value broke
+                    return $"{descriptionPrefix}{Language.GetString(Scales[0].EnumDescription)} {DisplayedUnitString} [!]";
+                }
+                */
+            }
+            else
+            {
+                if (isDebugBuild)
+                {
+                    return $"{descriptionPrefix}{parsedValue} {DisplayedUnitString} ({humanReadableType})";
+                }
+                else
+                {
+                    return $"{descriptionPrefix}{parsedValue} {DisplayedUnitString}";
+                }
+            }
         }
 
         public int GetDataType() 
@@ -271,7 +318,7 @@ namespace Caesar
                         Console.WriteLine("typelength and type must be valid");
                         // might be good to throw an exception here
                     }
-                    if ((unk1e == 1) || (unk1e == 2))
+                    if ((EnumType_unk1e == 1) || (EnumType_unk1e == 2))
                     {
                         result = 5; // ?? haven't seen this one around
                     }
@@ -284,12 +331,12 @@ namespace Caesar
             }
         }
 
-        public void PrintDebug() 
+        public void PrintDebug()
         {
             Console.WriteLine("Presentation: ");
             Console.WriteLine($"{nameof(Qualifier)}: {Qualifier}");
 
-            
+
             //Console.WriteLine($"{nameof(Description_CTF)}: {Description_CTF}");
             Console.WriteLine($"{nameof(ScaleTableOffset)}: {ScaleTableOffset}");
             Console.WriteLine($"{nameof(ScaleCountMaybe)}: {ScaleCountMaybe}");
@@ -323,11 +370,11 @@ namespace Caesar
             Console.WriteLine($"{nameof(unk1b)}: {unk1b}");
 
             Console.WriteLine($"{nameof(unk1d)}: {unk1d}");
-            Console.WriteLine($"{nameof(unk1e)}: {unk1e}");
+            Console.WriteLine($"{nameof(EnumType_unk1e)}: {EnumType_unk1e}");
             Console.WriteLine($"{nameof(unk1f)}: {unk1f}");
             Console.WriteLine($"{nameof(unk20)}: {unk20}");
 
-            Console.WriteLine($"{nameof(unk21)}: {unk21}");
+            Console.WriteLine($"{nameof(TypeLengthBytesMaybe_21)}: {TypeLengthBytesMaybe_21}");
             Console.WriteLine($"{nameof(unk22)}: {unk22}");
             Console.WriteLine($"{nameof(unk23)}: {unk23}");
             Console.WriteLine($"{nameof(unk24)}: {unk24}");
@@ -345,13 +392,60 @@ namespace Caesar
             Console.WriteLine($"{nameof(TypeLength_1a)}: {TypeLength_1a}");
             Console.WriteLine($"ScaleOffset: 0x{(ScaleTableOffset + BaseAddress):X}, base of pres @ 0x{BaseAddress:X}");
 
-            foreach (Scale s in Scales) 
+            foreach (Scale s in Scales)
             {
                 Console.WriteLine("Scale: ");
                 s.PrintDebug();
             }
 
             Console.WriteLine("Presentation end");
+        }
+
+        public string CopyMinDebug()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("PRES: ");
+            sb.Append($" {nameof(unk5)}: {unk5}");
+            sb.Append($" {nameof(unk6)}: {unk6}");
+            sb.Append($" {nameof(unk7)}: {unk7}");
+            sb.Append($" {nameof(unk8)}: {unk8}");
+            sb.Append($" {nameof(unk9)}: {unk9}");
+            sb.Append($" {nameof(unka)}: {unka}");
+            sb.Append($" {nameof(unkb)}: {unkb}");
+            sb.Append($" {nameof(unkc)}: {unkc}");
+            sb.Append($" {nameof(unkd)}: {unkd}");
+            sb.Append($" {nameof(unke)}: {unke}");
+            sb.Append($" {nameof(unkf)}: {unkf}");
+            sb.Append($" {nameof(unk11)}: {unk11}");
+            sb.Append($" {nameof(unk12)}: {unk12}");
+            sb.Append($" {nameof(unk13)}: {unk13}");
+            sb.Append($" {nameof(unk14)}: {unk14}");
+            sb.Append($" {nameof(unk15)}: {unk15}");
+            sb.Append($" {nameof(unk17)}: {unk17}");
+            sb.Append($" {nameof(unk18)}: {unk18}");
+            sb.Append($" {nameof(unk19)}: {unk19}");
+            sb.Append($" {nameof(unk1b)}: {unk1b}");
+            sb.Append($" {nameof(unk1d)}: {unk1d}");
+            sb.Append($" {nameof(EnumType_unk1e)}: {EnumType_unk1e}");
+            sb.Append($" {nameof(unk1f)}: {unk1f}");
+            sb.Append($" {nameof(unk20)}: {unk20}");
+            sb.Append($" {nameof(TypeLengthBytesMaybe_21)}: {TypeLengthBytesMaybe_21}");
+            sb.Append($" {nameof(unk22)}: {unk22}");
+            sb.Append($" {nameof(unk23)}: {unk23}");
+            sb.Append($" {nameof(unk24)}: {unk24}");
+            sb.Append($" {nameof(unk25)}: {unk25}");
+            sb.Append($" {nameof(unk26)}: {unk26}");
+            sb.Append($" {nameof(BaseAddress)}: 0x{BaseAddress:X8}");
+            sb.Append($" {nameof(Type_1c)}: {Type_1c}");
+            sb.Append($" {nameof(TypeLength_1a)}: {TypeLength_1a}");
+            sb.Append($" Type: {GetDataType()}");
+            sb.Append($" {nameof(ScaleTableOffset)}: {ScaleTableOffset}");
+            sb.Append($" {nameof(Qualifier)}: {Qualifier}"); sb.Append($" {nameof(ScaleCountMaybe)}: {ScaleCountMaybe}");
+            if (ScaleCountMaybe > 0)
+            {
+                sb.Append($" {Language.GetString(Scales[0].EnumDescription)}");
+            }
+            return sb.ToString();
         }
 
 
