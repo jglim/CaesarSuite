@@ -49,7 +49,7 @@ namespace Trafo
                             var subfragmentList = new List<object>();
                             foreach (VCSubfragment subfragment in fragment.Subfragments) 
                             {
-                                var subfragmentRow = new { SubfragmentName = subfragment.NameCTFResolved, HexData = BitUtility.BytesToHex(subfragment.Dump) };
+                                var subfragmentRow = new { SubfragmentName = subfragment.NameResolved, HexData = BitUtility.BytesToHex(subfragment.Dump) };
                                 subfragmentList.Add(subfragmentRow);
                             }
                             var fragmentRow = new { FragmentName = fragment.Qualifier, BitPosition = fragment.ByteBitPos, BitSize = fragment.BitLength, Subfragments = subfragmentList };

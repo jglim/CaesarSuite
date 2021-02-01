@@ -192,7 +192,7 @@ namespace Diogenes
 
                 dt.Rows.Add(new string[] { 
                     currentFragment.Qualifier, 
-                    subfragment is null ? "(warning: no matching subfragment)" : subfragment.NameCTFResolved,
+                    subfragment is null ? "(warning: no matching subfragment)" : subfragment.NameResolved,
                     currentFragment.ByteBitPos.ToString(),
                     currentFragment.BitLength.ToString(),
                 });
@@ -310,7 +310,7 @@ namespace Diogenes
                 foreach (VCSubfragment subfragment in fragment.Subfragments) 
                 {
                     ToolStripMenuItem tsItem = new ToolStripMenuItem();
-                    tsItem.Text = subfragment.NameCTFResolved;
+                    tsItem.Text = subfragment.NameResolved;
                     tsItem.Tag = fragmentName;
                     tsItem.Click += VCContextMenu_Click;
                     if (fragmentValue == tsItem.Text) 
@@ -334,7 +334,7 @@ namespace Diogenes
 
             for (int i = 0; i < fragment.Subfragments.Count; i++)
             {
-                table[i] = new string[] { fragment.Subfragments[i].NameCTFResolved };
+                table[i] = new string[] { fragment.Subfragments[i].NameResolved };
             }
             GenericPicker picker = new GenericPicker(table, new string[] { "Name" });
             picker.Text = $"Select an option for {fragmentName}";
@@ -361,7 +361,7 @@ namespace Diogenes
                 Console.WriteLine("Coding context menu: couldn't find a matching fragment");
                 return;
             }
-            VCSubfragment subfragment = fragment.Subfragments.Find(x => x.NameCTFResolved == fragmentValue);
+            VCSubfragment subfragment = fragment.Subfragments.Find(x => x.NameResolved == fragmentValue);
             if (subfragment is null)
             {
                 Console.WriteLine("Coding context menu: couldn't find a matching subfragment");

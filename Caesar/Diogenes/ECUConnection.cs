@@ -397,7 +397,7 @@ namespace Diogenes
                 }
             }
             // check if the response was an ECU seed
-            if (ConnectionProtocol.SupportsUnlocking() && (response.Length >= 2) && (response[0] == 0x67))
+            if ((ConnectionProtocol?.SupportsUnlocking() ?? false) && (response.Length >= 2) && (response[0] == 0x67))
             {
                 SecurityAutoLogin.ReceiveSecurityResponse(response, diagService.ParentECU, this);
             }

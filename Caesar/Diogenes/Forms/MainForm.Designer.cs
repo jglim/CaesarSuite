@@ -37,6 +37,11 @@
             this.loadCBFFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unloadExistingFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.loadCompressedJsonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportContainerAsCompressedJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportContainerAsJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +64,8 @@
             this.copyConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.identifyECUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dSCDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fixStringsDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fingerprintModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLastFingerprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -118,6 +125,11 @@
             this.loadCBFFilesToolStripMenuItem,
             this.unloadExistingFilesToolStripMenuItem,
             this.toolStripSeparator1,
+            this.loadCompressedJsonToolStripMenuItem,
+            this.exportContainerAsCompressedJSONToolStripMenuItem,
+            this.loadJSONToolStripMenuItem,
+            this.exportContainerAsJSONToolStripMenuItem,
+            this.toolStripSeparator6,
             this.aboutToolStripMenuItem,
             this.toolStripSeparator2,
             this.exitToolStripMenuItem});
@@ -129,7 +141,7 @@
             // 
             this.loadCBFFilesToolStripMenuItem.Name = "loadCBFFilesToolStripMenuItem";
             this.loadCBFFilesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.loadCBFFilesToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.loadCBFFilesToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
             this.loadCBFFilesToolStripMenuItem.Text = "Load CBF Files";
             this.loadCBFFilesToolStripMenuItem.Click += new System.EventHandler(this.loadCBFFilesToolStripMenuItem_Click);
             // 
@@ -138,31 +150,64 @@
             this.unloadExistingFilesToolStripMenuItem.Name = "unloadExistingFilesToolStripMenuItem";
             this.unloadExistingFilesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.U)));
-            this.unloadExistingFilesToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.unloadExistingFilesToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
             this.unloadExistingFilesToolStripMenuItem.Text = "Unload Existing Files";
             this.unloadExistingFilesToolStripMenuItem.Click += new System.EventHandler(this.unloadExistingFilesToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(252, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(273, 6);
+            // 
+            // loadCompressedJsonToolStripMenuItem
+            // 
+            this.loadCompressedJsonToolStripMenuItem.Name = "loadCompressedJsonToolStripMenuItem";
+            this.loadCompressedJsonToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
+            this.loadCompressedJsonToolStripMenuItem.Text = "Load Compressed JSON";
+            this.loadCompressedJsonToolStripMenuItem.Click += new System.EventHandler(this.loadCompressedJsonToolStripMenuItem_Click);
+            // 
+            // exportContainerAsCompressedJSONToolStripMenuItem
+            // 
+            this.exportContainerAsCompressedJSONToolStripMenuItem.Name = "exportContainerAsCompressedJSONToolStripMenuItem";
+            this.exportContainerAsCompressedJSONToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
+            this.exportContainerAsCompressedJSONToolStripMenuItem.Text = "Export Container as Compressed JSON";
+            this.exportContainerAsCompressedJSONToolStripMenuItem.Click += new System.EventHandler(this.exportContainerAsCompressedJSONToolStripMenuItem_Click);
+            // 
+            // loadJSONToolStripMenuItem
+            // 
+            this.loadJSONToolStripMenuItem.Name = "loadJSONToolStripMenuItem";
+            this.loadJSONToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
+            this.loadJSONToolStripMenuItem.Text = "Load JSON";
+            this.loadJSONToolStripMenuItem.Click += new System.EventHandler(this.loadJSONToolStripMenuItem_Click);
+            // 
+            // exportContainerAsJSONToolStripMenuItem
+            // 
+            this.exportContainerAsJSONToolStripMenuItem.Name = "exportContainerAsJSONToolStripMenuItem";
+            this.exportContainerAsJSONToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
+            this.exportContainerAsJSONToolStripMenuItem.Text = "Export Container as JSON";
+            this.exportContainerAsJSONToolStripMenuItem.Click += new System.EventHandler(this.exportContainerAsJSONToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(273, 6);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
             this.aboutToolStripMenuItem.Text = "About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(252, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(273, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(276, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -216,7 +261,9 @@
             this.showTraceToolStripMenuItem,
             this.copyConsoleToolStripMenuItem,
             this.clearConsoleToolStripMenuItem,
-            this.identifyECUToolStripMenuItem});
+            this.identifyECUToolStripMenuItem,
+            this.dSCDebugToolStripMenuItem,
+            this.fixStringsDebugToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.eCUToolStripMenuItem.Text = "Tools";
@@ -314,6 +361,22 @@
             this.identifyECUToolStripMenuItem.Text = "Identify ECU";
             this.identifyECUToolStripMenuItem.Visible = false;
             this.identifyECUToolStripMenuItem.Click += new System.EventHandler(this.identifyECUToolStripMenuItem_Click);
+            // 
+            // dSCDebugToolStripMenuItem
+            // 
+            this.dSCDebugToolStripMenuItem.Name = "dSCDebugToolStripMenuItem";
+            this.dSCDebugToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.dSCDebugToolStripMenuItem.Text = "DSC Debug";
+            this.dSCDebugToolStripMenuItem.Visible = false;
+            this.dSCDebugToolStripMenuItem.Click += new System.EventHandler(this.dSCDebugToolStripMenuItem_Click);
+            // 
+            // fixStringsDebugToolStripMenuItem
+            // 
+            this.fixStringsDebugToolStripMenuItem.Name = "fixStringsDebugToolStripMenuItem";
+            this.fixStringsDebugToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.fixStringsDebugToolStripMenuItem.Text = "FixStrings Debug";
+            this.fixStringsDebugToolStripMenuItem.Visible = false;
+            this.fixStringsDebugToolStripMenuItem.Click += new System.EventHandler(this.fixStringsDebugToolStripMenuItem_Click);
             // 
             // preferencesToolStripMenuItem1
             // 
@@ -528,6 +591,13 @@
         private System.Windows.Forms.ToolStripMenuItem diagnosticTroubleCodesDTCToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewECUMetadataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem identifyECUToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadCompressedJsonToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportContainerAsCompressedJSONToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem dSCDebugToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadJSONToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportContainerAsJSONToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fixStringsDebugToolStripMenuItem;
     }
 }
 

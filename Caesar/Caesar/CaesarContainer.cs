@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +14,12 @@ namespace Caesar
         public CFFHeader CaesarCFFHeader;
         public CTFHeader CaesarCTFHeader;
         public List<ECU> CaesarECUs = new List<ECU>();
+        [Newtonsoft.Json.JsonIgnore]
         public byte[] FileBytes = new byte[] { };
 
         public uint FileChecksum;
+
+        public CaesarContainer() { }
 
         // fixup serialization/deserialization:
         // language strings should be properties; resolve to actual string only when called
@@ -39,6 +44,61 @@ namespace Caesar
                 ReadECU(reader);
             }
         }
+
+        public static string SerializeContainer(CaesarContainer container) 
+        {
+            return JsonConvert.SerializeObject(container);
+        }
+
+        public static CaesarContainer DeserializeContainer(string json) 
+        {
+            CaesarContainer container = JsonConvert.DeserializeObject<CaesarContainer>(json);
+            // at this point, the container needs to restore its internal object references before it is fully usable
+            CTFLanguage language = container.CaesarCTFHeader.CtfLanguages[0];
+            foreach (ECU ecu in container.CaesarECUs) 
+            {
+                ecu.Restore(language, container);
+            }
+
+            return container;
+        }
+
+        public static CaesarContainer DeserializeCompressedContainer(byte[] containerBytes)
+        {
+            string json = Encoding.UTF8.GetString(Inflate(containerBytes));
+            return DeserializeContainer(json);
+        }
+        public static byte[] SerializeCompressedContainer(CaesarContainer container)
+        {
+            return Deflate(Encoding.UTF8.GetBytes(SerializeContainer(container)));
+        }
+
+
+        private static byte[] Inflate(byte[] input)
+        {
+            using (MemoryStream ms = new MemoryStream(input))
+            {
+                using (MemoryStream msInner = new MemoryStream())
+                {
+                    using (DeflateStream z = new DeflateStream(ms, CompressionMode.Decompress))
+                    {
+                        z.CopyTo(msInner);
+                    }
+                    return msInner.ToArray();
+                }
+            }
+        }
+        private static byte[] Deflate(byte[] input)
+        {
+            using (MemoryStream compressedStream = new MemoryStream())
+            {
+                DeflateStream deflateStream = new DeflateStream(compressedStream, CompressionLevel.Optimal, true);
+                deflateStream.Write(input, 0, input.Length);
+                deflateStream.Close();
+                return compressedStream.ToArray();
+            }
+        }
+
 
         public static bool VerifyChecksum(byte[] fileBytes, out uint checksum) 
         {

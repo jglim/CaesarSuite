@@ -40,6 +40,7 @@ namespace Diogenes
             this.clearSelectedDTCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearAllDTCsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewAllAvailableDTCsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -112,7 +113,8 @@ namespace Diogenes
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportDTCsToolStripMenuItem});
+            this.exportDTCsToolStripMenuItem,
+            this.viewAllAvailableDTCsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -120,7 +122,7 @@ namespace Diogenes
             // exportDTCsToolStripMenuItem
             // 
             this.exportDTCsToolStripMenuItem.Name = "exportDTCsToolStripMenuItem";
-            this.exportDTCsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.exportDTCsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.exportDTCsToolStripMenuItem.Text = "Export DTCs";
             this.exportDTCsToolStripMenuItem.Click += new System.EventHandler(this.exportDTCsToolStripMenuItem_Click);
             // 
@@ -137,23 +139,30 @@ namespace Diogenes
             // clearSelectedDTCToolStripMenuItem
             // 
             this.clearSelectedDTCToolStripMenuItem.Name = "clearSelectedDTCToolStripMenuItem";
-            this.clearSelectedDTCToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.clearSelectedDTCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clearSelectedDTCToolStripMenuItem.Text = "Clear Selected DTC";
             this.clearSelectedDTCToolStripMenuItem.Click += new System.EventHandler(this.clearSelectedDTCToolStripMenuItem_Click);
             // 
             // clearAllDTCsToolStripMenuItem
             // 
             this.clearAllDTCsToolStripMenuItem.Name = "clearAllDTCsToolStripMenuItem";
-            this.clearAllDTCsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.clearAllDTCsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clearAllDTCsToolStripMenuItem.Text = "Clear All DTCs";
             this.clearAllDTCsToolStripMenuItem.Click += new System.EventHandler(this.clearAllDTCsToolStripMenuItem_Click);
             // 
             // refreshDataToolStripMenuItem
             // 
             this.refreshDataToolStripMenuItem.Name = "refreshDataToolStripMenuItem";
-            this.refreshDataToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.refreshDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.refreshDataToolStripMenuItem.Text = "Refresh Data";
             this.refreshDataToolStripMenuItem.Click += new System.EventHandler(this.refreshDataToolStripMenuItem_Click);
+            // 
+            // viewAllAvailableDTCsToolStripMenuItem
+            // 
+            this.viewAllAvailableDTCsToolStripMenuItem.Name = "viewAllAvailableDTCsToolStripMenuItem";
+            this.viewAllAvailableDTCsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.viewAllAvailableDTCsToolStripMenuItem.Text = "View all available DTCs";
+            this.viewAllAvailableDTCsToolStripMenuItem.Click += new System.EventHandler(this.viewAllAvailableDTCsToolStripMenuItem_Click);
             // 
             // DTCForm
             // 
@@ -193,5 +202,6 @@ namespace Diogenes
         private System.Windows.Forms.ToolStripMenuItem clearAllDTCsToolStripMenuItem;
         private System.Windows.Forms.DataGridView dgvContext;
         private System.Windows.Forms.ToolStripMenuItem refreshDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewAllAvailableDTCsToolStripMenuItem;
     }
 }

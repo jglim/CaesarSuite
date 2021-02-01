@@ -17,23 +17,25 @@ namespace Caesar
         public int IITOffset;
         public int InfoPoolIndex;
         public int PresPoolIndex;
-        public int field1E;
+        public int Field1E;
         public int SystemParam;
         public int DumpMode;
-        public int DumpSize;
+        private int DumpSize;
         public byte[] Dump;
 
         public int BitPosition;
         public ushort ModeConfig;
         public int SizeInBits = 0;
 
-        CTFLanguage Language;
+        private CTFLanguage Language;
 
         public static readonly byte[] IntegerSizeMapping = new byte[] { 0x00, 0x01, 0x04, 0x08, 0x10, 0x20, 0x40 };
 
         long BaseAddress;
+        [Newtonsoft.Json.JsonIgnore]
         public ECU ParentECU;
         private DiagService ParentDiagService;
+
         public InferredDataType FieldType;
 
         public enum InferredDataType 
@@ -48,6 +50,15 @@ namespace Caesar
             BitDumpType,
             ExtendedBitDumpType,
         }
+
+        public void Restore(CTFLanguage language, ECU parentEcu, DiagService parentDiagService) 
+        {
+            Language = language;
+            ParentECU = parentEcu;
+            ParentDiagService = parentDiagService;
+        }
+
+        public DiagPreparation() { }
 
         // void __cdecl DiagServiceReadPresentation(int *inBase, DECODED_PRESENTATION *outPresentation)
         // Looks like its actually a presentation
@@ -73,7 +84,7 @@ namespace Caesar
             IITOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             InfoPoolIndex = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             PresPoolIndex = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            field1E = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            Field1E = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             SystemParam = CaesarReader.ReadBitflagInt16(ref bitflags, reader, -1);
             DumpMode = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             DumpSize = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -167,10 +178,10 @@ namespace Caesar
                                 resultBitSize = CaesarStructure.ReadCBFWithOffset(0x21, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // ???
                             }
                             */
-                            resultBitSize = pres.TypeLength_1a > 0 ? pres.TypeLength_1a : pres.TypeLengthBytesMaybe_21;
+                            resultBitSize = pres.TypeLength_1A > 0 ? pres.TypeLength_1A : pres.TypeLengthBytesMaybe_21;
 
                             // if value was specified in bytes, convert to bits
-                            if (pres.Type_1c == 0)
+                            if (pres.Type_1C == 0)
                             {
                                 resultBitSize *= 8;
                             }
@@ -206,10 +217,10 @@ namespace Caesar
                             }
                             */
 
-                            resultBitSize = pres.TypeLength_1a > 0 ? pres.TypeLength_1a : pres.TypeLengthBytesMaybe_21;
+                            resultBitSize = pres.TypeLength_1A > 0 ? pres.TypeLength_1A : pres.TypeLengthBytesMaybe_21;
 
                             // if value was specified in bytes, convert to bits
-                            if (pres.Type_1c == 0)
+                            if (pres.Type_1C == 0)
                             {
                                 resultBitSize *= 8;
                             }
@@ -232,7 +243,7 @@ namespace Caesar
                         if (reducedSysParam == 0)
                         {
                             // specifically requests for LOBYTE (& 0xFF)
-                            int resultByteSize = (ParentDiagService.RequestBytes_Count & 0xFF) - (BitPosition / 8);
+                            int resultByteSize = (ParentDiagService.RequestBytes.Length & 0xFF) - (BitPosition / 8);
                             resultBitSize = resultByteSize * 8;
                             FieldType = InferredDataType.ExtendedBitDumpType;
                             // Console.WriteLine($"0x{modeH:X} debug for {qualifier} (L: {modeL}) (BitWidth: {AlternativeBitWidth} SP: {SystemParam}), sz: {resultBitSize} b ({resultBitSize/8} B)");
@@ -245,7 +256,7 @@ namespace Caesar
                             DiagService referencedDs = ParentECU.GlobalDiagServices.Find(x => x.Qualifier == ParentDiagService.InputRefNameMaybe);
                             if (referencedDs != null)
                             {
-                                bool referencedDsHasRequestData = referencedDs.RequestBytes_Count > 0; // supposed to check if requestMessage is valid too
+                                bool referencedDsHasRequestData = referencedDs.RequestBytes.Length > 0; // supposed to check if requestMessage is valid too
                                 int internalType = referencedDs.DataClass_ServiceTypeShifted;
                                 if (((referencedDs.DataClass_ServiceTypeShifted & 0xC) > 0) && referencedDsHasRequestData)
                                 {
@@ -268,7 +279,7 @@ namespace Caesar
                                 {
                                     // use pres dump length
                                     FieldType = InferredDataType.UnhandledSP17Type;
-                                    resultBitSize = ParentDiagService.RequestBytes_Count * 8;
+                                    resultBitSize = ParentDiagService.RequestBytes.Length * 8;
                                 }
                             }
                             else
@@ -359,7 +370,7 @@ namespace Caesar
             Console.WriteLine($"{nameof(IITOffset)} : {IITOffset}");
             Console.WriteLine($"{nameof(InfoPoolIndex)} : {InfoPoolIndex}");
             Console.WriteLine($"{nameof(PresPoolIndex)} : {PresPoolIndex}");
-            Console.WriteLine($"{nameof(field1E)} : {field1E}");
+            Console.WriteLine($"{nameof(Field1E)} : {Field1E}");
             Console.WriteLine($"{nameof(SystemParam)} : {SystemParam}");
             // Console.WriteLine($"{nameof(noIdea_T)} : {language.GetString(noIdea_T)}");
             Console.WriteLine($"{nameof(Dump)} : {BitUtility.BytesToHex(Dump)}");

@@ -11,17 +11,17 @@ namespace Caesar
     {
         public string Qualifier;
         public int LanguageIndex;
-        public int StringPoolSize;
-        public int MaybeOffsetFromStringPoolBase;
-        public int StringCount;
+        private int StringPoolSize;
+        private int MaybeOffsetFromStringPoolBase;
+        private int StringCount;
         public List<string> StringEntries;
 
         public long BaseAddress;
+        public CTFLanguage() { }
         public CTFLanguage(BinaryReader reader, long baseAddress, int headerSize) 
         {
             BaseAddress = baseAddress;
             reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
-
             ulong languageEntryBitflags = reader.ReadUInt16();
 
             Qualifier = CaesarReader.ReadBitflagStringWithReader(ref languageEntryBitflags, reader, BaseAddress);
@@ -30,16 +30,13 @@ namespace Caesar
             MaybeOffsetFromStringPoolBase = CaesarReader.ReadBitflagInt32(ref languageEntryBitflags, reader);
             StringCount = CaesarReader.ReadBitflagInt32(ref languageEntryBitflags, reader);
 
-            // I have no idea if encoding data is included, using ascii as a default for now. Some german character data will be lost
             LoadStrings(reader, headerSize, CaesarReader.DefaultEncoding);
-
-            //PrintDebug();
         }
 
         public void LoadStrings(BinaryReader reader, int headerSize, Encoding encoding) 
         {
             StringEntries = new List<string>();
-            int caesarStringTableOffset = headerSize + 0x410 + 4; // header.CffHeaderSize
+            int caesarStringTableOffset = headerSize + 0x410 + 4; // header.CffHeaderSize; strange that this has to be manually computed
             for (int i = 0; i < StringCount; i++) 
             {
                 reader.BaseStream.Seek(caesarStringTableOffset + (i * 4), SeekOrigin.Begin);

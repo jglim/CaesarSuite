@@ -25,8 +25,8 @@ namespace Caesar
         public int CCFHandle;
         public int VarcodeDumpSize;
         public byte[] VarcodeDump;
-        public int SubfragmentCount;
-        public long SubfragmentFileOffset;
+        private int SubfragmentCount; // exposed as Subfragments.Count
+        private long SubfragmentFileOffset; // exposed as Subfragments
         public string Qualifier;
 
         public int ImplementationUpper;
@@ -36,9 +36,24 @@ namespace Caesar
 
         public List<VCSubfragment> Subfragments = new List<VCSubfragment>();
 
-        public static readonly byte[] FragmentLengthTable = new byte[] { 0, 1, 4, 8, 0x10, 0x20, 0x40 };
+        [Newtonsoft.Json.JsonIgnore]
+        private static readonly byte[] FragmentLengthTable = new byte[] { 0, 1, 4, 8, 0x10, 0x20, 0x40 };
+        [Newtonsoft.Json.JsonIgnore]
         public VCDomain ParentDomain;
+        [Newtonsoft.Json.JsonIgnore]
         public ECU ParentECU;
+
+        public void Restore(ECU parentEcu, VCDomain parentDomain, CTFLanguage language) 
+        {
+            ParentECU = parentEcu;
+            ParentDomain = parentDomain;
+            foreach (VCSubfragment subfragment in Subfragments) 
+            {
+                subfragment.Restore(language);
+            }
+        }
+
+        public VCFragment() { }
 
         public VCFragment(BinaryReader reader, VCDomain parentDomain, long fragmentTable, int fragmentIndex, CTFLanguage language, ECU parentEcu) 
         {
@@ -121,7 +136,7 @@ namespace Caesar
         {
             foreach (VCSubfragment subfragment in Subfragments)
             {
-                if (subfragment.NameCTFResolved == subfragmentName)
+                if (subfragment.NameResolved == subfragmentName)
                 {
                     return SetSubfragmentConfiguration(variantCodingValue, subfragment);
                 }
@@ -185,9 +200,9 @@ namespace Caesar
                         BitLength = CaesarStructure.ReadCBFWithOffset(0x21, CaesarStructure.StructureName.PRESENTATION_STRUCTURE, presentationStruct); // ???
                     }
                     */
-                    BitLength = pres.TypeLength_1a > 0 ? pres.TypeLength_1a : pres.TypeLengthBytesMaybe_21;
+                    BitLength = pres.TypeLength_1A > 0 ? pres.TypeLength_1A : pres.TypeLengthBytesMaybe_21;
                     // if value was specified in bytes, convert to bits
-                    if (pres.Type_1c == 0)
+                    if (pres.Type_1C == 0)
                     {
                         BitLength *= 8;
                     }

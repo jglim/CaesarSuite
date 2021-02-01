@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Caesar
 {
-    class DSCContext
+    public class DSCContext
     {
         public DSCContext(byte[] dscContainerBytes) 
         {

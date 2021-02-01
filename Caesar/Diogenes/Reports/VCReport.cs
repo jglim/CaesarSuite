@@ -62,7 +62,7 @@ namespace Diogenes
                     VCFragment currentFragment = domain.VCFragments[i];
                     VCSubfragment subfragment = currentFragment.GetSubfragmentConfiguration(vcValue);
 
-                    string fragmentValue = subfragment is null ? "(?)" : subfragment.NameCTFResolved;
+                    string fragmentValue = subfragment is null ? "(?)" : subfragment.NameResolved;
                     string fragmentSupplementKey = subfragment is null ? "(?)" : subfragment.SupplementKey;
 
                     string tableRowBlock = $@"

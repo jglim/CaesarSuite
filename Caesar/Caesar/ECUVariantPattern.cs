@@ -45,7 +45,15 @@ namespace Caesar
 
         public int VariantID;
 
-        public long BaseAddress;
+        private readonly long BaseAddress;
+
+        public void Restore() 
+        {
+        
+        }
+
+        public ECUVariantPattern() { }
+
         public ECUVariantPattern(BinaryReader reader, long baseAddress) 
         {
             BaseAddress = baseAddress;

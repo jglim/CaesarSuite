@@ -15,21 +15,28 @@ namespace Caesar
         public int EcuOffset;
         public int CtfOffset; // nCtfHeaderRpos
         public int StringPoolSize;
-        public int DscOffset;
-        public int DscCount;
-        public int DscEntrySize;
+        private int DscOffset;
+        private int DscCount;
+        private int DscEntrySize;
         public string CbfVersionString;
         public string GpdVersionString;
         public string XmlString;
 
+        [Newtonsoft.Json.JsonIgnore]
         public int CffHeaderSize;
+        [Newtonsoft.Json.JsonIgnore]
         public long BaseAddress;
 
         public long DscBlockOffset;
-        public int DscBlockSize;
+        private int DscBlockSize;
+
+        [Newtonsoft.Json.JsonIgnore]
         public byte[] DSCPool = new byte[] { };
 
         // DIIAddCBFFile
+
+        public CFFHeader() 
+        { }
 
         public CFFHeader(BinaryReader reader) 
         {

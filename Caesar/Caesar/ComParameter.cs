@@ -13,19 +13,27 @@ namespace Caesar
         // this takes precedence over SubinterfaceIndex for KW2C3PE
         public int ParentInterfaceIndex;
         public int SubinterfaceIndex;
-        public int unk5;
+        public int Unk5;
         public int Unk_CTF;
         public int Phrase;
-        public int DumpSize;
+        private int DumpSize;
         public byte[] Dump;
        
         public int ComParamValue;
         public string ParamName = "";
 
-        public long BaseAddress;
+        private long BaseAddress;
+        CTFLanguage Language;
+
+        public void Restore(CTFLanguage language) 
+        {
+            Language = language;
+        }
+
+        public ComParameter() { }
 
         // looks exactly like the definition in DIOpenDiagService (#T)
-        public ComParameter(BinaryReader reader, long baseAddress, List<ECUInterface> parentEcuInterfaceList) 
+        public ComParameter(BinaryReader reader, long baseAddress, List<ECUInterface> parentEcuInterfaceList, CTFLanguage language) 
         {
             BaseAddress = baseAddress;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
@@ -34,7 +42,7 @@ namespace Caesar
             ComParamIndex = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             ParentInterfaceIndex = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             SubinterfaceIndex = CaesarReader.ReadBitflagInt16(ref bitflags, reader, 0);
-            unk5 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
+            Unk5 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             Unk_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader); // no -1? ctf strings should have -1
             Phrase = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             DumpSize = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -48,7 +56,7 @@ namespace Caesar
 
             ECUInterface parentEcuInterface = parentEcuInterfaceList[ParentInterfaceIndex];
 
-            if (ComParamIndex >= parentEcuInterface.comParameters.Count)
+            if (ComParamIndex >= parentEcuInterface.ComParameterNames.Count)
             {
                 // throw new Exception("Invalid communication parameter : parent interface has no matching key");
                 ParamName = "CP_UNKNOWN_MISSING_KEY";
@@ -56,13 +64,13 @@ namespace Caesar
             }
             else
             {
-                ParamName = parentEcuInterface.comParameters[ComParamIndex];
+                ParamName = parentEcuInterface.ComParameterNames[ComParamIndex];
             }
         }
 
         public void PrintDebug() 
         {
-            Console.WriteLine($"ComParam: id {ComParamIndex} ({ParamName}), v {ComParamValue} 0x{ComParamValue:X8} SI_Index:{SubinterfaceIndex} | parentIndex:{ParentInterfaceIndex} 5:{unk5} DumpSize:{DumpSize} D: {BitUtility.BytesToHex(Dump)}");
+            Console.WriteLine($"ComParam: id {ComParamIndex} ({ParamName}), v {ComParamValue} 0x{ComParamValue:X8} SI_Index:{SubinterfaceIndex} | parentIndex:{ParentInterfaceIndex} 5:{Unk5} DumpSize:{DumpSize} D: {BitUtility.BytesToHex(Dump)}");
             Console.WriteLine($"Pos 0x{BaseAddress:X}");
         }
     }

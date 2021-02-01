@@ -15,14 +15,16 @@ namespace Diogenes
         private string[][] Table;
         private string[] Headers;
         public string[] SelectedResult;
+        public int SelectedRowIndex = -1;
         public int FilterColumnIndex;
 
-        public GenericPicker(string[][] table, string[] headers, int filterColumn = 0)
+        public GenericPicker(string[][] table, string[] headers, int filterColumn = 0, bool allowMultiSelect = false)
         {
             InitializeComponent();
             Table = table;
             Headers = headers;
             FilterColumnIndex = filterColumn;
+            dgvMain.MultiSelect = allowMultiSelect;
         }
 
         private void PresentRows()
@@ -69,6 +71,7 @@ namespace Diogenes
             {
                 int selectedRowIndex = int.Parse(dgvMain.SelectedRows[0].Cells[0].Value.ToString());
                 SelectedResult = Table[selectedRowIndex];
+                SelectedRowIndex = selectedRowIndex;
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }

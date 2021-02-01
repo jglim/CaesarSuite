@@ -28,45 +28,45 @@ namespace Caesar
         public int EcuSgmlSource;
         public int Unk6RelativeOffset;
 
-        public int EcuVariant_BlockOffset; // 1
-        public int EcuVariant_EntryCount;
-        public int EcuVariant_EntrySize;
-        public int EcuVariant_BlockSize;
+        private int EcuVariant_BlockOffset; // 1
+        private int EcuVariant_EntryCount;
+        private int EcuVariant_EntrySize;
+        private int EcuVariant_BlockSize;
 
-        public int DiagJob_BlockOffset; // 2
-        public int DiagJob_EntryCount;
-        public int DiagJob_EntrySize;
-        public int DiagJob_BlockSize;
+        private int DiagJob_BlockOffset; // 2
+        private int DiagJob_EntryCount;
+        private int DiagJob_EntrySize;
+        private int DiagJob_BlockSize;
 
-        public int Dtc_BlockOffset; // 3
-        public int Dtc_EntryCount;
-        public int Dtc_EntrySize;
-        public int Dtc_BlockSize;
+        private int Dtc_BlockOffset; // 3
+        private int Dtc_EntryCount;
+        private int Dtc_EntrySize;
+        private int Dtc_BlockSize;
 
-        public int Env_BlockOffset; // 4
-        public int Env_EntryCount;
-        public int Env_EntrySize;
-        public int Env_BlockSize;
+        private int Env_BlockOffset; // 4
+        private int Env_EntryCount;
+        private int Env_EntrySize;
+        private int Env_BlockSize;
 
-        public int VcDomain_BlockOffset; // 5 , 0x15716
-        public int VcDomain_EntryCount; // [1], 43 0x2B
-        public int VcDomain_EntrySize; // [2], 12 0xC (multiply with [1] for size), 43*12=516 = 0x204
-        public int VcDomain_BlockSize; // [3] unused
+        private int VcDomain_BlockOffset; // 5 , 0x15716
+        private int VcDomain_EntryCount; // [1], 43 0x2B
+        private int VcDomain_EntrySize; // [2], 12 0xC (multiply with [1] for size), 43*12=516 = 0x204
+        private int VcDomain_BlockSize; // [3] unused
 
-        public int Presentations_BlockOffset;
-        public int Presentations_EntryCount;
-        public int Presentations_EntrySize;
-        public int Presentations_BlockSize;
+        private int Presentations_BlockOffset;
+        private int Presentations_EntryCount;
+        private int Presentations_EntrySize;
+        private int Presentations_BlockSize;
 
-        public int InternalPresentations_BlockOffset; // 31 (formerly InfoPool)
-        public int InternalPresentations_EntryCount; // 32
-        public int InternalPresentations_EntrySize; // 33
-        public int InternalPresentations_BlockSize; // 34
+        private int InternalPresentations_BlockOffset; // 31 (formerly InfoPool)
+        private int InternalPresentations_EntryCount; // 32
+        private int InternalPresentations_EntrySize; // 33
+        private int InternalPresentations_BlockSize; // 34
 
-        public int Unk_BlockOffset;
-        public int Unk_EntryCount;
-        public int Unk_EntrySize;
-        public int Unk_BlockSize;
+        private int Unk_BlockOffset;
+        private int Unk_EntryCount;
+        private int Unk_EntrySize;
+        private int Unk_BlockSize;
 
         public int Unk39;
 
@@ -74,14 +74,19 @@ namespace Caesar
         public List<ECUInterfaceSubtype> ECUInterfaceSubtypes = new List<ECUInterfaceSubtype>();
         public List<ECUVariant> ECUVariants = new List<ECUVariant>();
 
+        public List<VCDomain> GlobalVCDs = new List<VCDomain>();
         public List<DTC> GlobalDTCs = new List<DTC>();
         public List<DiagService> GlobalEnvironmentContexts = new List<DiagService>();
         public List<DiagService> GlobalDiagServices = new List<DiagService>();
         public List<DiagPresentation> GlobalPresentations = new List<DiagPresentation>();
         public List<DiagPresentation> GlobalInternalPresentations = new List<DiagPresentation>();
 
-        public long BaseAddress;
-        CTFLanguage Language;
+        private long BaseAddress;
+        [Newtonsoft.Json.JsonIgnore]
+        public CTFLanguage Language;
+
+        [Newtonsoft.Json.JsonIgnore]
+        public CaesarContainer ParentContainer;
 
         byte[] cachedVarcodingPool = new byte[] { };
         byte[] cachedVariantPool = new byte[] { };
@@ -93,9 +98,51 @@ namespace Caesar
         byte[] cachedDtcPool = new byte[] { };
         byte[] cachedUnkPool = new byte[] { };
 
-        public CaesarContainer ParentContainer;
-
+        [Newtonsoft.Json.JsonIgnore]
         public string ECUDescription { get { return Language.GetString(EcuDescription_CTF); } }
+
+
+        public void Restore(CTFLanguage language, CaesarContainer parentContainer) 
+        {
+            Language = language;
+            ParentContainer = parentContainer;
+            foreach (VCDomain vc in GlobalVCDs)
+            {
+                vc.Restore(language, this);
+            }
+            foreach (DTC dtc in GlobalDTCs)
+            {
+                dtc.Restore(language, this);
+            }
+            foreach (DiagService ds in GlobalDiagServices)
+            {
+                ds.Restore(language, this);
+            }
+            foreach (DiagService ds in GlobalEnvironmentContexts)
+            {
+                ds.Restore(language, this);
+            }
+            foreach (DiagPresentation pres in GlobalPresentations)
+            {
+                pres.Restore(language);
+            }
+            foreach (DiagPresentation pres in GlobalInternalPresentations)
+            {
+                pres.Restore(language);
+            }
+            foreach (ECUInterface iface in ECUInterfaces)
+            {
+                iface.Restore(language);
+            }
+            foreach (ECUInterfaceSubtype iface in ECUInterfaceSubtypes)
+            {
+                iface.Restore(language);
+            }
+            foreach (ECUVariant variant in ECUVariants)
+            {
+                variant.Restore(language, this);
+            }
+        }
 
         public byte[] ReadDiagjobPool(BinaryReader reader)
         {
@@ -179,6 +226,8 @@ namespace Caesar
             reader.BaseStream.Seek(addressToReadFrom, SeekOrigin.Begin);
             return reader.ReadBytes(multiplier1 * multiplier2);
         }
+
+        public ECU() { }
 
         public ECU(BinaryReader reader, CTFLanguage language, CFFHeader header, long baseAddress, CaesarContainer parentContainer)  
         {
@@ -301,7 +350,7 @@ namespace Caesar
                 int actualBlockOffset = reader.ReadInt32();
                 long ctBaseAddress = ctTableAddress + actualBlockOffset;
 
-                ECUInterfaceSubtype ecuInterfaceSubtype = new ECUInterfaceSubtype(reader, ctBaseAddress, ctBufferIndex);
+                ECUInterfaceSubtype ecuInterfaceSubtype = new ECUInterfaceSubtype(reader, ctBaseAddress, ctBufferIndex, language);
                 ECUInterfaceSubtypes.Add(ecuInterfaceSubtype);
             }
 
@@ -313,6 +362,7 @@ namespace Caesar
             CreateDiagServices(reader, language);
             // dtc has xrefs to envs
             CreateDTCs(reader, language);
+            CreateVCDomains(reader, language);
 
             CreateEcuVariants(reader, language);
             //PrintDebug();
@@ -363,6 +413,26 @@ namespace Caesar
             }
             GlobalDTCs = new List<DTC>(globalDtcs);
         }
+
+        public void CreateVCDomains(BinaryReader reader, CTFLanguage language) 
+        {
+            byte[] vcPool = ReadVarcodingPool(reader);
+            VCDomain[] globalVCDs = new VCDomain[VcDomain_EntryCount];
+            using (BinaryReader poolReader = new BinaryReader(new MemoryStream(vcPool)))
+            {
+                for (int vcdIndex = 0; vcdIndex < VcDomain_EntryCount; vcdIndex++)
+                {
+                    int entryOffset = poolReader.ReadInt32();
+                    int entrySize = poolReader.ReadInt32();
+                    uint entryCrc = poolReader.ReadUInt32();
+                    long vcdBlockAddress = entryOffset + VcDomain_BlockOffset;
+                    VCDomain vcd = new VCDomain(reader, language, vcdBlockAddress, vcdIndex, this);
+                    globalVCDs[vcdIndex] = vcd;
+                }
+            }
+            GlobalVCDs = new List<VCDomain>(globalVCDs);
+        }
+
         public void CreateEnvironments(BinaryReader reader, CTFLanguage language)
         {
             /*

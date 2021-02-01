@@ -50,64 +50,92 @@ namespace Caesar
         public ushort ClientAccessLevel;
         public ushort SecurityAccessLevel;
 
-        public int T_ComParam_Count;
-        public int T_ComParam_Offset;
+        private int T_ComParam_Count;
+        private int T_ComParam_Offset;
 
-        public int Q_Count;
-        public int Q_Offset;
+        private int Q_Count;
+        private int Q_Offset;
 
-        public int R_Count;
-        public int R_Offset;
+        private int R_Count;
+        private int R_Offset;
 
         public string InputRefNameMaybe;
 
-        public int U_prep_Count;
-        public int U_prep_Offset;
+        private int U_prep_Count;
+        private int U_prep_Offset;
 
-        public int V_Count;
-        public int V_Offset;
+        private int V_Count;
+        private int V_Offset;
 
-        public int RequestBytes_Count;
-        public int RequestBytes_Offset;
+        private int RequestBytes_Count;
+        private int RequestBytes_Offset;
 
-        public int W_OutPres_Count;
-        public int W_OutPres_Offset;
+        private int W_OutPres_Count;
+        private int W_OutPres_Offset;
 
-        public ushort field50;
+        public ushort Field50;
 
         public string NegativeResponseName;
         public string UnkStr3;
         public string UnkStr4;
 
-        public int P_Count;
+        public int P_Count; // global vars?
         public int P_Offset;
 
-        public int DiagServiceCodeCount;
-        public int DiagServiceCodeOffset;
+        private int DiagServiceCodeCount;
+        private int DiagServiceCodeOffset;
 
-        public int S_Count;
-        public int S_Offset;
+        private int S_Count;
+        private int S_Offset;
 
-        public int X_Count;
-        public int X_Offset;
+        private int X_Count;
+        private int X_Offset;
 
-        public int Y_Count;
-        public int Y_Offset;
+        private int Y_Count;
+        private int Y_Offset;
 
-        public int Z_Count;
-        public int Z_Offset;
+        private int Z_Count;
+        private int Z_Offset;
 
         public byte[] RequestBytes;
 
-        public long BaseAddress;
+        private long BaseAddress;
         public int PoolIndex;
 
+        // these are inlined preparations
         public List<DiagPreparation> InputPreparations = new List<DiagPreparation>();
         public List<List<DiagPreparation>> OutputPreparations = new List<List<DiagPreparation>>();
         public List<ComParameter> DiagComParameters = new List<ComParameter>();
 
+        [Newtonsoft.Json.JsonIgnore]
         public ECU ParentECU;
-        public CTFLanguage Language;
+        private CTFLanguage Language;
+
+        public void Restore(CTFLanguage language, ECU parentEcu) 
+        {
+            Language = language;
+            ParentECU = parentEcu;
+            foreach (DiagPreparation dp in InputPreparations)
+            {
+                dp.Restore(language, parentEcu, this);
+            }
+            foreach (List<DiagPreparation> dpl in OutputPreparations)
+            {
+                foreach (DiagPreparation dp in dpl)
+                {
+                    dp.Restore(language, parentEcu, this);
+                }
+            }
+            /*
+            // nothing in comparam to restore
+            foreach (ComParameter cp in DiagComParameters) 
+            {
+            
+            }
+            */
+        }
+
+        public DiagService() { }
 
         public DiagService(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu) 
         {
@@ -156,7 +184,7 @@ namespace Caesar
             W_OutPres_Count = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             W_OutPres_Offset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
-            field50 = CaesarReader.ReadBitflagUInt16(ref bitflags, reader);
+            Field50 = CaesarReader.ReadBitflagUInt16(ref bitflags, reader);
 
             NegativeResponseName = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress); // negative response name
             UnkStr3 = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
@@ -245,7 +273,7 @@ namespace Caesar
                 reader.BaseStream.Seek(comParamTableBaseAddress + (cpIndex * 4), SeekOrigin.Begin);
                 int resultCpOffset = reader.ReadInt32();
                 long cpEntryBaseAddress = comParamTableBaseAddress + resultCpOffset;
-                ComParameter cp = new ComParameter(reader, cpEntryBaseAddress, parentEcu.ECUInterfaces);
+                ComParameter cp = new ComParameter(reader, cpEntryBaseAddress, parentEcu.ECUInterfaces, language);
                 DiagComParameters.Add(cp);
             }
 
@@ -349,7 +377,7 @@ namespace Caesar
 
         public void PrintDebug() 
         {
-            Console.WriteLine($"{Qualifier} - ReqBytes: {RequestBytes_Count}, P: {P_Count}, Q: {Q_Count}, R: {R_Count}, S: {S_Count}, ComParams: {T_ComParam_Count}, Preparation: {U_prep_Count}, V: {V_Count}, OutPres: {W_OutPres_Count}, X: {X_Count}, Y: {Y_Count}, Z: {Z_Count}, DSC {DiagServiceCodeCount}, field50: {field50}");
+            Console.WriteLine($"{Qualifier} - ReqBytes: {RequestBytes_Count}, P: {P_Count}, Q: {Q_Count}, R: {R_Count}, S: {S_Count}, ComParams: {T_ComParam_Count}, Preparation: {U_prep_Count}, V: {V_Count}, OutPres: {W_OutPres_Count}, X: {X_Count}, Y: {Y_Count}, Z: {Z_Count}, DSC {DiagServiceCodeCount}, field50: {Field50}");
             Console.WriteLine($"BaseAddress @ 0x{BaseAddress:X}, NR: {NegativeResponseName}");
             Console.WriteLine($"V @ 0x{BaseAddress + V_Offset:X}, count: {V_Count}");
         }

@@ -9,7 +9,7 @@ namespace Caesar
     class StubHeader
     {
         public const int StubHeaderSize = 0x410;
-        public static readonly byte[] FileHeader = Encoding.ASCII.GetBytes("CBF-TRANSLATOR-VERSION:04.00");
+        private static readonly byte[] FileHeader = Encoding.ASCII.GetBytes("CBF-TRANSLATOR-VERSION:04.00");
 
         public static void ReadHeader(byte[] header)
         {

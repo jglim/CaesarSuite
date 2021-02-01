@@ -442,17 +442,17 @@ namespace Diogenes
                 {
                     DiagService ds = foundVariant.DiagServices[int.Parse(node.Tag.ToString())];
 
-                    bool connectionSupportsUnlocking = Connection?.ConnectionProtocol.SupportsUnlocking() ?? false;
+                    bool connectionSupportsUnlocking = Connection?.ConnectionProtocol?.SupportsUnlocking() ?? false;
 
                     // can we help to skip the modal if the ds doesn't require additional user input? common for data, stored data
                     if ((ds.DataClass_ServiceType == (int)DiagService.ServiceType.StoredData) || (ds.DataClass_ServiceType == (int)DiagService.ServiceType.Data))
                     {
-                        Connection.ExecUserDiagJob(ds.RequestBytes, ds);
+                        Connection?.ExecUserDiagJob(ds.RequestBytes, ds);
                     }
                     else if (connectionSupportsUnlocking && (ds.RequestBytes.Length == 2) && (ds.RequestBytes[0] == 0x27))
                     {
                         // request seed, no need to prompt
-                        Connection.ExecUserDiagJob(ds.RequestBytes, ds);
+                        Connection?.ExecUserDiagJob(ds.RequestBytes, ds);
                     }
                     else
                     {
@@ -1009,5 +1009,122 @@ namespace Diogenes
                 Console.WriteLine($"Target could not be identified");
             }
         }
+
+        private void loadCompressedJsonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Select a Compressed Caesar Binary (JSON) File";
+            ofd.Filter = "CCB files (*.ccb)|*.ccb|All files (*.*)|*.*";
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                Containers.Add(CaesarContainer.DeserializeCompressedContainer(File.ReadAllBytes(ofd.FileName)));
+                LoadTree();
+            }
+        }
+
+        private CaesarContainer PickContainer() 
+        {
+            if (Containers.Count == 0)
+            {
+                MessageBox.Show("No containers have been loaded yet.");
+                return null;
+            }
+            CaesarContainer targetContainer = Containers[0];
+            if (Containers.Count > 1)
+            {
+                // there isn't an embedded qualifier to identify containers easily; the ecu name is probably an easier name to identify with
+                List<string[]> table = new List<string[]>();
+                foreach (CaesarContainer container in Containers)
+                {
+                    if (container.CaesarECUs.Count > 0)
+                    {
+                        table.Add(new string[] { container.CaesarECUs[0].Qualifier });
+                    }
+                }
+                GenericPicker picker = new GenericPicker(table.ToArray(), new string[] { "Container" }, 0);
+                picker.Text = "Please select a container";
+                if (picker.ShowDialog() != DialogResult.OK)
+                {
+                    return null;
+                }
+                string selectedEcuQualifier = picker.SelectedResult[0];
+                targetContainer = Containers.Find(x => ((x.CaesarECUs.Count > 0) && (x.CaesarECUs[0].Qualifier == selectedEcuQualifier)));
+            }
+            return targetContainer;
+        }
+
+        private void exportContainerAsCompressedJSONToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CaesarContainer targetContainer = PickContainer();
+            if (targetContainer is null)
+            {
+                Console.WriteLine("Internal error: target container is null");
+            }
+            else
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Title = "Specify a location to save your new Compressed Caesar Binary (JSON) file";
+                sfd.Filter = "CCB files (*.ccb)|*.ccb|All files (*.*)|*.*";
+                sfd.FileName = targetContainer.CaesarECUs[0].Qualifier;
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllBytes(sfd.FileName, CaesarContainer.SerializeCompressedContainer(targetContainer));
+                }
+            }
+        }
+
+        private void dSCDebugToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Select a PAL File";
+            ofd.Filter = "PAL files (*.pal)|*.pal|All files (*.*)|*.*";
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                DSCContext ctx = new DSCContext(File.ReadAllBytes(ofd.FileName));
+            }
+        }
+
+        private void loadJSONToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Select a Caesar JSON File";
+            ofd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                Containers.Add(CaesarContainer.DeserializeContainer(Encoding.UTF8.GetString(File.ReadAllBytes(ofd.FileName))));
+                LoadTree();
+            }
+        }
+
+        private void exportContainerAsJSONToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CaesarContainer targetContainer = PickContainer();
+            if (targetContainer is null)
+            {
+                Console.WriteLine("Internal error: target container is null");
+            }
+            else
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Title = "Specify a location to save your new Caesar JSON file";
+                sfd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                sfd.FileName = targetContainer.CaesarECUs[0].Qualifier;
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllBytes(sfd.FileName, Encoding.UTF8.GetBytes(CaesarContainer.SerializeContainer(targetContainer)));
+                }
+            }
+        }
+
+        private void fixStringsDebugToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
     }
 }

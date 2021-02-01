@@ -16,11 +16,25 @@ namespace Caesar
         public int Unk3;
         public int Unk4;
         public string SupplementKey;
-        public string NameCTFResolved;
+
+
+        [Newtonsoft.Json.JsonIgnore]
+        public string NameResolved { get { return Language.GetString(Description_CTF); } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        CTFLanguage Language;
+
+        public void Restore(CTFLanguage language) 
+        {
+            Language = language;
+        }
+
+        public VCSubfragment() { }
 
         public VCSubfragment(BinaryReader reader, VCFragment parentFragment, CTFLanguage language, long baseAddress)
         {
             // see DIOpenCBF_FragValHandle
+            Language = language;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             ulong bitflags = reader.ReadUInt16();
 
@@ -35,7 +49,6 @@ namespace Caesar
             Unk3 = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
             Unk4 = CaesarReader.ReadBitflagInt16(ref bitflags, reader, -1);
             SupplementKey = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-            NameCTFResolved = language.GetString(Description_CTF);
 
             //int subfragmentIdk2 = reader.ReadInt32();
             //int subfragmentName = reader.ReadInt32();
@@ -52,7 +65,7 @@ namespace Caesar
                 Console.WriteLine($"{nameof(Name_CTF)}, {Name_CTF}");
                 Console.WriteLine($"{nameof(Dump)}, {BitUtility.BytesToHex(Dump)}");
                 Console.WriteLine($"{nameof(Description_CTF)}, {Description_CTF}");
-                Console.WriteLine($"{nameof(NameCTFResolved)}, {NameCTFResolved}");
+                Console.WriteLine($"{nameof(NameResolved)}, {NameResolved}");
                 Console.WriteLine($"{nameof(QualifierUsuallyDisabled)}, {QualifierUsuallyDisabled}");
                 Console.WriteLine($"{nameof(Unk3)}, {Unk3}");
                 Console.WriteLine($"{nameof(Unk4)}, {Unk4}");
@@ -60,7 +73,7 @@ namespace Caesar
             }
             else
             {
-                Console.WriteLine($">> {BitUtility.BytesToHex(Dump)} : {NameCTFResolved}");
+                Console.WriteLine($">> {BitUtility.BytesToHex(Dump)} : {NameResolved}");
             }
         }
     }

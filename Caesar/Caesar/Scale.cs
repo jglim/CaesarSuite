@@ -30,9 +30,21 @@ namespace Caesar
         public int EnumDescription;
         public int UnkC;
 
-        public Scale(BinaryReader reader, long baseAddress) 
+        [Newtonsoft.Json.JsonIgnore]
+        private CTFLanguage Language;
+
+        public void Restore(CTFLanguage language) 
+        {
+            Language = language;
+        }
+
+        public Scale() { }
+
+        public Scale(BinaryReader reader, long baseAddress, CTFLanguage language) 
         {
             BaseAddress = baseAddress;
+            Language = language;
+            
             reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
 
             ulong bitflags = reader.ReadUInt16();

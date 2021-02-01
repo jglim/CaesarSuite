@@ -59,15 +59,28 @@ namespace Caesar
         public int Unk9;
         public int Unk10; // might be signed
 
-        public long BaseAddress;
-        public int Index;
+        private long BaseAddress;
+        private int Index;
 
         public List<ComParameter> CommunicationParameters = new List<ComParameter>();
+        private CTFLanguage Language;
 
-        public ECUInterfaceSubtype(BinaryReader reader, long baseAddress, int index)
+        public void Restore(CTFLanguage language) 
+        {
+            Language = language;
+            foreach (ComParameter cp in CommunicationParameters) 
+            {
+                cp.Restore(language);
+            }
+        }
+
+        public ECUInterfaceSubtype() { }
+
+        public ECUInterfaceSubtype(BinaryReader reader, long baseAddress, int index, CTFLanguage language)
         {
             Index = index;
             BaseAddress = baseAddress;
+            Language = language;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             // we can now properly operate on the interface block
             ulong ctBitflags = reader.ReadUInt32();

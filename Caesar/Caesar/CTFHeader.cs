@@ -13,13 +13,15 @@ namespace Caesar
         public string Qualifier;
         public int CtfUnk3;
         public int CtfUnk4;
-        public int CtfLanguageCount;
-        public int CtfLanguageTableOffset;
+        private int CtfLanguageCount;
+        private int CtfLanguageTableOffset;
         public string CtfUnkString;
 
         public List<CTFLanguage> CtfLanguages;
 
         public long BaseAddress;
+
+        public CTFHeader() { }
         public CTFHeader(BinaryReader reader, long baseAddress, int headerSize) 
         {
             BaseAddress = baseAddress;

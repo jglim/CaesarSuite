@@ -30,13 +30,24 @@ namespace Caesar
         public int XrefStart = -1;
         public int XrefCount = -1;
 
-        public long BaseAddress;
+        private long BaseAddress;
         public int PoolIndex;
 
+        [Newtonsoft.Json.JsonIgnore]
         public ECU ParentECU;
+        [Newtonsoft.Json.JsonIgnore]
         CTFLanguage Language;
 
+        [Newtonsoft.Json.JsonIgnore]
         public string Description { get { return Language.GetString(Description_CTF); } }
+
+        public void Restore(CTFLanguage language, ECU parentEcu) 
+        {
+            ParentECU = parentEcu;
+            Language = language;
+        }
+
+        public DTC() { }
 
         public DTC(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu)
         {

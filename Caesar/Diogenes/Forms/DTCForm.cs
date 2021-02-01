@@ -293,6 +293,18 @@ namespace Diogenes
         {
             DTCReport.CreateDTCReport(DTCContexts, Connection, Variant);
         }
+
+        private void viewAllAvailableDTCsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<string[]> rows = new List<string[]>();
+            foreach (DTC dtc in Variant.DTCs) 
+            {
+                rows.Add(new string[] { dtc.Qualifier, dtc.Description });
+            }
+            GenericPicker picker = new GenericPicker(rows.ToArray(), new string[] { "Identifier", "Description" }, 0, true);
+            picker.Text = $"All DTCs for {Variant.Qualifier}";
+            picker.Show();
+        }
     }
 
     public class DTCContext

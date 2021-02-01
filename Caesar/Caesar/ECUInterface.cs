@@ -14,13 +14,22 @@ namespace Caesar
         public int Description_CTF;
         public string VersionString;
         public int Version;
-        public int ComParamCount;
-        public int ComParamListOffset;
+        private int ComParamCount;
+        private int ComParamListOffset;
         public int Unk6;
+        
 
-        public List<string> comParameters = new List<string>();
+        public List<string> ComParameterNames = new List<string>();
 
-        public long BaseAddress;
+        private CTFLanguage Language;
+        private long BaseAddress;
+
+        public void Restore(CTFLanguage language) 
+        {
+            Language = language;
+        }
+
+        public ECUInterface() { }
 
         public ECUInterface(BinaryReader reader, long baseAddress)
         {
@@ -51,7 +60,7 @@ namespace Caesar
                 long interfaceStringReadoutPtr = reader.ReadInt32() + comparamFileOffset;
                 reader.BaseStream.Seek(interfaceStringReadoutPtr, SeekOrigin.Begin);
                 string comParameter = CaesarReader.ReadStringFromBinaryReader(reader);
-                comParameters.Add(comParameter);
+                ComParameterNames.Add(comParameter);
             }
         }
 
@@ -66,7 +75,7 @@ namespace Caesar
             Console.WriteLine($"{nameof(ComParamListOffset)} : 0x{ComParamListOffset:X}");
             Console.WriteLine($"{nameof(Unk6)} : {Unk6}");
 
-            foreach (string comParameter in comParameters)
+            foreach (string comParameter in ComParameterNames)
             {
                 Console.WriteLine($"InterfaceComParameter: {comParameter}");
             }

@@ -16,24 +16,24 @@ namespace Caesar
         public string UnkStr2;
         public int Unk1;
         
-        public int MatchingPatternCount; // A
-        public int MatchingPatternOffset;
-        public int SubsectionB_Count; // B
-        public int SubsectionB_Offset;
-        public int ComParamsCount; // C
-        public int ComParamsOffset;
-        public int DiagServiceCode_Count; // D : DSC
-        public int DiagServiceCode_Offset;
-        public int DiagServicesCount; // E
-        public int DiagServicesOffset;
-        public int DTC_Count; // F
-        public int DTC_Offset;
-        public int EnvironmentCtx_Count; // G
-        public int EnvironmentCtx_Offset;
-        public int Xref_Count; // H
-        public int Xref_Offset;
-        public int VCDomainsCount; // I
-        public int VCDomainsOffset;
+        private int MatchingPatternCount; // A
+        private int MatchingPatternOffset;
+        private int SubsectionB_Count; // B
+        private int SubsectionB_Offset;
+        private int ComParamsCount; // C
+        private int ComParamsOffset;
+        private int DiagServiceCode_Count; // D : DSC
+        private int DiagServiceCode_Offset;
+        private int DiagServicesCount; // E
+        private int DiagServicesOffset;
+        private int DTC_Count; // F
+        private int DTC_Offset;
+        private int EnvironmentCtx_Count; // G
+        private int EnvironmentCtx_Offset;
+        private int Xref_Count; // H
+        private int Xref_Offset;
+        private int VCDomainsCount; // I
+        private int VCDomainsOffset;
 
         public string NegativeResponseName;
         public int UnkByte;
@@ -43,16 +43,48 @@ namespace Caesar
         public List<Tuple<int, int, int>> DTCsPoolOffsetsWithBounds = new List<Tuple<int, int, int>>();
         public List<int> EnvironmentContextsPoolOffsets = new List<int>();
 
-        public List<VCDomain> VCDomains = new List<VCDomain>();
         public List<ECUVariantPattern> VariantPatterns = new List<ECUVariantPattern>();
-        public DiagService[] DiagServices = new DiagService[] { };
-        public DTC[] DTCs = new DTC[] { };
-        public DiagService[] EnvironmentContexts = new DiagService[] { };
-        //public EnvironmentContext[] EnvironmentContexts = new EnvironmentContext[] { };
         public int[] Xrefs = new int[] { };
 
+        // these should be manually deserialized by creating references back to the parent ECU
+
+        [Newtonsoft.Json.JsonIgnore]
+        public List<VCDomain> VCDomains = new List<VCDomain>();
+        [Newtonsoft.Json.JsonIgnore]
+        public DiagService[] DiagServices = new DiagService[] { };
+        [Newtonsoft.Json.JsonIgnore]
+        public DTC[] DTCs = new DTC[] { };
+        [Newtonsoft.Json.JsonIgnore]
+        public DiagService[] EnvironmentContexts = new DiagService[] { };
+
         public long BaseAddress;
+        [Newtonsoft.Json.JsonIgnore]
         public ECU ParentECU;
+
+        [Newtonsoft.Json.JsonIgnore]
+        private CTFLanguage Language;
+
+        public void Restore(CTFLanguage language, ECU parentEcu) 
+        {
+            Language = language;
+            ParentECU = parentEcu;
+
+            CreateVCDomains(parentEcu, language);
+            CreateDiagServices(parentEcu, language);
+            CreateDTCs(parentEcu, language);
+            CreateEnvironmentContexts(parentEcu, language);
+
+            /*
+            // no restoring required
+            foreach (ECUVariantPattern vp in VariantPatterns) 
+            {
+                vp.Restore();
+            }
+            */
+            // CreateComParameters(reader, parentEcu); // already serialized in json
+        }
+
+        public ECUVariant() { }
 
         public ECUVariant(BinaryReader reader, ECU parentEcu, CTFLanguage language, long baseAddress, int blockSize)
         {
@@ -60,6 +92,7 @@ namespace Caesar
 
             BaseAddress = baseAddress;
             ParentECU = parentEcu;
+            Language = language;
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             byte[] variantBytes = reader.ReadBytes(blockSize);
 
@@ -133,12 +166,12 @@ namespace Caesar
                 }
             }
 
-            CreateVCDomains(reader, parentEcu, language);
-            CreateDiagServices(reader, parentEcu, language);
+            CreateVCDomains(parentEcu, language);
+            CreateDiagServices(parentEcu, language);
             CreateVariantPatterns(reader);
             CreateComParameters(reader, parentEcu);
-            CreateDTCs(reader, parentEcu, language);
-            CreateEnvironmentContexts(reader, parentEcu, language);
+            CreateDTCs(parentEcu, language);
+            CreateEnvironmentContexts(parentEcu, language);
             CreateXrefs(reader, parentEcu, language);
             //PrintDebug();
         }
@@ -183,7 +216,7 @@ namespace Caesar
 
             foreach (long comparamOffset in comparameterOffsets)
             {
-                ComParameter param = new ComParameter(reader, comparamOffset, parentEcu.ECUInterfaces);
+                ComParameter param = new ComParameter(reader, comparamOffset, parentEcu.ECUInterfaces, Language);
 
                 // KW2C3PE uses a different parent addressing style
                 int parentIndex = param.ParentInterfaceIndex > 0 ? param.ParentInterfaceIndex : param.SubinterfaceIndex;
@@ -248,16 +281,19 @@ namespace Caesar
             return result.ToArray();
         }
 
-        private void CreateVCDomains(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        private void CreateVCDomains(ECU parentEcu, CTFLanguage language)
         {
             VCDomains = new List<VCDomain>();
             foreach (int variantCodingDomainEntry in VCDomainPoolOffsets)
             {
+                /*
                 VCDomain vcDomain = new VCDomain(reader, parentEcu, language, variantCodingDomainEntry);
                 VCDomains.Add(vcDomain);
+                */
+                VCDomains.Add(ParentECU.GlobalVCDs[variantCodingDomainEntry]);
             }
         }
-        private void CreateDiagServices(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        private void CreateDiagServices(ECU parentEcu, CTFLanguage language)
         {
             // unlike variant domains, storing references to the parent objects in the ecu is preferable since this is relatively larger
             //DiagServices = new List<DiagService>();
@@ -276,7 +312,7 @@ namespace Caesar
                 }
             }
         }
-        private void CreateDTCs(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        private void CreateDTCs(ECU parentEcu, CTFLanguage language)
         {
             DTCs = new DTC[DTCsPoolOffsetsWithBounds.Count];
 
@@ -303,7 +339,7 @@ namespace Caesar
                 Xrefs[i] = reader.ReadInt32();
             }
         }
-        private void CreateEnvironmentContexts(BinaryReader reader, ECU parentEcu, CTFLanguage language)
+        private void CreateEnvironmentContexts(ECU parentEcu, CTFLanguage language)
         {
             /*
             EnvironmentContexts = new EnvironmentContext[EnvironmentContextsPoolOffsets.Count];
