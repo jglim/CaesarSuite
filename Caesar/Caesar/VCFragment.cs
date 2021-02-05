@@ -224,7 +224,8 @@ namespace Caesar
                 }
                 else if (ImplementationUpper == 0x340)
                 {
-                    throw new NotImplementedException("Requires implementation of ITT handle");
+                    //throw new NotImplementedException("Requires implementation of ITT handle");
+                    Console.WriteLine($"[!] Warning: Please avoid {ParentDomain.Qualifier} -> {Qualifier} as it could not be parsed (requires ITT).");
                 }
                 else
                 {

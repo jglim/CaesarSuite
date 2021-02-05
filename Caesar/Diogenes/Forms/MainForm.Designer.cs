@@ -80,6 +80,7 @@
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
+            this.listVariantIDsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -263,7 +264,8 @@
             this.clearConsoleToolStripMenuItem,
             this.identifyECUToolStripMenuItem,
             this.dSCDebugToolStripMenuItem,
-            this.fixStringsDebugToolStripMenuItem});
+            this.fixStringsDebugToolStripMenuItem,
+            this.listVariantIDsToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.eCUToolStripMenuItem.Text = "Tools";
@@ -517,6 +519,13 @@
             this.tmrBlinkConnectionMenu.Interval = 60;
             this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
             // 
+            // listVariantIDsToolStripMenuItem
+            // 
+            this.listVariantIDsToolStripMenuItem.Name = "listVariantIDsToolStripMenuItem";
+            this.listVariantIDsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.listVariantIDsToolStripMenuItem.Text = "List Variant IDs";
+            this.listVariantIDsToolStripMenuItem.Click += new System.EventHandler(this.listVariantIDsToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -598,6 +607,7 @@
         private System.Windows.Forms.ToolStripMenuItem loadJSONToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportContainerAsJSONToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fixStringsDebugToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem listVariantIDsToolStripMenuItem;
     }
 }
 

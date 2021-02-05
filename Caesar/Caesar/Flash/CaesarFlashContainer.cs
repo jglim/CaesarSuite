@@ -64,6 +64,14 @@ namespace Caesar
             byte[] flashContainer = File.ReadAllBytes(filePath);
             CaesarFlashContainer container = new CaesarFlashContainer(flashContainer);
 
+            // mini-feature: if a binary with enough space exists, the image's data will be written to it (for some CFFs with many segments, this saves time)
+            string mergePath = @"merge.bin";
+            bool useMergeFeature = File.Exists(mergePath);
+            byte[] mergeBytes = new byte[] { };
+            if (useMergeFeature) 
+            {
+                mergeBytes = File.ReadAllBytes(mergePath);
+            }
 
             using (BinaryReader reader = new BinaryReader(new MemoryStream(flashContainer)))
             {
@@ -86,10 +94,22 @@ namespace Caesar
                         byte[] fileBytes = reader.ReadBytes(seg.SegmentLength);
 
                         File.WriteAllBytes($"{directory}\\{db.Qualifier}_{seg.FromAddress:X}.bin", fileBytes);
+
+                        if (useMergeFeature && (mergeBytes.Length >= (seg.FromAddress + fileBytes.Length)))
+                        {
+                            for (int i = 0; i < fileBytes.Length; i++) 
+                            {
+                                mergeBytes[i + seg.FromAddress] |= fileBytes[i];
+                            }
+                        }
                     }
                 }
             }
             Console.WriteLine($"Exported segments can be found at {directory}");
+            if (useMergeFeature) 
+            {
+                File.WriteAllBytes(mergePath, mergeBytes);
+            }
         }
 
         public void SpliceCFFFile(string filePath)

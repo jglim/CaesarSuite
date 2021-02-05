@@ -1125,6 +1125,26 @@ namespace Diogenes
 
         }
 
-
+        private void listVariantIDsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CaesarContainer targetContainer = PickContainer();
+            if (targetContainer is null)
+            {
+                Console.WriteLine("Internal error: target container is null");
+            }
+            else
+            {
+                foreach (ECU ecu in targetContainer.CaesarECUs) 
+                {
+                    foreach (ECUVariant variant in ecu.ECUVariants) 
+                    {
+                        foreach (ECUVariantPattern pattern in variant.VariantPatterns) 
+                        {
+                            Console.WriteLine($"{variant.Qualifier}: {pattern.VariantID:X4}");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
