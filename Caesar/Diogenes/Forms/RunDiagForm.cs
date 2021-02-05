@@ -79,10 +79,10 @@ namespace Diogenes
         private void PresentDiagService() 
         {
             DataTable dt = new DataTable();
-            dt.Columns.Add("Index", typeof(String));
+            dt.Columns.Add("Index", typeof(int));
             dt.Columns.Add("Name", typeof(String));
-            dt.Columns.Add("Byte Position", typeof(String));
-            dt.Columns.Add("Data Size", typeof(String));
+            dt.Columns.Add("Byte Position", typeof(int));
+            dt.Columns.Add("Data Size", typeof(int));
             dt.Columns.Add("Data Type", typeof(String));
             dt.Columns.Add("Inferred Type", typeof(String));
             dt.Columns.Add("Direction", typeof(String));
@@ -93,12 +93,12 @@ namespace Diogenes
             {
                 DiagPreparation prep = CurrentDiagService.InputPreparations[i];
 
-                dt.Rows.Add(new string[]
+                dt.Rows.Add(new object[]
                 {
-                        listUniqueIndex.ToString(),
+                        listUniqueIndex,
                         prep.Qualifier,
-                        (prep.BitPosition / 8).ToString(),
-                        (prep.SizeInBits / 8).ToString(),
+                        prep.BitPosition / 8,
+                        prep.SizeInBits / 8,
                         prep.ModeConfig.ToString("X"),
                         prep.FieldType.ToString(),
                         "Input",
@@ -113,12 +113,12 @@ namespace Diogenes
                 {
                     DiagPreparation prep = CurrentDiagService.OutputPreparations[i][j];
 
-                    dt.Rows.Add(new string[]
+                    dt.Rows.Add(new object[]
                     {
-                        listUniqueIndex.ToString(),
+                        listUniqueIndex,
                         prep.Qualifier,
-                        (prep.BitPosition / 8).ToString(),
-                        (prep.SizeInBits / 8).ToString(),
+                        prep.BitPosition / 8,
+                        prep.SizeInBits / 8,
                         prep.ModeConfig.ToString("X"),
                         prep.FieldType.ToString(),
                         $"Output ({i})",
