@@ -37,7 +37,10 @@ namespace Diogenes
             }
             if (txtTrace.Text.Length != ParentMainForm.Connection.CommunicationsLogHighLevel.Length) 
             {
-                txtTrace.Text = ParentMainForm.Connection.CommunicationsLogHighLevel.ToString();
+                lock (ParentMainForm.Connection.WriteLock) 
+                {
+                    txtTrace.Text = ParentMainForm.Connection.CommunicationsLogHighLevel.ToString();
+                }
                 txtTrace.SelectionStart = txtTrace.TextLength;
                 txtTrace.ScrollToCaret();
             }

@@ -66,6 +66,7 @@
             this.identifyECUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSCDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fixStringsDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.listVariantIDsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fingerprintModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLastFingerprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,7 +81,6 @@
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
-            this.listVariantIDsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -377,8 +377,14 @@
             this.fixStringsDebugToolStripMenuItem.Name = "fixStringsDebugToolStripMenuItem";
             this.fixStringsDebugToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.fixStringsDebugToolStripMenuItem.Text = "FixStrings Debug";
-            this.fixStringsDebugToolStripMenuItem.Visible = false;
             this.fixStringsDebugToolStripMenuItem.Click += new System.EventHandler(this.fixStringsDebugToolStripMenuItem_Click);
+            // 
+            // listVariantIDsToolStripMenuItem
+            // 
+            this.listVariantIDsToolStripMenuItem.Name = "listVariantIDsToolStripMenuItem";
+            this.listVariantIDsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.listVariantIDsToolStripMenuItem.Text = "List Variant IDs";
+            this.listVariantIDsToolStripMenuItem.Click += new System.EventHandler(this.listVariantIDsToolStripMenuItem_Click);
             // 
             // preferencesToolStripMenuItem1
             // 
@@ -518,13 +524,6 @@
             // 
             this.tmrBlinkConnectionMenu.Interval = 60;
             this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
-            // 
-            // listVariantIDsToolStripMenuItem
-            // 
-            this.listVariantIDsToolStripMenuItem.Name = "listVariantIDsToolStripMenuItem";
-            this.listVariantIDsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
-            this.listVariantIDsToolStripMenuItem.Text = "List Variant IDs";
-            this.listVariantIDsToolStripMenuItem.Click += new System.EventHandler(this.listVariantIDsToolStripMenuItem_Click);
             // 
             // MainForm
             // 

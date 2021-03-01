@@ -84,6 +84,7 @@ namespace Diogenes
 
         // this should really go into a dedicated logger
         public StringBuilder CommunicationsLogHighLevel = new StringBuilder();
+        public readonly object WriteLock = new object();
 
         // constant 2000 ms as recomended by the ISO 15765-3 standard (§6.3.3).
         Timer TesterPresentTimer = new Timer(2000);
@@ -588,11 +589,17 @@ namespace Diogenes
 
         public void LogRead(IEnumerable<byte> inBuffer)
         {
-            CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(inBuffer.ToArray(), true)}\r\n");
+            lock (WriteLock) 
+            {
+                CommunicationsLogHighLevel.Append($"R {BitUtility.BytesToHex(inBuffer.ToArray(), true)}\r\n");
+            }
         }
         public void LogWrite(IEnumerable<byte> inBuffer)
         {
-            CommunicationsLogHighLevel.Append($"W {BitUtility.BytesToHex(inBuffer.ToArray(), true)}\r\n");
+            lock (WriteLock)
+            {
+                CommunicationsLogHighLevel.Append($"W {BitUtility.BytesToHex(inBuffer.ToArray(), true)}\r\n");
+            }
         }
 
         public void TryCleanup()

@@ -95,11 +95,18 @@ namespace Caesar
 
                         File.WriteAllBytes($"{directory}\\{db.Qualifier}_{seg.FromAddress:X}.bin", fileBytes);
 
-                        if (useMergeFeature && (mergeBytes.Length >= (seg.FromAddress + fileBytes.Length)))
+                        if (useMergeFeature)
                         {
-                            for (int i = 0; i < fileBytes.Length; i++) 
+                            if ((mergeBytes.Length >= (seg.FromAddress + fileBytes.Length)))
                             {
-                                mergeBytes[i + seg.FromAddress] |= fileBytes[i];
+                                for (int i = 0; i < fileBytes.Length; i++)
+                                {
+                                    mergeBytes[i + seg.FromAddress] |= fileBytes[i];
+                                }
+                            }
+                            else 
+                            {
+                                Console.WriteLine($"Out-of-bound merge, skipping {seg.SegmentName} mapped to 0x{seg.FromAddress:X} with size 0x{seg.SegmentLength:X}");
                             }
                         }
                     }
