@@ -65,8 +65,9 @@
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.identifyECUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dSCDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fixStringsDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.genericDebugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listVariantIDsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadBlocksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fingerprintModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLastFingerprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -264,8 +265,9 @@
             this.clearConsoleToolStripMenuItem,
             this.identifyECUToolStripMenuItem,
             this.dSCDebugToolStripMenuItem,
-            this.fixStringsDebugToolStripMenuItem,
-            this.listVariantIDsToolStripMenuItem});
+            this.genericDebugToolStripMenuItem,
+            this.listVariantIDsToolStripMenuItem,
+            this.downloadBlocksToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.eCUToolStripMenuItem.Text = "Tools";
@@ -372,12 +374,13 @@
             this.dSCDebugToolStripMenuItem.Visible = false;
             this.dSCDebugToolStripMenuItem.Click += new System.EventHandler(this.dSCDebugToolStripMenuItem_Click);
             // 
-            // fixStringsDebugToolStripMenuItem
+            // genericDebugToolStripMenuItem
             // 
-            this.fixStringsDebugToolStripMenuItem.Name = "fixStringsDebugToolStripMenuItem";
-            this.fixStringsDebugToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
-            this.fixStringsDebugToolStripMenuItem.Text = "FixStrings Debug";
-            this.fixStringsDebugToolStripMenuItem.Click += new System.EventHandler(this.fixStringsDebugToolStripMenuItem_Click);
+            this.genericDebugToolStripMenuItem.Name = "genericDebugToolStripMenuItem";
+            this.genericDebugToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.genericDebugToolStripMenuItem.Text = "Generic Debug Button";
+            this.genericDebugToolStripMenuItem.Visible = false;
+            this.genericDebugToolStripMenuItem.Click += new System.EventHandler(this.genericDebugToolStripMenuItem_Click);
             // 
             // listVariantIDsToolStripMenuItem
             // 
@@ -385,6 +388,13 @@
             this.listVariantIDsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.listVariantIDsToolStripMenuItem.Text = "List Variant IDs";
             this.listVariantIDsToolStripMenuItem.Click += new System.EventHandler(this.listVariantIDsToolStripMenuItem_Click);
+            // 
+            // downloadBlocksToolStripMenuItem
+            // 
+            this.downloadBlocksToolStripMenuItem.Name = "downloadBlocksToolStripMenuItem";
+            this.downloadBlocksToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.downloadBlocksToolStripMenuItem.Text = "Download Blocks";
+            this.downloadBlocksToolStripMenuItem.Click += new System.EventHandler(this.downloadBlocksToolStripMenuItem_Click);
             // 
             // preferencesToolStripMenuItem1
             // 
@@ -605,8 +615,9 @@
         private System.Windows.Forms.ToolStripMenuItem dSCDebugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadJSONToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportContainerAsJSONToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fixStringsDebugToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem genericDebugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem listVariantIDsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadBlocksToolStripMenuItem;
     }
 }
 

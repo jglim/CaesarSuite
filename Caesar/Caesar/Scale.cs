@@ -13,8 +13,8 @@ namespace Caesar
 
         // 0x0b [2,   4,4,4,4,    4,4,4,4,   4,4,4],
 
-        public int Unk1;
-        public int Unk2;
+        public int EnumLowBound;
+        public int EnumUpBound;
         public int PrepLowBound;
         public int PrepUpBound;
 
@@ -49,8 +49,8 @@ namespace Caesar
 
             ulong bitflags = reader.ReadUInt16();
 
-            Unk1 = CaesarReader.ReadBitflagInt32(ref bitflags, reader); // typically qualifier
-            Unk2 = CaesarReader.ReadBitflagInt32(ref bitflags, reader); // typically description
+            EnumLowBound = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            EnumUpBound = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
             PrepLowBound = CaesarReader.ReadBitflagInt32(ref bitflags, reader); // could be float
             PrepUpBound = CaesarReader.ReadBitflagInt32(ref bitflags, reader); // could be float
@@ -71,8 +71,8 @@ namespace Caesar
 
         public void PrintDebug()
         {
-            Console.WriteLine($"{nameof(Unk1)} : {Unk1}");
-            Console.WriteLine($"{nameof(Unk2)} : {Unk2}");
+            Console.WriteLine($"{nameof(EnumLowBound)} : {EnumLowBound}");
+            Console.WriteLine($"{nameof(EnumUpBound)} : {EnumUpBound}");
             Console.WriteLine($"{nameof(PrepLowBound)} : {PrepLowBound}");
             Console.WriteLine($"{nameof(PrepUpBound)} : {PrepUpBound}");
 

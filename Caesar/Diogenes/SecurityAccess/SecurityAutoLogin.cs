@@ -58,7 +58,7 @@ namespace Diogenes.SecurityAccess
             return false;
         }
 
-        private static bool QueryUnlockEcu(byte[] seed, string ecuName, int level, out byte[] key)
+        public static bool QueryUnlockEcu(byte[] seed, string ecuName, int level, out byte[] key)
         {
             string unlockEcuFolder = $"{Application.StartupPath}{Path.DirectorySeparatorChar}UnlockECU{Path.DirectorySeparatorChar}";
             string binaryPath = $"{unlockEcuFolder}ConsoleUnlockECU.exe";

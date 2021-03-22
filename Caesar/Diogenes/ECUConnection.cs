@@ -87,7 +87,7 @@ namespace Diogenes
         public readonly object WriteLock = new object();
 
         // constant 2000 ms as recomended by the ISO 15765-3 standard (§6.3.3).
-        Timer TesterPresentTimer = new Timer(2000);
+        public Timer TesterPresentTimer = new Timer(2000);
 
         // holds out-of-order, non testerpresent bytes since packets (apparently) can be received in any order
         Queue<byte[]> OutOfOrderBytesList = new Queue<byte[]>();
@@ -483,9 +483,9 @@ namespace Diogenes
             bool waitingForPacket = true;
             while (waitingForPacket)
             {
-                if (sw.ElapsedMilliseconds > 2500) // is this P2_TIMEOUT? initially picked 2000 since that is the minimum for tester presence 
+                if (sw.ElapsedMilliseconds > 18500) // is this P2_TIMEOUT? initially picked 2000 since that is the minimum for tester presence 
                 {
-                    Console.WriteLine($"[!] Internally timed out: {originalMessageAsStringForDebug}");
+                    Console.WriteLine($"[!] Internally timed out"); // Console.WriteLine($"[!] Internally timed out: {originalMessageAsStringForDebug}");
                     sw.Stop();
                     break;
                 }
@@ -559,7 +559,7 @@ namespace Diogenes
                 else if (readResult.Result == ResultCode.BUFFER_EMPTY)
                 {
                     // nothing in the mailbox, try again
-                    Console.WriteLine($"[!] Retrying: empty buffer: {readResult.Result} for request {originalMessageAsStringForDebug}");
+                    // Console.WriteLine($"[!] Retrying: empty buffer: {readResult.Result}"); // Console.WriteLine($"[!] Retrying: empty buffer: {readResult.Result} for request {originalMessageAsStringForDebug}");
                 }
                 else
                 {

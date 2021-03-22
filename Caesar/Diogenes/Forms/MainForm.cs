@@ -746,7 +746,7 @@ namespace Diogenes
                 txtJ2534Input.Text = "";
                 if (BitUtility.CheckHexValid(inText))
                 {
-                    byte[] requestData = BitUtility.BytesFromHex(inText);
+                    byte[] requestData = BitUtility.BytesFromHex(inText.Replace(" ", "").ToUpper());
                     byte[] response = Connection.SendMessage(requestData);
                     Console.WriteLine($"ECU:  {BitUtility.BytesToHex(response, true)}");
                 }
@@ -1120,9 +1120,38 @@ namespace Diogenes
             }
         }
 
-        private void fixStringsDebugToolStripMenuItem_Click(object sender, EventArgs e)
+        // this is normally not exposed to the user, the button has to be manually enabled in the Designer
+        private void genericDebugToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            foreach (CaesarContainer container in Containers) 
+            {
+                foreach (ECU ecu in container.CaesarECUs) 
+                {
+                    foreach (DiagService ds in ecu.GlobalDiagServices) 
+                    {
+                        if (ds.Qualifier != "DT_Istgang") 
+                        {
+                            //continue;
+                        }
+                        foreach (List<DiagPreparation> dpl in ds.OutputPreparations) 
+                        {
+                            foreach (DiagPreparation prep in dpl) 
+                            {
+                                DiagPresentation pres = ecu.GlobalPresentations[prep.PresPoolIndex];
+                                foreach (Scale scale in pres.Scales) 
+                                {
+                                    if (scale.EnumUpBound > 0) 
+                                    {
+                                        string presOut = pres.InterpretData(BitUtility.BytesFromHex("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), prep);
+                                        Console.WriteLine($"{ds.Qualifier} : {prep.Qualifier} @ {presOut}");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("done");
         }
 
         private void listVariantIDsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1145,6 +1174,17 @@ namespace Diogenes
                     }
                 }
             }
+        }
+
+        private void downloadBlocksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Connection.ConnectionProtocol is null)
+            {
+                //MessageBox.Show("Please initiate contact with a target first.");
+                //return;
+            }
+            BlockDownload blockDownload = new BlockDownload(Connection);
+            blockDownload.ShowDialog();
         }
     }
 }

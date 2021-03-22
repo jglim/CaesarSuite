@@ -76,6 +76,12 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\BlockDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BlockDownload.Designer.cs">
+      <DependentUpon>BlockDownload.cs</DependentUpon>
+    </Compile>
     <Compile Include="DiagnosticProtocol\KW2C3PE.cs" />
     <Compile Include="DiagnosticProtocol\UDS.cs" />
     <Compile Include="DiagnosticProtocol\UnsupportedProtocol.cs" />
@@ -171,6 +177,9 @@
     <Compile Include="Reports\VCReport.cs" />
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BlockDownload.resx">
+      <DependentUpon>BlockDownload.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DTCForm.resx">
       <DependentUpon>DTCForm.cs</DependentUpon>

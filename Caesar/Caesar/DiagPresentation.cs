@@ -171,6 +171,14 @@ namespace Caesar
 
             bool isEnumType = (EnumType_1E == 0) && ((Type_1C == 1) || (ScaleCountMaybe > 1));
 
+            // hack: sometimes hybrid types (regularly parsed as an scaled value if within bounds) are misinterpreted as pure enums
+            // this is a temporary fix for kilometerstand until there's a better way to ascertain its type
+            // this also won't work on other similar cases without a unit string e.g. error instance counter (Häufigkeitszähler)
+            if (DisplayedUnitString == "km") 
+            {
+                isEnumType = false;
+            }
+
             if (workingBytes.Length != TypeLength_1A)
             {
                 return $"InBytes [{BitUtility.BytesToHex(workingBytes)}] length mismatch (expecting {TypeLength_1A})";
@@ -244,9 +252,40 @@ namespace Caesar
                 parsedValue = Encoding.UTF8.GetString(workingBytes);
             }
 
-            if (isEnumType && (rawIntInterpretation < Scales.Count))
+            if (isEnumType)
             {
-                return $"{descriptionPrefix}{Language.GetString(Scales[rawIntInterpretation].EnumDescription)} {DisplayedUnitString}";
+                // discovered by @VladLupashevskyi in https://github.com/jglim/CaesarSuite/issues/27
+                // if an enum is specified, the inclusive upper bound and lower bound will be defined in the scale object
+
+                bool useNewInterpretation = false;
+                foreach (Scale scale in Scales)
+                {
+                    if ((scale.EnumUpBound > 0) || (scale.EnumLowBound > 0))
+                    {
+                        useNewInterpretation = true;
+                        break;
+                    }
+                }
+
+                if (useNewInterpretation)
+                {
+                    foreach (Scale scale in Scales)
+                    {
+                        if ((rawIntInterpretation >= scale.EnumLowBound) && (rawIntInterpretation <= scale.EnumUpBound))
+                        {
+                            return $"{descriptionPrefix}{Language.GetString(scale.EnumDescription)} {DisplayedUnitString}";
+                        }
+                    }
+                }
+                else 
+                {
+                    // original implementation, probably incorrect
+                    if (rawIntInterpretation < Scales.Count)
+                    {
+                        return $"{descriptionPrefix}{Language.GetString(Scales[rawIntInterpretation].EnumDescription)} {DisplayedUnitString}";
+                    }
+                }
+                return $"{descriptionPrefix}(Enum not found) {DisplayedUnitString}";
                 // this bit below for troubleshooting problematic presentations
                 /*
                 if (rawIntInterpretation < Scales.Count)
