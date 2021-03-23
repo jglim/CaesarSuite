@@ -67,6 +67,31 @@ namespace Caesar
                 encoding = DefaultEncoding;
             }
 
+            // slightly better performance than the original below at the expense of compiling with unsafe
+            long stringStartPosition = reader.BaseStream.Position;
+            while (reader.ReadByte() != 0) 
+            {
+            }
+            long stringEndPosition = reader.BaseStream.Position;
+            int difference = (int)(stringEndPosition - stringStartPosition);
+            reader.BaseStream.Seek(stringStartPosition, SeekOrigin.Begin);
+
+            byte[] stringAsBytes = reader.ReadBytes(difference);
+
+            unsafe
+            {
+                // preferably read directly from the stream instead of copying another array, but it breaks below
+                // fixed (byte* pBytes = ((MemoryStream)reader.BaseStream).GetBuffer())
+                fixed (byte* pBytes = stringAsBytes)
+                {
+                    // seems to run out of memory, no idea what's wrong yet
+                    // return new string((sbyte*)pBytes, (int)stringStartPosition, (int)(stringEndPosition - 1), encoding); 
+                    return new string((sbyte*)pBytes, 0, (int)(difference - 1), encoding);
+                }
+            }
+
+            /*
+            // significant performance bottleneck: (original)
             // read out a string, stopping at the first null terminator
             using (BinaryWriter writer = new BinaryWriter(new MemoryStream()))
             {
@@ -84,6 +109,7 @@ namespace Caesar
                     }
                 }
             }
+            */
         }
 
         public static bool CheckAndAdvanceBitflag(ref ulong bitFlag)

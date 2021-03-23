@@ -1138,13 +1138,21 @@ namespace Diogenes
                             foreach (DiagPreparation prep in dpl) 
                             {
                                 DiagPresentation pres = ecu.GlobalPresentations[prep.PresPoolIndex];
+                                if (pres.EnumMaxValue == 0) 
+                                {
+                                    continue;
+                                }
                                 foreach (Scale scale in pres.Scales) 
                                 {
-                                    if (scale.EnumUpBound > 0) 
+                                    if (scale.EnumUpBound >= 0) 
                                     {
                                         string presOut = pres.InterpretData(BitUtility.BytesFromHex("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), prep);
-                                        Console.WriteLine($"{ds.Qualifier} : {prep.Qualifier} @ {presOut}");
+                                        Console.WriteLine($"{ds.Qualifier} : {prep.Qualifier} @ {presOut} = {pres.Unk1b}, {pres.EnumMaxValue}");
                                     }
+                                }
+                                if (pres.Qualifier == "PRES_ZIELGANG") 
+                                {
+                                    pres.PrintDebug();
                                 }
                             }
                         }

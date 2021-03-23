@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Caesar
 {
@@ -25,9 +26,12 @@ namespace Caesar
         // language strings should be properties; resolve to actual string only when called
         public CaesarContainer(byte[] fileBytes)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             FileBytes = fileBytes;
             // work from int __cdecl DIIAddCBFFile(char *fileName)
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(fileBytes)))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(fileBytes, 0, fileBytes.Length, false, true)))
             {
                 byte[] header = reader.ReadBytes(StubHeader.StubHeaderSize);
                 StubHeader.ReadHeader(header);
@@ -35,14 +39,20 @@ namespace Caesar
                 int cffHeaderSize = reader.ReadInt32();
                 byte[] cffHeaderData = reader.ReadBytes(cffHeaderSize);
 
-                VerifyChecksum(fileBytes, out uint checksum);
-                FileChecksum = checksum;
+                // expensive, probably an impediment for modders
+                // VerifyChecksum(fileBytes, out uint checksum);
+                FileChecksum = ReadFileChecksum(fileBytes);
 
                 ReadCFFDefinition(reader);
                 // language is the highest priority since all our strings come from it
                 ReadCTF(reader);
                 ReadECU(reader);
             }
+
+            sw.Stop();
+#if DEBUG
+            Console.WriteLine($"Loaded {CaesarECUs[0].Qualifier} in {sw.ElapsedMilliseconds}ms");
+#endif
         }
 
         public static string SerializeContainer(CaesarContainer container) 

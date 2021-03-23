@@ -298,8 +298,11 @@ namespace Caesar
             // unlike variant domains, storing references to the parent objects in the ecu is preferable since this is relatively larger
             //DiagServices = new List<DiagService>();
 
-            // computationally expensive, 40ish % runtime is spent here
             DiagServices = new DiagService[DiagServicesPoolOffsets.Count];
+
+            /*
+            // computationally expensive, 40ish % runtime is spent here
+            // easier to read, below optimization essentially accomplishes this in a shorter period
 
             foreach (DiagService diagSvc in parentEcu.GlobalDiagServices)
             {
@@ -311,11 +314,74 @@ namespace Caesar
                     }
                 }
             }
+            */
+            // optimization hack
+            int poolSize = DiagServicesPoolOffsets.Count;
+            for (int i = 0; i < poolSize; i++) 
+            {
+                if (i == DiagServicesPoolOffsets[i])
+                {
+                    DiagServices[i] = parentEcu.GlobalDiagServices[i];
+                }
+            }
+            DiagServicesPoolOffsets.Sort();
+            int lowestIndex = 0;
+            int loopMax = parentEcu.GlobalDiagServices.Count;
+            for (int i = 0; i < poolSize; i++)
+            {
+                if (DiagServices[i] != null) 
+                {
+                    continue;
+                }
+                for (int globalIndex = lowestIndex; globalIndex < loopMax; globalIndex++)
+                {
+                    if (parentEcu.GlobalDiagServices[globalIndex].PoolIndex == DiagServicesPoolOffsets[i])
+                    {
+                        DiagServices[i] = parentEcu.GlobalDiagServices[globalIndex];
+                        lowestIndex = globalIndex;
+                        break;
+                    }
+                }
+            }
         }
         private void CreateDTCs(ECU parentEcu, CTFLanguage language)
         {
-            DTCs = new DTC[DTCsPoolOffsetsWithBounds.Count];
+            int dtcPoolSize = DTCsPoolOffsetsWithBounds.Count;
+            DTCs = new DTC[dtcPoolSize];
 
+            for (int i = 0; i < dtcPoolSize; i++) 
+            {
+                if (i == DTCsPoolOffsetsWithBounds[i].Item1) 
+                {
+                    DTCs[i] = parentEcu.GlobalDTCs[i];
+                    DTCs[i].XrefStart = DTCsPoolOffsetsWithBounds[i].Item2;
+                    DTCs[i].XrefCount = DTCsPoolOffsetsWithBounds[i].Item3;
+                }
+            }
+            DTCsPoolOffsetsWithBounds.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+            int lowestIndex = 0;
+            int loopMax = ParentECU.GlobalDTCs.Count;
+            for (int i = 0; i < dtcPoolSize; i++) 
+            {
+                if (DTCs[i] != null)
+                {
+                    continue;
+                }
+                for (int globalIndex = lowestIndex; globalIndex < loopMax; globalIndex++)
+                {
+                    if (ParentECU.GlobalDTCs[globalIndex].PoolIndex == DTCsPoolOffsetsWithBounds[i].Item1) 
+                    {
+                        DTCs[i] = parentEcu.GlobalDTCs[globalIndex];
+                        DTCs[i].XrefStart = DTCsPoolOffsetsWithBounds[i].Item2;
+                        DTCs[i].XrefCount = DTCsPoolOffsetsWithBounds[i].Item3;
+                        lowestIndex = globalIndex;
+                        break;
+                    }
+                }
+            }
+
+            /*
+            // same thing as above, just more readable and slower
             foreach (DTC dtc in parentEcu.GlobalDTCs)
             {
                 for (int i = 0; i < DTCsPoolOffsetsWithBounds.Count; i++)
@@ -329,6 +395,7 @@ namespace Caesar
                     }
                 }
             }
+            */
         }
         private void CreateXrefs(BinaryReader reader, ECU parentEcu, CTFLanguage language)
         {
@@ -341,22 +408,37 @@ namespace Caesar
         }
         private void CreateEnvironmentContexts(ECU parentEcu, CTFLanguage language)
         {
-            /*
-            EnvironmentContexts = new EnvironmentContext[EnvironmentContextsPoolOffsets.Count];
+            int envPoolSize = EnvironmentContextsPoolOffsets.Count;
+            EnvironmentContexts = new DiagService[envPoolSize];
 
-            foreach (EnvironmentContext env in parentEcu.GlobalEnvironmentContexts)
+            for (int i = 0; i < envPoolSize; i++)
             {
-                for (int i = 0; i < EnvironmentContextsPoolOffsets.Count; i++)
+                if (i == EnvironmentContextsPoolOffsets[i])
                 {
-                    if (env.PoolIndex == EnvironmentContextsPoolOffsets[i])
+                    EnvironmentContexts[i] = parentEcu.GlobalEnvironmentContexts[i];
+                }
+            }
+            EnvironmentContextsPoolOffsets.Sort();
+            int lowestIndex = 0;
+            int loopMax = parentEcu.GlobalEnvironmentContexts.Count;
+            for (int i = 0; i < envPoolSize; i++)
+            {
+                if (EnvironmentContexts[i] != null)
+                {
+                    continue;
+                }
+                for (int globalIndex = lowestIndex; globalIndex < loopMax; globalIndex++)
+                {
+                    if (parentEcu.GlobalEnvironmentContexts[globalIndex].PoolIndex == EnvironmentContextsPoolOffsets[i])
                     {
-                        EnvironmentContexts[i] = env;
+                        EnvironmentContexts[i] = parentEcu.GlobalEnvironmentContexts[globalIndex];
+                        lowestIndex = globalIndex;
+                        break;
                     }
                 }
             }
-            */
-            EnvironmentContexts = new DiagService[EnvironmentContextsPoolOffsets.Count];
-
+            /*
+            // same thing, more readable, much slower
             foreach (DiagService env in parentEcu.GlobalEnvironmentContexts)
             {
                 for (int i = 0; i < EnvironmentContextsPoolOffsets.Count; i++)
@@ -367,6 +449,7 @@ namespace Caesar
                     }
                 }
             }
+            */
         }
 
         public void PrintDebug() 

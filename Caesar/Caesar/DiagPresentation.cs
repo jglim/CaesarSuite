@@ -27,7 +27,7 @@ namespace Caesar
         public int DisplayedUnit_CTF;
         public int Unk11;
         public int Unk12;
-        public int Unk13;
+        public int EnumMaxValue;
         public int Unk14;
         public int Unk15;
         public int Description2_CTF;
@@ -116,7 +116,7 @@ namespace Caesar
 
             Unk11 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             Unk12 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            Unk13 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            EnumMaxValue = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             Unk14 = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
 
             Unk15 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -415,7 +415,7 @@ namespace Caesar
 
             Console.WriteLine($"{nameof(Unk11)}: {Unk11}");
             Console.WriteLine($"{nameof(Unk12)}: {Unk12}");
-            Console.WriteLine($"{nameof(Unk13)}: {Unk13}");
+            Console.WriteLine($"{nameof(EnumMaxValue)}: {EnumMaxValue}");
             Console.WriteLine($"{nameof(Unk14)}: {Unk14}");
 
             Console.WriteLine($"{nameof(Unk15)}: {Unk15}");
@@ -475,7 +475,7 @@ namespace Caesar
             sb.Append($" {nameof(UnkF)}: {UnkF}");
             sb.Append($" {nameof(Unk11)}: {Unk11}");
             sb.Append($" {nameof(Unk12)}: {Unk12}");
-            sb.Append($" {nameof(Unk13)}: {Unk13}");
+            sb.Append($" {nameof(EnumMaxValue)}: {EnumMaxValue}");
             sb.Append($" {nameof(Unk14)}: {Unk14}");
             sb.Append($" {nameof(Unk15)}: {Unk15}");
             sb.Append($" {nameof(Unk17)}: {Unk17}");

@@ -379,7 +379,6 @@
             this.genericDebugToolStripMenuItem.Name = "genericDebugToolStripMenuItem";
             this.genericDebugToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.genericDebugToolStripMenuItem.Text = "Generic Debug Button";
-            this.genericDebugToolStripMenuItem.Visible = false;
             this.genericDebugToolStripMenuItem.Click += new System.EventHandler(this.genericDebugToolStripMenuItem_Click);
             // 
             // listVariantIDsToolStripMenuItem
