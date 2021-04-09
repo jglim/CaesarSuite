@@ -34,7 +34,10 @@ namespace Diogenes
             RedirectConsole();
             LoadContainers();
             UnmanagedUtility.SendMessage(txtJ2534Input.Handle, UnmanagedUtility.EM_SETCUEBANNER, 0, "J2534 Console : Enter hex values (01 23 45 57) and press enter to send a raw J2534 command");
-
+#if (!DEBUG)
+            genericDebugToolStripMenuItem.Visible = false;
+            downloadBlocksToolStripMenuItem.Visible = false;
+#endif
             SetDisconnectedState(false);
         }
 
@@ -1123,6 +1126,24 @@ namespace Diogenes
         // this is normally not exposed to the user, the button has to be manually enabled in the Designer
         private void genericDebugToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            foreach (CaesarContainer container in Containers)
+            {
+                foreach (ECU ecu in container.CaesarECUs)
+                {
+                    foreach (DTC dtc in ecu.GlobalDTCs) 
+                    {
+                        byte[] dtcQualBytes = BitUtility.BytesFromHex(dtc.Qualifier.Substring(1));
+                        int dtcInt = (dtcQualBytes[0] << 16) | (dtcQualBytes[1] << 8) | dtcQualBytes[2];
+                        long remainder = dtcInt & 0xFFC00000;
+                        if (remainder > 0) 
+                        {
+                            throw new NotImplementedException("fail");
+                        }
+                        Console.WriteLine($"Q: {dtc.Qualifier} {dtcInt:X8} : {dtc.Description}");
+                    }
+                }
+            }
+            return;
             foreach (CaesarContainer container in Containers) 
             {
                 foreach (ECU ecu in container.CaesarECUs) 

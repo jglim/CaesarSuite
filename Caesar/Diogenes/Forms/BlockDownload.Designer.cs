@@ -40,6 +40,7 @@ namespace Diogenes
             this.nudAddressWidth = new System.Windows.Forms.NumericUpDown();
             this.lblDescPrefix = new System.Windows.Forms.Label();
             this.gbOperation = new System.Windows.Forms.GroupBox();
+            this.btnExportAsMono = new System.Windows.Forms.Button();
             this.btnDownload = new System.Windows.Forms.Button();
             this.btnRemoveBlocks = new System.Windows.Forms.Button();
             this.btnAddBlock = new System.Windows.Forms.Button();
@@ -62,7 +63,7 @@ namespace Diogenes
             this.groupBox1.Controls.Add(this.dgvMain);
             this.groupBox1.Location = new System.Drawing.Point(282, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(506, 426);
+            this.groupBox1.Size = new System.Drawing.Size(506, 455);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Flash Payload";
@@ -79,7 +80,7 @@ namespace Diogenes
             this.dgvMain.Name = "dgvMain";
             this.dgvMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvMain.ShowEditingIcon = false;
-            this.dgvMain.Size = new System.Drawing.Size(500, 407);
+            this.dgvMain.Size = new System.Drawing.Size(500, 436);
             this.dgvMain.TabIndex = 1;
             this.dgvMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.dgvMain_DragDrop);
             this.dgvMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.dgvMain_DragEnter);
@@ -191,15 +192,29 @@ namespace Diogenes
             // 
             // gbOperation
             // 
+            this.gbOperation.Controls.Add(this.btnExportAsMono);
             this.gbOperation.Controls.Add(this.btnDownload);
             this.gbOperation.Controls.Add(this.btnRemoveBlocks);
             this.gbOperation.Controls.Add(this.btnAddBlock);
             this.gbOperation.Location = new System.Drawing.Point(12, 232);
             this.gbOperation.Name = "gbOperation";
-            this.gbOperation.Size = new System.Drawing.Size(264, 112);
+            this.gbOperation.Size = new System.Drawing.Size(264, 139);
             this.gbOperation.TabIndex = 9;
             this.gbOperation.TabStop = false;
             this.gbOperation.Text = "Operation";
+            // 
+            // btnExportAsMono
+            // 
+            this.btnExportAsMono.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportAsMono.Location = new System.Drawing.Point(9, 106);
+            this.btnExportAsMono.Name = "btnExportAsMono";
+            this.btnExportAsMono.Size = new System.Drawing.Size(250, 23);
+            this.btnExportAsMono.TabIndex = 3;
+            this.btnExportAsMono.Text = "Save as monolithic binary";
+            this.btnExportAsMono.UseVisualStyleBackColor = true;
+            this.btnExportAsMono.Visible = false;
+            this.btnExportAsMono.Click += new System.EventHandler(this.btnExportAsMono_Click);
             // 
             // btnDownload
             // 
@@ -240,7 +255,7 @@ namespace Diogenes
             // gbMemo
             // 
             this.gbMemo.Controls.Add(this.lblWarning);
-            this.gbMemo.Location = new System.Drawing.Point(12, 350);
+            this.gbMemo.Location = new System.Drawing.Point(12, 377);
             this.gbMemo.Name = "gbMemo";
             this.gbMemo.Size = new System.Drawing.Size(264, 88);
             this.gbMemo.TabIndex = 10;
@@ -262,7 +277,7 @@ namespace Diogenes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 479);
             this.Controls.Add(this.gbMemo);
             this.Controls.Add(this.gbOperation);
             this.Controls.Add(this.gbInputOutput);
@@ -302,5 +317,6 @@ namespace Diogenes
         private System.Windows.Forms.Button btnAddBlock;
         private System.Windows.Forms.GroupBox gbMemo;
         private System.Windows.Forms.Label lblWarning;
+        private System.Windows.Forms.Button btnExportAsMono;
     }
 }

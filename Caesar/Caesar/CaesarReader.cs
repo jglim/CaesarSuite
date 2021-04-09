@@ -69,26 +69,15 @@ namespace Caesar
 
             // slightly better performance than the original below at the expense of compiling with unsafe
             long stringStartPosition = reader.BaseStream.Position;
-            while (reader.ReadByte() != 0) 
+            byte[] underlyingBuffer = ((MemoryStream)reader.BaseStream).GetBuffer();
+            long cursor = stringStartPosition;
+            while (underlyingBuffer[cursor++] != 0) 
             {
             }
-            long stringEndPosition = reader.BaseStream.Position;
-            int difference = (int)(stringEndPosition - stringStartPosition);
-            reader.BaseStream.Seek(stringStartPosition, SeekOrigin.Begin);
-
-            byte[] stringAsBytes = reader.ReadBytes(difference);
-
-            unsafe
-            {
-                // preferably read directly from the stream instead of copying another array, but it breaks below
-                // fixed (byte* pBytes = ((MemoryStream)reader.BaseStream).GetBuffer())
-                fixed (byte* pBytes = stringAsBytes)
-                {
-                    // seems to run out of memory, no idea what's wrong yet
-                    // return new string((sbyte*)pBytes, (int)stringStartPosition, (int)(stringEndPosition - 1), encoding); 
-                    return new string((sbyte*)pBytes, 0, (int)(difference - 1), encoding);
-                }
-            }
+            int difference = (int)(cursor - stringStartPosition) - 1;
+            byte[] stringBytes = new byte[difference];
+            Buffer.BlockCopy(underlyingBuffer, (int)stringStartPosition, stringBytes, 0, difference);
+            return encoding.GetString(stringBytes);
 
             /*
             // significant performance bottleneck: (original)

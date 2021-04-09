@@ -248,6 +248,7 @@ namespace Diogenes
         {
             List<SConfig> sconfigList = new List<SConfig>();
             sconfigList.Add(new SConfig(Parameter.STMIN_TX, 65535));
+            // todo: check if only STMIN_TX can be raised without affecting the other values
             sconfigList.Add(new SConfig(Parameter.ISO15765_STMIN, 20));
             sconfigList.Add(new SConfig(Parameter.ISO15765_BS, 8));
             connection.ConnectionChannel.SetConfig(sconfigList.ToArray());
@@ -368,6 +369,25 @@ namespace Diogenes
             Connection.SendMessage(BitUtility.BytesFromHex("3101FF00"));
             Console.WriteLine("Ready to accept flash data");
             */
+        }
+
+        private void btnExportAsMono_Click(object sender, EventArgs e)
+        {
+            // fixme: buffer allocation
+            // on a good day, the base is 0, however if it's significantly offset, this won't work out of the box
+            // button is currently set as invisible until this is properly fixed
+            byte[] finalBuffer = new byte[0x200000];
+            foreach (FlashBlock b in FlashBlocks) 
+            {
+                Array.ConstrainedCopy(b.Payload, 0, finalBuffer, (int)b.Address, b.Payload.Length);
+            }
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Specify a location to save your BIN file";
+            sfd.Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllBytes(sfd.FileName, finalBuffer);
+            }
         }
     }
 

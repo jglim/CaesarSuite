@@ -216,19 +216,26 @@ namespace Diogenes.DiagnosticProtocol
             {
                 return new List<DTCContext>();
             }
-
             for (int i = 3; i < response.Length; i += 4)
             {
                 byte[] dtcRow = new byte[4];
                 Array.ConstrainedCopy(response, i, dtcRow, 0, 4);
-                string dtcIdentifier = BitUtility.BytesToHex(dtcRow.Take(3).ToArray(), false);
+                long dtcIdRaw = (dtcRow[3] << 24) | (dtcRow[2] << 16) | (dtcRow[1] << 8) | dtcRow[0];
+                // issue raised in https://github.com/jglim/CaesarSuite/discussions/21#discussioncomment-587029
+                // no idea which part of the spec requires ANDing 3FFFFF; what do the upper 2+8 bits do?
+                dtcIdRaw &= 0x3FFFFF;
+
+                string dtcIdentifier = $"{dtcIdRaw:X6}";
 
                 DTC foundDtc = DTC.FindDTCById(dtcIdentifier, variant);
                 if (foundDtc is null)
                 {
                     Console.WriteLine($"DTC: No matching DTC available for {dtcIdentifier}");
                 }
-                dtcCtx.Add(new DTCContext() { DTC = foundDtc, StatusByte = dtcRow[3], EnvironmentContext = new List<string[]>() });
+                else
+                {
+                    dtcCtx.Add(new DTCContext() { DTC = foundDtc, StatusByte = dtcRow[3], EnvironmentContext = new List<string[]>() });
+                }
             }
             return dtcCtx;
         }

@@ -17,7 +17,7 @@ namespace Caesar
         {
             FileBytes = fileBytes;
             // from DIOpenCFF
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(fileBytes)))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(fileBytes, 0, FileBytes.Length, false, true)))
             {
                 byte[] header = reader.ReadBytes(StubHeader.StubHeaderSize);
 

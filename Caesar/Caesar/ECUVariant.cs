@@ -96,7 +96,7 @@ namespace Caesar
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
             byte[] variantBytes = reader.ReadBytes(blockSize);
 
-            using (BinaryReader variantReader = new BinaryReader(new MemoryStream(variantBytes)))
+            using (BinaryReader variantReader = new BinaryReader(new MemoryStream(variantBytes, 0, variantBytes.Length, false, true)))
             {
                 ulong bitFlags = variantReader.ReadUInt32();
                 int skip = variantReader.ReadInt32();
