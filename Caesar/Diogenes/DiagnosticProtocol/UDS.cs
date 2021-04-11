@@ -220,7 +220,8 @@ namespace Diogenes.DiagnosticProtocol
             {
                 byte[] dtcRow = new byte[4];
                 Array.ConstrainedCopy(response, i, dtcRow, 0, 4);
-                long dtcIdRaw = (dtcRow[3] << 24) | (dtcRow[2] << 16) | (dtcRow[1] << 8) | dtcRow[0];
+                byte statusMask = dtcRow[3];
+                long dtcIdRaw = ((dtcRow[0] << 16) | (dtcRow[1] << 8) | dtcRow[2]);
                 // issue raised in https://github.com/jglim/CaesarSuite/discussions/21#discussioncomment-587029
                 // no idea which part of the spec requires ANDing 3FFFFF; what do the upper 2+8 bits do?
                 dtcIdRaw &= 0x3FFFFF;
@@ -234,7 +235,7 @@ namespace Diogenes.DiagnosticProtocol
                 }
                 else
                 {
-                    dtcCtx.Add(new DTCContext() { DTC = foundDtc, StatusByte = dtcRow[3], EnvironmentContext = new List<string[]>() });
+                    dtcCtx.Add(new DTCContext() { DTC = foundDtc, StatusByte = statusMask, EnvironmentContext = new List<string[]>() });
                 }
             }
             return dtcCtx;
