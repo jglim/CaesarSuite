@@ -222,13 +222,20 @@ namespace Diogenes.DiagnosticProtocol
                 Array.ConstrainedCopy(response, i, dtcRow, 0, 4);
                 byte statusMask = dtcRow[3];
                 long dtcIdRaw = ((dtcRow[0] << 16) | (dtcRow[1] << 8) | dtcRow[2]);
-                // issue raised in https://github.com/jglim/CaesarSuite/discussions/21#discussioncomment-587029
-                // no idea which part of the spec requires ANDing 3FFFFF; what do the upper 2+8 bits do?
-                dtcIdRaw &= 0x3FFFFF;
+                // fixup DTC prefix in https://github.com/jglim/CaesarSuite/issues/36
+                int dtcId = (int)dtcIdRaw & 0x3FFFFF; // id is the lowest 22 bits
+                int dtcPrefix = (int)(dtcIdRaw >> 22) & 3; // prefix is the next 2 bits
 
-                string dtcIdentifier = $"{dtcIdRaw:X6}";
+                string[] prefixTable = new string[] {
+                    "P", // powertrain
+                    "C", // chassis
+                    "B", // body
+                    "U"  // network
+                };
 
-                DTC foundDtc = DTC.FindDTCById(dtcIdentifier, variant);
+                string dtcIdentifier = $"{prefixTable[dtcPrefix]}{dtcId:X6}";
+
+                DTC foundDtc = FindDTCById(dtcIdentifier, variant);
                 if (foundDtc is null)
                 {
                     Console.WriteLine($"DTC: No matching DTC available for {dtcIdentifier}");
