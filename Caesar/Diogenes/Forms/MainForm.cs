@@ -1130,16 +1130,13 @@ namespace Diogenes
             {
                 foreach (ECU ecu in container.CaesarECUs)
                 {
-                    foreach (DTC dtc in ecu.GlobalDTCs) 
+                    foreach (DiagPresentation pres in ecu.GlobalPresentations) 
                     {
-                        byte[] dtcQualBytes = BitUtility.BytesFromHex(dtc.Qualifier.Substring(1));
-                        int dtcInt = (dtcQualBytes[0] << 16) | (dtcQualBytes[1] << 8) | dtcQualBytes[2];
-                        long remainder = dtcInt & 0xFFC00000;
-                        if (remainder > 0) 
+                        Console.WriteLine($"Pres : {pres.Qualifier} : {pres.GetDataType()}");
+                        if (pres.InternalDataType == 8) 
                         {
-                            throw new NotImplementedException("fail");
+                            throw new NotImplementedException("found a iee754 float!");
                         }
-                        Console.WriteLine($"Q: {dtc.Qualifier} {dtcInt:X8} : {dtc.Description}");
                     }
                 }
             }
@@ -1168,7 +1165,7 @@ namespace Diogenes
                                     if (scale.EnumUpBound >= 0) 
                                     {
                                         string presOut = pres.InterpretData(BitUtility.BytesFromHex("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), prep);
-                                        Console.WriteLine($"{ds.Qualifier} : {prep.Qualifier} @ {presOut} = {pres.Unk1b}, {pres.EnumMaxValue}");
+                                        Console.WriteLine($"{ds.Qualifier} : {prep.Qualifier} @ {presOut} = {pres.InternalDataType}, {pres.EnumMaxValue}");
                                     }
                                 }
                                 if (pres.Qualifier == "PRES_ZIELGANG") 

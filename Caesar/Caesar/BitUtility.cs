@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Caesar
@@ -78,6 +79,28 @@ namespace Caesar
             byte[] result = new byte[finalSize];
             Buffer.BlockCopy(inData, 0, result, 0, inData.Length);
             return result;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        struct UIntFloat
+        {
+            [FieldOffset(0)]
+            public float FloatValue;
+
+            [FieldOffset(0)]
+            public uint IntValue;
+        }
+
+        /// <summary>
+        /// Directly converts an in-memory representation of an uint to a float.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static float ToFloat(uint value)
+        {
+            UIntFloat intermediate = new UIntFloat();
+            intermediate.IntValue = value;
+            return intermediate.FloatValue;
         }
 
 

@@ -87,7 +87,7 @@ namespace Diogenes
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.Location = new System.Drawing.Point(493, 325);
+            this.btnClose.Location = new System.Drawing.Point(493, 361);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 4;
@@ -97,6 +97,9 @@ namespace Diogenes
             // 
             // lbCredits
             // 
+            this.lbCredits.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbCredits.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.lbCredits.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lbCredits.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -105,16 +108,18 @@ namespace Diogenes
             this.lbCredits.ItemHeight = 17;
             this.lbCredits.Items.AddRange(new object[] {
             "Made possible with the help and support of these projects and individuals:",
+            "",
             "Mark James : http://www.famfamfam.com/about/",
             "Brian Humlicek : https://github.com/BrianHumlicek/J2534-Sharp/",
             "s30shiro (しーちゃん) : http://blog.livedoor.jp/s30shiro/",
             "@VladLupashevskyi (Vladyslav Lupashevskyi)",
             "@N0cynym (@N0cynym)",
             "@Feezex (Сергей)",
-            "@rnd-ash (Ashcon Mohseninia)"});
+            "@rnd-ash (Ashcon Mohseninia)",
+            "@prj (@prj)"});
             this.lbCredits.Location = new System.Drawing.Point(20, 180);
             this.lbCredits.Name = "lbCredits";
-            this.lbCredits.Size = new System.Drawing.Size(548, 136);
+            this.lbCredits.Size = new System.Drawing.Size(548, 170);
             this.lbCredits.TabIndex = 5;
             // 
             // AboutForm
@@ -122,7 +127,7 @@ namespace Diogenes
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.ClientSize = new System.Drawing.Size(580, 360);
+            this.ClientSize = new System.Drawing.Size(580, 396);
             this.Controls.Add(this.lbCredits);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.linkLabel1);

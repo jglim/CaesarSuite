@@ -35,10 +35,10 @@ namespace Caesar
         public int Unk18;
         public int Unk19;
         public int TypeLength_1A;
-        public int Unk1b;
+        public int InternalDataType; // discovered by @prj : #37
         public int Type_1C;
         public int Unk1d;
-        public int EnumType_1E;
+        public int SignBit; // discovered by @prj : #37
         public int Unk1F;
         public int Unk20;
 
@@ -126,11 +126,11 @@ namespace Caesar
 
             Unk19 = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
             TypeLength_1A = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-            Unk1b = CaesarReader.ReadBitflagInt8(ref bitflags, reader, -1);
+            InternalDataType = CaesarReader.ReadBitflagInt8(ref bitflags, reader, -1);
             Type_1C = CaesarReader.ReadBitflagInt8(ref bitflags, reader, -1);
 
             Unk1d = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
-            EnumType_1E = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
+            SignBit = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
             Unk1F = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
             Unk20 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
@@ -169,7 +169,7 @@ namespace Caesar
             string descriptionPrefix = describe ? $"{DescriptionString}: " : "";
             byte[] workingBytes = inBytes.Skip(inPreparation.BitPosition / 8).Take(TypeLength_1A).ToArray();
 
-            bool isEnumType = (EnumType_1E == 0) && ((Type_1C == 1) || (ScaleCountMaybe > 1));
+            bool isEnumType = (SignBit == 0) && ((Type_1C == 1) || (ScaleCountMaybe > 1));
 
             // hack: sometimes hybrid types (regularly parsed as an scaled value if within bounds) are misinterpreted as pure enums
             // this is a temporary fix for kilometerstand until there's a better way to ascertain its type
@@ -212,11 +212,10 @@ namespace Caesar
 
             string humanReadableType = $"UnhandledType:{dataType}";
             string parsedValue = BitUtility.BytesToHex(workingBytes, true);
-            if ((dataType == 6 || (dataType == 20)))
+            if (dataType == 20)
             {
                 // parse as a regular int (BE)
-
-                for (int i = 0; i < workingBytes.Length; i++) 
+                for (int i = 0; i < workingBytes.Length; i++)
                 {
                     rawIntInterpretation <<= 8;
                     rawIntInterpretation |= workingBytes[i];
@@ -225,7 +224,7 @@ namespace Caesar
                 humanReadableType = "IntegerType";
 
                 parsedValue = rawIntInterpretation.ToString();
-                if (dataType == 20) 
+                if (dataType == 20)
                 {
                     humanReadableType = "ScaledType";
 
@@ -240,6 +239,31 @@ namespace Caesar
                     valueToScale += Scales[0].AddConstOffset;
 
                     parsedValue = valueToScale.ToString("0.000000");
+                }
+            }
+            else if (dataType == 6) 
+            {
+                // type 6 refers to either internal presentation types 8 (ieee754 float) or 5 (unsigned int?)
+                // these values are tagged with an exclamation [!] i (jglim) am not sure if they will work correctly yet
+                // specifically, i am not sure if the big endian float parsing is done correctly
+                uint rawUIntInterpretation = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    rawUIntInterpretation <<= 8;
+                    rawUIntInterpretation |= workingBytes[i];
+                }
+
+                if (InternalDataType == 8)
+                {
+                    // interpret as big-endian float, https://github.com/jglim/CaesarSuite/issues/37
+                    parsedValue = BitUtility.ToFloat(rawUIntInterpretation).ToString("");
+                    humanReadableType = "Float [!]";
+                }
+                else if (InternalDataType == 5) 
+                {
+                    // haven't seen this one around, will parse as a regular int (BE) for now
+                    humanReadableType = "UnsignedIntegerType [!]";
+                    parsedValue = rawUIntInterpretation.ToString();
                 }
             }
             else if (dataType == 18)
@@ -315,7 +339,6 @@ namespace Caesar
         public int GetDataType() 
         {
             // see DIDiagServiceRealPresType
-
             int result = -1;
             if (Unk14 != -1) 
             {
@@ -346,21 +369,21 @@ namespace Caesar
                 {
                     return 18; // hexdump raw
                 }
-                if (Unk1b != -1)
+                if (InternalDataType != -1)
                 {
-                    if (Unk1b == 6)
+                    if (InternalDataType == 6)
                     {
                         return 17; // ascii dump
                     }
-                    else if (Unk1b == 7)
+                    else if (InternalDataType == 7)
                     {
                         return 22; // ?? haven't seen this one around
                     }
-                    else if (Unk1b == 8)
+                    else if (InternalDataType == 8)
                     {
-                        result = 6; // integer
+                        result = 6; // IEEE754 float, discovered by @prj in https://github.com/jglim/CaesarSuite/issues/37
                     }
-                    else if (Unk1b == 5) 
+                    else if (InternalDataType == 5) 
                     {
                         // UNSIGNED integer (i haven't seen a const for uint around, sticking it into a regular int for now)
                         // this will be an issue for 32-bit+ uints
@@ -375,7 +398,7 @@ namespace Caesar
                         Console.WriteLine("typelength and type must be valid");
                         // might be good to throw an exception here
                     }
-                    if ((EnumType_1E == 1) || (EnumType_1E == 2))
+                    if ((SignBit == 1) || (SignBit == 2))
                     {
                         result = 5; // ?? haven't seen this one around
                     }
@@ -424,10 +447,10 @@ namespace Caesar
             Console.WriteLine($"{nameof(Unk18)}: {Unk18}");
 
             Console.WriteLine($"{nameof(Unk19)}: {Unk19}");
-            Console.WriteLine($"{nameof(Unk1b)}: {Unk1b}");
+            Console.WriteLine($"{nameof(InternalDataType)}: {InternalDataType}");
 
             Console.WriteLine($"{nameof(Unk1d)}: {Unk1d}");
-            Console.WriteLine($"{nameof(EnumType_1E)}: {EnumType_1E}");
+            Console.WriteLine($"{nameof(SignBit)}: {SignBit}");
             Console.WriteLine($"{nameof(Unk1F)}: {Unk1F}");
             Console.WriteLine($"{nameof(Unk20)}: {Unk20}");
 
@@ -481,9 +504,9 @@ namespace Caesar
             sb.Append($" {nameof(Unk17)}: {Unk17}");
             sb.Append($" {nameof(Unk18)}: {Unk18}");
             sb.Append($" {nameof(Unk19)}: {Unk19}");
-            sb.Append($" {nameof(Unk1b)}: {Unk1b}");
+            sb.Append($" {nameof(InternalDataType)}: {InternalDataType}");
             sb.Append($" {nameof(Unk1d)}: {Unk1d}");
-            sb.Append($" {nameof(EnumType_1E)}: {EnumType_1E}");
+            sb.Append($" {nameof(SignBit)}: {SignBit}");
             sb.Append($" {nameof(Unk1F)}: {Unk1F}");
             sb.Append($" {nameof(Unk20)}: {Unk20}");
             sb.Append($" {nameof(TypeLengthBytesMaybe_21)}: {TypeLengthBytesMaybe_21}");
