@@ -39,7 +39,7 @@ namespace Caesar
         public int Type_1C;
         public int Unk1d;
         public int SignBit; // discovered by @prj : #37
-        public int Unk1F;
+        public int ByteOrder; // discovered by @prj : #37 ; Unset = HiLo, 1 = LoHi
         public int Unk20;
 
         public int TypeLengthBytesMaybe_21;
@@ -131,7 +131,7 @@ namespace Caesar
 
             Unk1d = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
             SignBit = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
-            Unk1F = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
+            ByteOrder = CaesarReader.ReadBitflagInt8(ref bitflags, reader);
             Unk20 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
             bitflags = extendedBitflags;
@@ -451,7 +451,7 @@ namespace Caesar
 
             Console.WriteLine($"{nameof(Unk1d)}: {Unk1d}");
             Console.WriteLine($"{nameof(SignBit)}: {SignBit}");
-            Console.WriteLine($"{nameof(Unk1F)}: {Unk1F}");
+            Console.WriteLine($"{nameof(ByteOrder)}: {ByteOrder}");
             Console.WriteLine($"{nameof(Unk20)}: {Unk20}");
 
             Console.WriteLine($"{nameof(TypeLengthBytesMaybe_21)}: {TypeLengthBytesMaybe_21}");
@@ -507,7 +507,7 @@ namespace Caesar
             sb.Append($" {nameof(InternalDataType)}: {InternalDataType}");
             sb.Append($" {nameof(Unk1d)}: {Unk1d}");
             sb.Append($" {nameof(SignBit)}: {SignBit}");
-            sb.Append($" {nameof(Unk1F)}: {Unk1F}");
+            sb.Append($" {nameof(ByteOrder)}: {ByteOrder}");
             sb.Append($" {nameof(Unk20)}: {Unk20}");
             sb.Append($" {nameof(TypeLengthBytesMaybe_21)}: {TypeLengthBytesMaybe_21}");
             sb.Append($" {nameof(Unk22)}: {Unk22}");
