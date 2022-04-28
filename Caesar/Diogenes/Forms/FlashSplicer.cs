@@ -218,7 +218,7 @@ namespace Diogenes
             int flashDataFileOffset = FlashContainer.CaesarFlashHeader.CffHeaderSize + FlashContainer.CaesarFlashHeader.LanguageBlockLength + 0x414;
             byte[] nonFlashData = FlashBytes.Take(flashDataFileOffset).ToArray();
 
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(FlashBytes)))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(FlashBytes, 0, FlashBytes.Length, false, true)))
             using (BinaryWriter nonFlashWriter = new BinaryWriter(new MemoryStream(nonFlashData)))
             using (BinaryWriter flashPayloadWriter = new BinaryWriter(new MemoryStream()))
             {
