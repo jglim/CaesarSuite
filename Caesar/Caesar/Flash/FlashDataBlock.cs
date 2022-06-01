@@ -31,13 +31,14 @@ namespace Caesar
         public int SecuritiesOffset;
         public string DataBlockType;
         public int UniqueObjectId;
-        public string FlashDataInfo_Idk;
-        public int FlashDataInfoLang1;
-        public int FlashDataInfoLang2;
-        public int FlashDataInfo_Idk2;
+        public string FlashDataInfoQualifier;
+        public int FlashDataInfoLongName;
+        public int FlashDataInfoDescription;
+        public int FlashDataInfoUniqueObjectId;
 
         public long BaseAddress;
         public List<FlashSegment> FlashSegments = new List<FlashSegment>();
+        public List<FlashSecurity> FlashSecurities = new List<FlashSecurity>();
 
         public FlashDataBlock(BinaryReader reader, long baseAddress)
         {
@@ -72,10 +73,10 @@ namespace Caesar
             DataBlockType = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, BaseAddress);
             UniqueObjectId = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
-            FlashDataInfo_Idk = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, BaseAddress);
-            FlashDataInfoLang1 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            FlashDataInfoLang2 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            FlashDataInfo_Idk2 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            FlashDataInfoQualifier = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, BaseAddress);
+            FlashDataInfoLongName = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            FlashDataInfoDescription = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            FlashDataInfoUniqueObjectId = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
 
             // CtfUnk1 = CaesarReader.ReadBitflagInt32(ref ctfBitflags, reader);
@@ -89,6 +90,17 @@ namespace Caesar
 
                 FlashSegment segment = new FlashSegment(reader, segmentBaseAddress);
                 FlashSegments.Add(segment);
+            }
+
+            FlashSecurities = new List<FlashSecurity>();
+            for (int securitiesIndex = 0; securitiesIndex < NumberOfSecurities; securitiesIndex++)
+            {
+                long securitiesEntryAddress = SecuritiesOffset + BaseAddress + (securitiesIndex * 4);
+                reader.BaseStream.Seek(securitiesEntryAddress, SeekOrigin.Begin);
+
+                long securitiesBaseAddress = SecuritiesOffset + BaseAddress + reader.ReadInt32();
+                FlashSecurity security = new FlashSecurity(reader, securitiesBaseAddress);
+                FlashSecurities.Add(security);
             }
 
         }
@@ -158,10 +170,10 @@ namespace Caesar
             Console.WriteLine($"{nameof(SecuritiesOffset)} : {SecuritiesOffset}");
             Console.WriteLine($"{nameof(DataBlockType)} : {DataBlockType}");
             Console.WriteLine($"{nameof(UniqueObjectId)} : {UniqueObjectId}");
-            Console.WriteLine($"{nameof(FlashDataInfo_Idk)} : {FlashDataInfo_Idk}");
-            Console.WriteLine($"{nameof(FlashDataInfoLang1)} : {FlashDataInfoLang1}");
-            Console.WriteLine($"{nameof(FlashDataInfoLang2)} : {FlashDataInfoLang2}");
-            Console.WriteLine($"{nameof(FlashDataInfo_Idk2)} : {FlashDataInfo_Idk2}");
+            Console.WriteLine($"{nameof(FlashDataInfoQualifier)} : {FlashDataInfoQualifier}");
+            Console.WriteLine($"{nameof(FlashDataInfoLongName)} : {FlashDataInfoLongName}");
+            Console.WriteLine($"{nameof(FlashDataInfoDescription)} : {FlashDataInfoDescription}");
+            Console.WriteLine($"{nameof(FlashDataInfoUniqueObjectId)} : {FlashDataInfoUniqueObjectId}");
 
         }
     }

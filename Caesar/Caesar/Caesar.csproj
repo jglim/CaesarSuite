@@ -76,6 +76,7 @@
     <Compile Include="Flash\FlashDataBlock.cs" />
     <Compile Include="Flash\FlashDescriptionHeader.cs" />
     <Compile Include="Flash\FlashHeader.cs" />
+    <Compile Include="Flash\FlashSecurity.cs" />
     <Compile Include="Flash\FlashSegment.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

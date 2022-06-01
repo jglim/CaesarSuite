@@ -90,14 +90,45 @@ namespace Diogenes
         private string GetLog() 
         {
             FlashHeader header = FlashContainer.CaesarFlashHeader;
-            return $"Name\t\t\t: {header.FlashName}\r\n" +
+            StringBuilder response = new StringBuilder();
+            response.Append($"Name\t\t\t: {header.FlashName}\r\n" +
                 $"Author\t\t\t: {header.FileAuthor}\r\n" +
                 $"Creation Time\t\t: {header.FileCreationTime}\r\n" +
                 $"Authoring Tool Version\t: {header.AuthoringToolVersion}\r\n" +
                 $"Trafo Version\t\t: {header.FTRAFOVersionString}\r\n" +
                 $"CFF Version\t\t: {header.CFFVersionString}\r\n" +
                 $"Referenced ECU count\t: {header.NumberOfECURefs}\r\n" +
-                $"Generation Parameter:\n {header.FlashGenerationParams}\r\n";
+                $"Generation Parameter:\n {header.FlashGenerationParams}\r\n" +
+                $"\r\n---------------------\r\n");
+
+            foreach (var blocks in FlashContainer.CaesarFlashHeader.DataBlocks) 
+            {
+                response.Append($"\r\nFlash block: {blocks.Qualifier}");
+
+                for (int secIndex = 0; secIndex < blocks.FlashSecurities.Count; secIndex++) 
+                {
+                    var sec = blocks.FlashSecurities[secIndex];
+                    response.Append($"\r\n\r\nSecurity [{secIndex}]");
+
+                    if (sec.MethodValue.Length > 0)
+                    {
+                        response.Append($"\r\n - Method : {BitUtility.BytesToHex(sec.MethodValue)}");
+                    }
+                    if (sec.SignatureValue.Length > 0)
+                    {
+                        response.Append($"\r\n - Signature : {BitUtility.BytesToHex(sec.SignatureValue)}");
+                    }
+                    if (sec.ChecksumValue.Length > 0)
+                    {
+                        response.Append($"\r\n - Checksum : {BitUtility.BytesToHex(sec.ChecksumValue)}");
+                    }
+                    if (sec.EcuKeyValue.Length > 0)
+                    {
+                        response.Append($"\r\n - ECU : {BitUtility.BytesToHex(sec.EcuKeyValue)}");
+                    }
+                }
+            }
+            return response.ToString();
         }
 
         private void PresentRows()
