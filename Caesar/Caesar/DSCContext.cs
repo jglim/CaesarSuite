@@ -13,7 +13,7 @@ namespace Caesar
         public DSCContext(byte[] dscContainerBytes) 
         {
             const int fnTableEntrySize = 50;
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(dscContainerBytes)))
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(dscContainerBytes, 0, dscContainerBytes.Length, true, true)))
             {
                 reader.BaseStream.Seek(0x10, SeekOrigin.Begin);
                 int fnTableOffset = reader.ReadInt32(); // @ 0x10, originally i16
