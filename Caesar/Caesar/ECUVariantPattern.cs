@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;   
+using System.IO;
+using System.Diagnostics;
 
 namespace Caesar
 {
@@ -29,7 +30,7 @@ namespace Caesar
         public int Unk14;
         public int Unk15;
 
-        public byte[] Unk16;
+        public byte[] EcuId;
 
         public int Unk17;
         public int Unk18;
@@ -79,7 +80,7 @@ namespace Caesar
             Unk14 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
             Unk15 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
 
-            Unk16 = CaesarReader.ReadBitflagDumpWithReader(ref bitflags, reader, 5, baseAddress); // read with a constant size
+            EcuId = CaesarReader.ReadBitflagRawBytes(ref bitflags, reader, 4);
 
             Unk17 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
             Unk18 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
@@ -115,7 +116,7 @@ namespace Caesar
             Console.WriteLine($"Unk13 : {Unk13}");
             Console.WriteLine($"Unk14 : {Unk14}");
             Console.WriteLine($"Unk15 : {Unk15}");
-            Console.WriteLine($"Unk16 : {Unk16}");
+            Console.WriteLine($"EcuId : {EcuId}");
             Console.WriteLine($"Unk17 : {Unk17}");
             Console.WriteLine($"Unk18 : {Unk18}");
             Console.WriteLine($"Unk19 : {Unk19}");
