@@ -48,6 +48,12 @@ namespace Diogenes
 
         }
 
+        private static void GatewayWait() 
+        {
+            System.Threading.Thread.Sleep(150);
+            Application.DoEvents();
+        }
+
         private void btnRead_Click(object sender, EventArgs e)
         {
             if (!FetchAndValidateInput(out uint sourceAddress, out uint destinationAddress, out uint bufferSize))
@@ -91,7 +97,7 @@ namespace Diogenes
                 {
                     readSize = (int)remainder;
                 }
-                List<byte> readCommand = CreateReadCommand(readCmd, alfid, readCursor, addressWidth, readSize);
+                List<byte> readCommand = CreateReadCommand(readCmd, alfid, readCursor, addressWidth, readSize, chkSendAlfid.Checked);
 
                 byte[] response = Connection.SendMessage(readCommand);
                 if (response[0] == positiveResponse)
@@ -105,6 +111,9 @@ namespace Diogenes
 
                 readCursor += (uint)readSize;
                 bufferCursor += readSize;
+
+                // waiting for a moment here; if there is a gateway (e.g. 500k<->83.3k), let it take a breather
+                GatewayWait();
             }
 
             loader.Close();
@@ -124,16 +133,19 @@ namespace Diogenes
             }
         }
 
-        private List<byte> CreateReadCommand(byte readCmd, byte alfid, long sourceAddress, int addressWidth, int ioWidth)
+        private List<byte> CreateReadCommand(byte readCmd, byte alfid, long sourceAddress, int addressWidth, int ioWidth, bool includeAlfid)
         {
             List<byte> readCommand = new List<byte>();
             readCommand.Add(readCmd); // command
-            readCommand.Add(alfid);   // addressing and memory mode
+            if (includeAlfid)
+            {
+                readCommand.Add(alfid);   // addressing and memory mode
+            }
             readCommand.AddRange(ValueToBEByteArrayConstrained(sourceAddress, addressWidth)); // address, constrained to earlier specified width
-            readCommand.AddRange(ValueToBEByteArray(ioWidth));
+            readCommand.AddRange(ValueToBEByteArray(ioWidth)); // should actually be constrained too, based on alfid
             return readCommand;
         }
-        private List<byte> CreateWriteCommand(byte writeCmd, long destAddress, int addressWidth, byte[] payload)
+        private List<byte> CreateWriteCommand(byte writeCmd, long destAddress, int addressWidth, byte[] payload, bool includeAlfid)
         {
             int ioDigitCount = GetMemoryDigitCount(payload.Length);
             byte alfid = GetAddressAndLengthFormatIdentifier(
@@ -142,9 +154,12 @@ namespace Diogenes
                     );
             List<byte> writeCommand = new List<byte>();
             writeCommand.Add(writeCmd); // command
-            writeCommand.Add(alfid);   // addressing and memory mode
+            if (includeAlfid)
+            {
+                writeCommand.Add(alfid);   // addressing and memory mode
+            }
             writeCommand.AddRange(ValueToBEByteArrayConstrained(destAddress, addressWidth)); // address, constrained to earlier specified width
-            writeCommand.AddRange(ValueToBEByteArray(payload.Length));
+            writeCommand.AddRange(ValueToBEByteArray(payload.Length)); // should actually be constrained too, based on alfid
             writeCommand.AddRange(payload);
             return writeCommand;
         }
@@ -308,7 +323,7 @@ namespace Diogenes
                 // skip writes to unmodified chunks
                 if (!BytearrayEqual(dataToWrite, originalData))
                 {
-                    List<byte> writeCommand = CreateWriteCommand(writeCmd, writeCursor, addressWidth, dataToWrite);
+                    List<byte> writeCommand = CreateWriteCommand(writeCmd, writeCursor, addressWidth, dataToWrite, chkSendAlfid.Checked);
 
                     byte[] response = Connection.SendMessage(writeCommand);
                     if (response[0] != positiveResponse)
@@ -318,6 +333,8 @@ namespace Diogenes
                 }
                 writeCursor += (uint)writeSizeChunk;
                 bufferCursor += writeSizeChunk;
+
+                GatewayWait();
             }
 
             if (hasBadWrites)
@@ -343,5 +360,6 @@ namespace Diogenes
                 File.WriteAllBytes(sfd.FileName, memoryBuffer);
             }
         }
+
     }
 }

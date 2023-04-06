@@ -32,6 +32,7 @@ namespace Diogenes
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UDSHexEditor));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gbInputOutput = new System.Windows.Forms.GroupBox();
+            this.chkSendAlfid = new System.Windows.Forms.CheckBox();
             this.lblDescCmdWrite = new System.Windows.Forms.Label();
             this.nudWriteCmd = new System.Windows.Forms.NumericUpDown();
             this.lblDescCmdRead = new System.Windows.Forms.Label();
@@ -75,7 +76,7 @@ namespace Diogenes
             this.splitContainer1.Panel1.Controls.Add(this.gbOperation);
             this.splitContainer1.Panel1.Controls.Add(this.gbDestination);
             this.splitContainer1.Panel1.Controls.Add(this.gbSource);
-            this.splitContainer1.Size = new System.Drawing.Size(929, 593);
+            this.splitContainer1.Size = new System.Drawing.Size(929, 595);
             this.splitContainer1.SplitterDistance = 285;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -83,6 +84,7 @@ namespace Diogenes
             // 
             this.gbInputOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbInputOutput.Controls.Add(this.chkSendAlfid);
             this.gbInputOutput.Controls.Add(this.lblDescCmdWrite);
             this.gbInputOutput.Controls.Add(this.nudWriteCmd);
             this.gbInputOutput.Controls.Add(this.lblDescCmdRead);
@@ -93,10 +95,22 @@ namespace Diogenes
             this.gbInputOutput.Controls.Add(this.nudAddressWidth);
             this.gbInputOutput.Location = new System.Drawing.Point(12, 289);
             this.gbInputOutput.Name = "gbInputOutput";
-            this.gbInputOutput.Size = new System.Drawing.Size(264, 274);
+            this.gbInputOutput.Size = new System.Drawing.Size(264, 295);
             this.gbInputOutput.TabIndex = 7;
             this.gbInputOutput.TabStop = false;
             this.gbInputOutput.Text = "I/O";
+            // 
+            // chkSendAlfid
+            // 
+            this.chkSendAlfid.AutoSize = true;
+            this.chkSendAlfid.Checked = true;
+            this.chkSendAlfid.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSendAlfid.Location = new System.Drawing.Point(9, 270);
+            this.chkSendAlfid.Name = "chkSendAlfid";
+            this.chkSendAlfid.Size = new System.Drawing.Size(227, 17);
+            this.chkSendAlfid.TabIndex = 10;
+            this.chkSendAlfid.Text = "AddressAndLengthFormatID (KW: Disable)";
+            this.chkSendAlfid.UseVisualStyleBackColor = true;
             // 
             // lblDescCmdWrite
             // 
@@ -352,7 +366,7 @@ namespace Diogenes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 593);
+            this.ClientSize = new System.Drawing.Size(929, 595);
             this.Controls.Add(this.splitContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "UDSHexEditor";
@@ -399,5 +413,6 @@ namespace Diogenes
         private System.Windows.Forms.TextBox txtDestination;
         private System.Windows.Forms.TextBox txtSource;
         private System.Windows.Forms.Button btnSaveToFile;
+        private System.Windows.Forms.CheckBox chkSendAlfid;
     }
 }
