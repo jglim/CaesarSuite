@@ -1212,5 +1212,29 @@ namespace Diogenes
             BlockDownload blockDownload = new BlockDownload(Connection);
             blockDownload.ShowDialog();
         }
+
+        private void fixCBFChecksumToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // repairs the checksum on a CBF that may have been modified, so that it can be loaded by c32s (e.g. Vediamo) again
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Select a CBF File";
+            ofd.Filter = "CBF files (*.cbf)|*.cbf|All files (*.*)|*.*";
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                byte[] file = File.ReadAllBytes(ofd.FileName);
+                Console.WriteLine($"Current checksum: {BitUtility.BytesToHex(file.Skip(file.Length - 4).Reverse().ToArray())}");
+                // restore the checksum
+                uint checksum = CaesarReader.ComputeFileChecksumLazy(file);
+                Console.WriteLine($"New checksum: {checksum:X8}");
+
+                file[file.Length - 4] = (byte)((checksum >> 0) & 0xFF);
+                file[file.Length - 3] = (byte)((checksum >> 8) & 0xFF);
+                file[file.Length - 2] = (byte)((checksum >> 16) & 0xFF);
+                file[file.Length - 1] = (byte)((checksum >> 24) & 0xFF);
+                File.WriteAllBytes(ofd.FileName, file);
+                Console.WriteLine($"Fixed CBF file saved at {ofd.FileName}");
+            }
+        }
     }
 }
