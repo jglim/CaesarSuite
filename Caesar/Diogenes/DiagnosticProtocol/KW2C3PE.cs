@@ -12,26 +12,59 @@ namespace Diogenes.DiagnosticProtocol
         private static bool EnterDiagnosticSession(ECUConnection connection)
         {
             Console.WriteLine("KW2C3PE: Switching session states");
-            byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x92 });
+
+            // vediamo sends this twice https://github.com/jglim/CaesarSuite/issues/52#issuecomment-1399474867
+            // cgmb sends this 5x https://github.com/jglim/CaesarSuite/issues/52#issuecomment-1403566348
+
+            for (int i = 0; i < 5; i++) 
+            {
+                connection.SendMessage(
+                    message: new byte[] { 0x10, 0x92 },
+                    expectsResponse: false,
+                    destinationIdOverride: new byte[] { 0x00, 0x00, 0x00, 0x1C }
+                );
+                System.Threading.Thread.Sleep(35);
+            }
+
+            /*
+            byte[] sessionSwitchResponse = connection.SendMessage(
+                message: new byte[] { 0x10, 0x92 },
+                expectsResponse: false,
+                destinationIdOverride: new byte[] { 0x00, 0x00, 0x00, 0x1C }
+            );
+
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x92 };
             if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
             {
                 Console.WriteLine($"Failed to switch session : target responded with [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
                 return false;
             }
+            */
             return true;
         }
         
         private static bool ExitDiagnosticSession(ECUConnection connection)
         {
+            // only sent once by vediamo even in situations where 10 92 is sent twice
             Console.WriteLine("KW2C3PE: Switching session states");
-            byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x81 });
+            connection.SendMessage(
+                message: new byte[] { 0x10, 0x81 },
+                expectsResponse: false,
+                destinationIdOverride: new byte[] { 0x00, 0x00, 0x00, 0x1C }
+            );
+            /*
+            byte[] sessionSwitchResponse = connection.SendMessage(
+                message: new byte[] { 0x10, 0x81 },
+                expectsResponse: false,
+                destinationIdOverride: new byte[] { 0x00, 0x00, 0x00, 0x1C }
+            );
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x81 };
             if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
             {
                 Console.WriteLine($"Failed to switch session : target responded with [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
                 return false;
             }
+            */
             return true;
         }
 
@@ -98,6 +131,7 @@ namespace Diogenes.DiagnosticProtocol
 
         public override void ConnectionEstablishedHandler(ECUConnection connection)
         {
+            // changing this to debug ki211 as it doesn't seem to have sessions
             if (!EnterDiagnosticSession(connection))
             {
                 return;
@@ -118,7 +152,16 @@ namespace Diogenes.DiagnosticProtocol
         public override void SendTesterPresent(ECUConnection connection)
         {
             // looks like 3E 01 for KW2C3PE 
-            connection.SendMessage(new byte[] { 0x3E, 0x01 }, true);
+            // changing this to debug ki211 : no concept of session?
+            //connection.SendMessage(message: new byte[] { 0x3E, 0x01 }, testerPresenceRequest: true); // was 3E 01
+
+            connection.SendMessage(
+                message: new byte[] { 0x3E, 0x02 },
+                testerPresenceRequest: true,
+                expectsResponse: false,
+                destinationIdOverride: new byte[] { 0x00, 0x00, 0x00, 0x1C }
+            );
+
         }
 
         public override bool IsResponseToTesterPresent(byte[] inBuffer)
@@ -128,6 +171,7 @@ namespace Diogenes.DiagnosticProtocol
 
         public override void ConnectionClosingHandler(ECUConnection connection)
         {
+            // changing this to debug ki211 : no concept of session?
             ExitDiagnosticSession(connection);
         }
 

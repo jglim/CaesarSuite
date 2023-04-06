@@ -364,9 +364,12 @@ namespace Diogenes
                 // apparently some are optional so we have to check for the presence of known comparams to configure the target j2534 device
                 if (profile.GetComParameterValue(comPair.Item2, out int comValue))
                 {
-                    sconfigList.Add(new SConfig(comPair.Item1, comValue));
+                    //sconfigList.Add(new SConfig(comPair.Item1, comValue));
                 }
             }
+            sconfigList.Add(new SConfig(Parameter.STMIN_TX, 2));
+            sconfigList.Add(new SConfig(Parameter.ISO15765_BS, 8));
+            sconfigList.Add(new SConfig(Parameter.ISO15765_STMIN, 40));
             ConnectionChannel.SetConfig(sconfigList.ToArray());
         }
 
@@ -404,7 +407,7 @@ namespace Diogenes
             }
         }
 
-        public byte[] SendMessage(IEnumerable<byte> message, bool testerPresenceRequest = false)
+        public byte[] SendMessage(IEnumerable<byte> message, bool testerPresenceRequest = false, bool expectsResponse = true, byte[] destinationIdOverride = null)
         {
             LogWrite(message);
             if (IsSimulation()) 
@@ -422,7 +425,7 @@ namespace Diogenes
 
 
             // prepare data to send
-            List<byte> packet = new List<byte>(CanIdentifier);
+            List<byte> packet = new List<byte>(destinationIdOverride is null ? CanIdentifier : destinationIdOverride);
             packet.AddRange(message);
             string messageAsString = BitUtility.BytesToHex(message.ToArray(), true);
             if (!testerPresenceRequest)
@@ -453,18 +456,30 @@ namespace Diogenes
             }
 
             // reset the heartbeat timer; I don't know the actual behavior per the spec
+            // there's a comparam for this interval, and the timer must run independently of the currently sent messages
+            // this is because the messages may be intended for another target (e.g. central gateway)
+            /*
             TesterPresentTimer.Stop();
             TesterPresentTimer.Start();
+            */
 
-            // this loop catches 7F xx 78 reqeuests from the ecu, where it needs more time to complete an action
-            bool responseIsValid = false;
-            while (!responseIsValid)
+            // break into discrete send/recv?
+            if (expectsResponse)
             {
-                response = ReadResponse(messageAsString, testerPresenceRequest);
-                responseIsValid = !IsECURequestingForWait(response);
+                // this loop catches 7F xx 78 requests from the ecu, where it needs more time to complete an action
+                bool responseIsValid = false;
+                while (!responseIsValid)
+                {
+                    response = ReadResponse(messageAsString, testerPresenceRequest);
+                    responseIsValid = !IsECURequestingForWait(response);
+                }
+                // should detection for 7f xx 21 be done around here too..?
+                return response;
             }
-
-            return response;
+            else 
+            {
+                return new byte[] { };
+            }
         }
 
         public byte[] ReadResponse(string originalMessageAsStringForDebug, bool testerPresenceRequest) 
@@ -506,10 +521,12 @@ namespace Diogenes
                         {
                             if (identifier.SequenceEqual(CanIdentifier))
                             {
-                                // quietly ignore if it is our can id, usually empty packet
+                                // quietly ignore if it is our can id, usually empty packet 
+                                // probably row.RxStatus == RxFlag.TX_INDICATION
                                 continue;
                             }
-                            Console.WriteLine($"[!] Discarding received message (unknown sender):  {BitUtility.BytesToHex(row.Data, true)} expects {BitUtility.BytesToHex(RxCanIdentifier, true)}");
+                            // new.. suppress this because of central gateway behavior. this needs a rewrite
+                            //Console.WriteLine($"[!] Discarding received message (unknown sender):  {BitUtility.BytesToHex(row.Data, true)} expects {BitUtility.BytesToHex(RxCanIdentifier, true)}");
                             continue;
                         }
 
