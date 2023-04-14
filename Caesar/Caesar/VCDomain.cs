@@ -23,7 +23,7 @@ namespace Caesar
         public int Unk1;
 
         public List<VCFragment> VCFragments = new List<VCFragment>();
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public ECU ParentECU;
 
         public List<Tuple<string, byte[]>> DefaultData = new List<Tuple<string, byte[]>>();

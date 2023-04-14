@@ -78,27 +78,6 @@ namespace Caesar
             byte[] stringBytes = new byte[difference];
             Buffer.BlockCopy(underlyingBuffer, (int)stringStartPosition, stringBytes, 0, difference);
             return encoding.GetString(stringBytes);
-
-            /*
-            // significant performance bottleneck: (original)
-            // read out a string, stopping at the first null terminator
-            using (BinaryWriter writer = new BinaryWriter(new MemoryStream()))
-            {
-                while (true)
-                {
-                    byte nextByte = reader.ReadByte();
-                    if (nextByte == 0)
-                    {
-                        byte[] stringRaw = ((MemoryStream)writer.BaseStream).ToArray();
-                        return encoding.GetString(stringRaw);
-                    }
-                    else
-                    {
-                        writer.Write(nextByte);
-                    }
-                }
-            }
-            */
         }
 
         public static bool CheckAndAdvanceBitflag(ref ulong bitFlag)
@@ -107,9 +86,10 @@ namespace Caesar
             bitFlag >>= 1;
             return flagIsSet;
         }
-
-        public static byte[] ReadBitflagRawBytes(ref ulong bitFlags, BinaryReader reader, int bytes) {
-            if (CheckAndAdvanceBitflag(ref bitFlags)) {
+        public static byte[] ReadBitflagRawBytes(ref ulong bitFlags, BinaryReader reader, int bytes)
+        {
+            if (CheckAndAdvanceBitflag(ref bitFlags))
+            {
                 return reader.ReadBytes(bytes);
             }
             return new byte[] { };

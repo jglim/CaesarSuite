@@ -48,9 +48,13 @@ namespace Caesar
             DumpSize = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             Dump = CaesarReader.ReadBitflagDumpWithReader(ref bitflags, reader, DumpSize, baseAddress);
             ComParamValue = 0;
-            if (DumpSize == 4) 
+            if (DumpSize == 4)
             {
                 ComParamValue = BitConverter.ToInt32(Dump, 0);
+            }
+            else 
+            {
+                throw new Exception("Unhandled dump in comparam");
             }
 
 
@@ -58,9 +62,11 @@ namespace Caesar
 
             if (ComParamIndex >= parentEcuInterface.ComParameterNames.Count)
             {
-                // throw new Exception("Invalid communication parameter : parent interface has no matching key");
+                throw new Exception("Invalid communication parameter : parent interface has no matching key");
+                /*
                 ParamName = "CP_UNKNOWN_MISSING_KEY";
                 Console.WriteLine($"Warning: Tried to load a communication parameter without a parent (value: {ComParamValue}), parent: {parentEcuInterface.Qualifier}.");
+                */
             }
             else
             {
@@ -72,6 +78,29 @@ namespace Caesar
         {
             Console.WriteLine($"ComParam: id {ComParamIndex} ({ParamName}), v {ComParamValue} 0x{ComParamValue:X8} SI_Index:{SubinterfaceIndex} | parentIndex:{ParentInterfaceIndex} 5:{Unk5} DumpSize:{DumpSize} D: {BitUtility.BytesToHex(Dump)}");
             Console.WriteLine($"Pos 0x{BaseAddress:X}");
+        }
+
+        public void InsertIntoEcu(ECU parentEcu)
+        {
+            // KW2C3PE uses a different parent addressing style
+            int parentIndex = ParentInterfaceIndex > 0 ? ParentInterfaceIndex : SubinterfaceIndex;
+            if (ParentInterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
+            {
+                throw new Exception("ComParam: tried to assign to nonexistent interface");
+            }
+            else
+            {
+                // apparently it is possible to insert multiple of the same comparams..?
+                var parentList = parentEcu.ECUInterfaceSubtypes[parentIndex].CommunicationParameters;
+                if (parentList.Count(x => x.ParamName == ParamName) > 0)
+                {
+                    Console.WriteLine($"ComParam with existing key already exists, skipping insertion: {ParamName} new: {ComParamValue}");
+                }
+                else
+                {
+                    parentList.Add(this);
+                }
+            }
         }
     }
 }

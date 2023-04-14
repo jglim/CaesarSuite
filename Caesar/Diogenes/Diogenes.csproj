@@ -1,345 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2216DB99-EAAC-46A8-B99A-28D659907DE7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Diogenes</RootNamespace>
-    <AssemblyName>Diogenes</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>diogenes2-256.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <PropertyGroup>
-    <StartupObject />
+    <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ss:fffZ"))</SourceRevisionId>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>diogenes-256.ico</ApplicationIcon>
-  </PropertyGroup>
+  
   <ItemGroup>
-    <Reference Include="Be.Windows.Forms.HexBox, Version=1.6.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Be.Windows.Forms.HexBox.1.6.1\lib\net40\Be.Windows.Forms.HexBox.dll</HintPath>
-    </Reference>
-    <Reference Include="J2534-Sharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\J2534-Sharp.1.0.0-CI00026\lib\net46\J2534-Sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsFormsIntegration" />
+    <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Forms\BlockDownload.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\BlockDownload.Designer.cs">
-      <DependentUpon>BlockDownload.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DiagnosticProtocol\KW2C3PE.cs" />
-    <Compile Include="DiagnosticProtocol\UDS.cs" />
-    <Compile Include="DiagnosticProtocol\UnsupportedProtocol.cs" />
-    <Compile Include="ECUIdentification.cs" />
-    <Compile Include="Reports\DTCReport.cs" />
-    <Compile Include="ECUFlashMetadata.cs" />
-    <Compile Include="ECUMetadata.cs" />
-    <Compile Include="Forms\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AboutForm.Designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ECUConnection.cs" />
-    <Compile Include="Forms\DTCForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DTCForm.Designer.cs">
-      <DependentUpon>DTCForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FlashSplicer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FlashSplicer.Designer.cs">
-      <DependentUpon>FlashSplicer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\GenericLoader.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\GenericLoader.Designer.cs">
-      <DependentUpon>GenericLoader.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\GenericPicker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\GenericPicker.Designer.cs">
-      <DependentUpon>GenericPicker.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\PickDiagForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PickDiagForm.Designer.cs">
-      <DependentUpon>PickDiagForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\RunDiagForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\RunDiagForm.Designer.cs">
-      <DependentUpon>RunDiagForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DiagnosticProtocol\BaseProtocol.cs" />
-    <Compile Include="Preferences.cs" />
-    <Compile Include="SecurityAccess\DllContext.cs" />
-    <Compile Include="SecurityAccess\ExportDefinition.cs" />
-    <Compile Include="Forms\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Forms\SecurityLevelForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\SecurityLevelForm.Designer.cs">
-      <DependentUpon>SecurityLevelForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SecurityAccess\SecurityAutoLogin.cs" />
-    <Compile Include="Simulation\SimulatedDevice.cs" />
-    <Compile Include="Simulation\Simulated_CRD3.cs" />
-    <Compile Include="TextboxWriter.cs" />
-    <Compile Include="Forms\TraceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TraceForm.Designer.cs">
-      <DependentUpon>TraceForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\UDSHexEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\UDSHexEditor.Designer.cs">
-      <DependentUpon>UDSHexEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UnmanagedUtility.cs" />
-    <Compile Include="Forms\VCForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\VCForm.Designer.cs">
-      <DependentUpon>VCForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VariantCoding.cs" />
-    <Compile Include="Reports\VCReport.cs" />
-    <EmbeddedResource Include="Forms\AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BlockDownload.resx">
-      <DependentUpon>BlockDownload.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DTCForm.resx">
-      <DependentUpon>DTCForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FlashSplicer.resx">
-      <DependentUpon>FlashSplicer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\GenericLoader.resx">
-      <DependentUpon>GenericLoader.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\GenericPicker.resx">
-      <DependentUpon>GenericPicker.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PickDiagForm.resx">
-      <DependentUpon>PickDiagForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <ProjectReference Include="..\CaesarConnection\CaesarConnection.csproj" />
+    <ProjectReference Include="..\Caesar\Caesar.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Forms\RunDiagForm.resx">
-      <DependentUpon>RunDiagForm.cs</DependentUpon>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SecurityLevelForm.resx">
-      <DependentUpon>SecurityLevelForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TraceForm.resx">
-      <DependentUpon>TraceForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\VCForm.resx">
-      <DependentUpon>VCForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UDSHexEditor.resx">
-      <DependentUpon>UDSHexEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Caesar\Caesar.csproj">
-      <Project>{71c43c61-7dc7-4d47-9947-1dd73e559911}</Project>
-      <Name>Caesar</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\brick.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\house.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\cog.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\blank.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\box.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\connect.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\information.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_black.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_blue.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_go.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_green.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_orange.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_pink.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_purple.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_red.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_star.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_white.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\bullet_yellow.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\computer_go.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\lock_edit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\key.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\application_xp_terminal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\page_white_edit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\asterisk_orange.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\folder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\accept.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\report.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="diogenes-256.ico" />
-    <None Include="Resources\diogenes.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

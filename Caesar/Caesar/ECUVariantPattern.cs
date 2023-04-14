@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using System.Diagnostics;
+using System.IO;   
 
 namespace Caesar
 {
     public class ECUVariantPattern
     {
+        // 0x04 [4,4,4,4,4,4,4,2,2,2,2,1,1,1,1,1,5,1,1,1,1,4,4,4,4,4],
 
         public int UnkBufferSize;
 
@@ -44,7 +44,11 @@ namespace Caesar
         public int UdsVendorID;
         public int PatternType;
 
-        public int VariantID;
+        // this doesn't actually exist on the file, but is a handy helper to get the actual variant
+        public int VariantID 
+        { 
+            get { return UdsVendorID == 0 ? KwpVendorID : UdsVendorID; }
+        }
 
         private readonly long BaseAddress;
 
@@ -62,7 +66,6 @@ namespace Caesar
             ulong bitflags = reader.ReadUInt32();
 
             UnkBufferSize = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-
             UnkBuffer = CaesarReader.ReadBitflagDumpWithReader(ref bitflags, reader, UnkBufferSize, baseAddress);
             Unk3 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             Unk4 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -80,7 +83,7 @@ namespace Caesar
             Unk14 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
             Unk15 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
 
-            EcuId = CaesarReader.ReadBitflagRawBytes(ref bitflags, reader, 4);
+            EcuId = CaesarReader.ReadBitflagRawBytes(ref bitflags, reader, 4); // @prj's fix : https://github.com/jglim/CaesarSuite/issues/57
 
             Unk17 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
             Unk18 = CaesarReader.ReadBitflagUInt8(ref bitflags, reader);
@@ -91,12 +94,13 @@ namespace Caesar
 
             Unk22 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             Unk23 = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+
+            // upper 2 bytes (e.g. 00 02) indicate the expected session? maybe boot: 3, diag: 2
+            // lower 2 bytes are for the variant id
             UdsVendorID = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             PatternType = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-
-            VariantID = UdsVendorID == 0 ? KwpVendorID : UdsVendorID;
             // type 3 contains a vendor name
-
+            //PrintDebug();
         }
 
         public void PrintDebug() 
@@ -116,7 +120,7 @@ namespace Caesar
             Console.WriteLine($"Unk13 : {Unk13}");
             Console.WriteLine($"Unk14 : {Unk14}");
             Console.WriteLine($"Unk15 : {Unk15}");
-            Console.WriteLine($"EcuId : {EcuId}");
+            Console.WriteLine($"EcuId : {BitConverter.ToString(EcuId)}");
             Console.WriteLine($"Unk17 : {Unk17}");
             Console.WriteLine($"Unk18 : {Unk18}");
             Console.WriteLine($"Unk19 : {Unk19}");
@@ -124,8 +128,10 @@ namespace Caesar
             Console.WriteLine($"Unk21 : {Unk21}");
             Console.WriteLine($"Unk22 : {Unk22}");
             Console.WriteLine($"Unk23 : {Unk23}");
-            Console.WriteLine($"VariantID : {VariantID}");
+            Console.WriteLine($"UdsVendorID : {UdsVendorID}");
             Console.WriteLine($"PatternType : {PatternType}");
+
+            Console.WriteLine($"VariantID : {VariantID} {VariantID:X}");
         }
     }
 }

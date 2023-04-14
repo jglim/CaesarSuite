@@ -48,20 +48,20 @@ namespace Caesar
 
         // these should be manually deserialized by creating references back to the parent ECU
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public List<VCDomain> VCDomains = new List<VCDomain>();
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public DiagService[] DiagServices = new DiagService[] { };
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public DTC[] DTCs = new DTC[] { };
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public DiagService[] EnvironmentContexts = new DiagService[] { };
 
         public long BaseAddress;
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public ECU ParentECU;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         private CTFLanguage Language;
 
         public void Restore(CTFLanguage language, ECU parentEcu) 
@@ -196,7 +196,7 @@ namespace Caesar
             return ctxList;
         }
 
-        public void CreateComParameters(BinaryReader reader, ECU parentEcu)
+        private void CreateComParameters(BinaryReader reader, ECU parentEcu)
         {
             // this is unusual as it doesn't use the usual caesar-style bitflag reads
             // for reasons unknown the comparam is attached to the basevariant
@@ -217,22 +217,11 @@ namespace Caesar
             foreach (long comparamOffset in comparameterOffsets)
             {
                 ComParameter param = new ComParameter(reader, comparamOffset, parentEcu.ECUInterfaces, Language);
-
-                // KW2C3PE uses a different parent addressing style
-                int parentIndex = param.ParentInterfaceIndex > 0 ? param.ParentInterfaceIndex : param.SubinterfaceIndex;
-
-                if (param.ParentInterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
-                {
-                    throw new Exception("ComParam: tried to assign to nonexistent interface");
-                }
-                else
-                {
-                    parentEcu.ECUInterfaceSubtypes[parentIndex].CommunicationParameters.Add(param);
-                }
+                param.InsertIntoEcu(parentEcu);
             }
         }
 
-        public void CreateVariantPatterns(BinaryReader reader) 
+        private void CreateVariantPatterns(BinaryReader reader) 
         {
             long tableOffset = BaseAddress + MatchingPatternOffset;
             reader.BaseStream.Seek(tableOffset, SeekOrigin.Begin);

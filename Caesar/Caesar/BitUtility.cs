@@ -240,8 +240,9 @@ namespace Caesar
 
         }
 
-        public static bool CheckHexValid(string inHex) 
+        public static bool TryParseHex(string inHex, out byte[] parsed) 
         {
+            parsed = Array.Empty<byte>();
             string cleanedText = inHex.Replace(" ", "").Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace("-", "").ToUpper();
             if (cleanedText.Length % 2 != 0)
             {
@@ -251,6 +252,7 @@ namespace Caesar
             {
                 return false;
             }
+            parsed = BytesFromHex(cleanedText);
             return true;
         }
     }

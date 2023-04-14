@@ -79,13 +79,13 @@ namespace Caesar
         public List<DiagService> GlobalEnvironmentContexts = new List<DiagService>();
         public List<DiagService> GlobalDiagServices = new List<DiagService>();
         public List<DiagPresentation> GlobalPresentations = new List<DiagPresentation>();
-        public List<DiagPresentation> GlobalInternalPresentations = new List<DiagPresentation>();
+        public List<DiagPresentation> GlobalPrepPresentations = new List<DiagPresentation>();
 
         private long BaseAddress;
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public CTFLanguage Language;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public CaesarContainer ParentContainer;
 
         byte[] cachedVarcodingPool = new byte[] { };
@@ -98,7 +98,7 @@ namespace Caesar
         byte[] cachedDtcPool = new byte[] { };
         byte[] cachedUnkPool = new byte[] { };
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public string ECUDescription { get { return Language.GetString(EcuDescription_CTF); } }
 
 
@@ -126,7 +126,7 @@ namespace Caesar
             {
                 pres.Restore(language);
             }
-            foreach (DiagPresentation pres in GlobalInternalPresentations)
+            foreach (DiagPresentation pres in GlobalPrepPresentations)
             {
                 pres.Restore(language);
             }
@@ -340,13 +340,10 @@ namespace Caesar
             // this address is relative to the definitions block
             ECUInterfaceSubtypes = new List<ECUInterfaceSubtype>();
             long ctTableAddress = BaseAddress + SubinterfacesOffset;
-            // Console.WriteLine($"Interface subtype table address: {ctTableAddress:X}, given offset: {ecuChildTypesOffset:X}");
             for (int ctBufferIndex = 0; ctBufferIndex < SubinterfacesCount; ctBufferIndex++)
             {
-                // Console.WriteLine($"Parsing interface subtype {ctBufferIndex + 1}/{ecuNumberOfEcuChildTypes}");
                 // find our ct block offset
                 reader.BaseStream.Seek(ctTableAddress + (ctBufferIndex * 4), SeekOrigin.Begin);
-                // seek to the actual block (ambiguity: is this relative to the ct table or the current array?)
                 int actualBlockOffset = reader.ReadInt32();
                 long ctBaseAddress = ctTableAddress + actualBlockOffset;
 
@@ -356,7 +353,7 @@ namespace Caesar
 
             // dependency of variants
             CreatePresentations(reader, language);
-            CreateInternalPresentations(reader, language);
+            CreatePrepPresentations(reader, language);
             // requires presentations
             CreateEnvironments(reader, language);
             CreateDiagServices(reader, language);
@@ -505,7 +502,7 @@ namespace Caesar
             }
             GlobalPresentations = new List<DiagPresentation>(globalPresentations);
         }
-        public void CreateInternalPresentations(BinaryReader reader, CTFLanguage language)
+        public void CreatePrepPresentations(BinaryReader reader, CTFLanguage language)
         {
             byte[] internalPresentationsPool = ReadECUInternalPresentationsPool(reader);
             DiagPresentation[] globalInternalPresentations = new DiagPresentation[InternalPresentations_EntryCount];
@@ -522,7 +519,7 @@ namespace Caesar
                     globalInternalPresentations[internalPresentationsIndex] = pres;
                 }
             }
-            GlobalInternalPresentations = new List<DiagPresentation>(globalInternalPresentations);
+            GlobalPrepPresentations = new List<DiagPresentation>(globalInternalPresentations);
         }
         public void CreateEcuVariants(BinaryReader reader, CTFLanguage language) 
         {

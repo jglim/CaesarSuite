@@ -33,12 +33,12 @@ namespace Caesar
         private long BaseAddress;
         public int PoolIndex;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public ECU ParentECU;
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         CTFLanguage Language;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public string Description { get { return Language.GetString(Description_CTF); } }
 
         public void Restore(CTFLanguage language, ECU parentEcu) 

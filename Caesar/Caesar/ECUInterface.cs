@@ -49,6 +49,9 @@ namespace Caesar
             Unk6 = CaesarReader.ReadBitflagInt16(ref interfaceBitflags, reader);
 
 
+            // absolute file offset to the comparam string table
+            // this points to an array of integers
+            // each of these ints is added to the fileoffset to get to the actual string
             long comparamFileOffset = ComParamListOffset + BaseAddress;
             // Console.WriteLine($"interface string table offset from definition block : {interfaceStringTableOffset_fromDefinitionBlock:X}");
 

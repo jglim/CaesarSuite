@@ -1,0 +1,133 @@
+﻿#region License
+/*Copyright(c) 2021, Brian Humlicek
+* https://github.com/BrianHumlicek
+* 
+*Permission is hereby granted, free of charge, to any person obtaining a copy
+*of this software and associated documentation files (the "Software"), to deal
+*in the Software without restriction, including without limitation the rights
+*to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
+*copies of the Software, and to permit persons to whom the Software is
+*furnished to do so, subject to the following conditions:
+*The above copyright notice and this permission notice shall be included in all
+*copies or substantial portions of the Software.
+*
+*THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+*SOFTWARE.
+*/
+/* 
+ * Copyright (c) 2010, Michael Kelly
+ * michael.e.kelly@gmail.com
+ * http://michael-kelly.com/
+ * 
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of the organization nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ */
+#endregion License
+namespace SAE.J2534
+{
+    public enum DeviceInfo
+    {
+        SERIAL_NUMBER = 0x00000001,
+        J1850PWM_SUPPORTED = 0x00000002,
+        J1850VPW_SUPPORTED = 0x00000003,
+        ISO9141_SUPPORTED = 0x00000004,
+        ISO14230_SUPPORTED = 0x00000005,
+        CAN_SUPPORTED = 0x00000006,
+        ISO15765_SUPPORTED = 0x00000007,
+        SCI_A_ENGINE_SUPPORTED = 0x00000008,
+        SCI_A_TRANS_SUPPORTED = 0x00000009,
+        SCI_B_ENGINE_SUPPORTED = 0x0000000A,
+        SCI_B_TRANS_SUPPORTED = 0x0000000B,
+        SW_ISO15765_SUPPORTED = 0x0000000C,
+        SW_CAN_SUPPORTED = 0x0000000D,
+        GM_UART_SUPPORTED = 0x0000000E,
+        UART_ECHO_BYTE_SUPPORTED = 0x0000000F,
+        HONDA_DIAGH_SUPPORTED = 0x00000010,
+        J1939_SUPPORTED = 0x00000011,
+        J1708_SUPPORTED = 0x00000012,
+        TP2_0_SUPPORTED = 0x00000013,
+        J2610_SUPPORTED = 0x00000014,
+        ANALOG_IN_SUPPORTED = 0x00000015,
+        MAX_NON_VOLATILE_STORAGE = 0x00000016,
+        SHORT_TO_GND_J1962 = 0x00000017,
+        PGM_VOLTAGE_J1962 = 0x00000018,
+        J1850PWM_PS_J1962 = 0x00000019,
+        J1850VPW_PS_J1962 = 0x0000001A,
+        ISO9141_PS_K_LINE_J1962 = 0x0000001B,
+        ISO9141_PS_L_LINE_J1962 = 0x0000001C,
+        ISO14230_PS_K_LINE_J1962 = 0x0000001D,
+        ISO14230_PS_L_LINE_J1962 = 0x0000001E,
+        CAN_PS_J1962 = 0x0000001F,
+        ISO15765_PS_J1962 = 0x00000020,
+        SW_CAN_PS_J1962 = 0x00000021,
+        SW_ISO15765_PS_J1962 = 0x00000022,
+        GM_UART_PS_J1962 = 0x00000023,
+        UART_ECHO_BYTE_PS_J1962 = 0x00000024,
+        HONDA_DIAGH_PS_J1962 = 0x00000025,
+        J1939_PS_J1962 = 0x00000026,
+        J1708_PS_J1962 = 0x00000027,
+        TP2_0_PS_J1962 = 0x00000028,
+        J2610_PS_J1962 = 0x00000029,
+        J1939_PS_J1939 = 0x0000002A,
+        J1708_PS_J1939 = 0x0000002B,
+        ISO9141_PS_K_LINE_J1939 = 0x0000002C,
+        ISO9141_PS_L_LINE_J1939 = 0x0000002D,
+        ISO14230_PS_K_LINE_J1939 = 0x0000002E,
+        ISO14230_PS_L_LINE_J1939 = 0x0000002F,
+        J1708_PS_J1708 = 0x00000030,
+        FT_CAN_SUPPORTED = 0x00000031,
+        FT_ISO15765_SUPPORTED = 0x00000032,
+        FT_CAN_PS_J1962 = 0x00000033,
+        FT_ISO15765_PS_J1962 = 0x00000034,
+        J1850PWM_SIMULTANEOUS = 0x00000035,
+        J1850VPW_SIMULTANEOUS = 0x00000036,
+        ISO9141_SIMULTANEOUS = 0x00000037,
+        ISO14230_SIMULTANEOUS = 0x00000038,
+        CAN_SIMULTANEOUS = 0x00000039,
+        ISO15765_SIMULTANEOUS = 0x0000003A,
+        SCI_A_ENGINE_SIMULTANEOUS = 0x0000003B,
+        SCI_A_TRANS_SIMULTANEOUS = 0x0000003C,
+        SCI_B_ENGINE_SIMULTANEOUS = 0x0000003D,
+        SCI_B_TRANS_SIMULTANEOUS = 0x0000003E,
+        SW_ISO15765_SIMULTANEOUS = 0x0000003F,
+        SW_CAN_SIMULTANEOUS = 0x00000040,
+        GM_UART_SIMULTANEOUS = 0x00000041,
+        UART_ECHO_BYTE_SIMULTANEOUS = 0x00000042,
+        HONDA_DIAGH_SIMULTANEOUS = 0x00000043,
+        J1939_SIMULTANEOUS = 0x00000044,
+        J1708_SIMULTANEOUS = 0x00000045,
+        TP2_0_SIMULTANEOUS = 0x00000046,
+        J2610_SIMULTANEOUS = 0x00000047,
+        ANALOG_IN_SIMULTANEOUS = 0x00000048,
+        PART_NUMBER = 0x00000049,
+        FT_CAN_SIMULTANEOUS = 0x0000004A,
+        FT_ISO15765_SIMULTANEOUS = 0x0000004B,
+        FD_CAN_SUPPORTED = 0x0000004C,
+        FD_ISO15765_SUPPORTED = 0x0000004D,
+        FD_CAN_SIMULTANEOUS = 0x0000004E,
+        FD_ISO15765_SIMULTANEOUS = 0x0000004F,
+        FD_CAN_PS_J1962 = 0x00000050,
+        FD_ISO15765_PS_J1962 = 0x00000051
+    }
+}

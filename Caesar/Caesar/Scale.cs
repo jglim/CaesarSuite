@@ -30,7 +30,7 @@ namespace Caesar
         public int EnumDescription;
         public int UnkC;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         private CTFLanguage Language;
 
         public void Restore(CTFLanguage language) 

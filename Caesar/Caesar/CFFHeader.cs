@@ -22,15 +22,15 @@ namespace Caesar
         public string GpdVersionString;
         public string XmlString;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public int CffHeaderSize;
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public long BaseAddress;
 
         public long DscBlockOffset;
         private int DscBlockSize;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public byte[] DSCPool = new byte[] { };
 
         // DIIAddCBFFile

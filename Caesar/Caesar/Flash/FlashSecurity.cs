@@ -26,7 +26,7 @@ namespace Caesar
         public byte[] EcuKeyValue;
 
         public long BaseAddress;
-
+        // 2,    2, 4, 4, 2,  4, 4, 2, 4,  4, 2, 4, 4
         public FlashSecurity(BinaryReader reader, long baseAddress)
         {
             BaseAddress = baseAddress;

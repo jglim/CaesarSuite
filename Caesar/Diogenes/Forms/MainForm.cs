@@ -3,1238 +3,462 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Caesar;
-using System.IO;
-using Diogenes.Properties;
-using System.Runtime.InteropServices;
-using Diogenes.SecurityAccess;
+using CaesarConnection.ComParam;
+using CaesarConnection.Protocol;
 
-namespace Diogenes
+namespace Diogenes.Forms
 {
+
     public partial class MainForm : Form
     {
-        public ECUConnection Connection = null;
+
+        /*
+        // dbg: remove
+        string[] cbfPool = { CBF_ic204, CBF_ki211, CBF_crd3, CBF_cr4nfz, CBF_clamp15, CBF_med40, CBF_ki169, CBF_eis204, CBF_ezs169 };
+
+        const string CBF_ic204 = @"C:\Users\jg\Downloads\Vediamo 5_0_0\Data05.00.00\IC_204.CBF";
+        const string CBF_ki211 = @"C:\Users\jg\Downloads\Benz\DTSProjects\211\cbf\KI211.CBF";
+        const string CBF_crd3 = @"C:\Users\jg\Downloads\Vediamo 5_0_0\Data05.00.00\CRD3.CBF";
+        const string CBF_cr4nfz = @"C:\Users\jg\Downloads\Vediamo 5_0_0\CBF VAN\CR4_NFZ.cbf";
+        const string CBF_clamp15 = @"C:\Users\jg\Downloads\Vediamo 5_0_0\Data05.00.00\CLAMP15.CBF";
+        const string CBF_med40 = @"C:\Users\jg\Downloads\Vediamo 5_0_0\Data05.00.00\MED40.CBF";
+        const string CBF_ki169 = @"C:\Users\jg\Downloads\Vediamo 5_0_0\Data05.00.00\KI169.CBF";
+        const string CBF_eis204 = @"C:\Users\jg\Downloads\Vediamo 5_0_0\Data05.00.00\EIS_204.CBF";
+        const string CBF_ezs169 = @"C:\Users\jg\Downloads\Vediamo 5_0_0\Data05.00.00\EZS169.CBF";
+        const string CFF_204_appl = @"C:\Users\jg\Downloads\Benz\CxFViewer\jg_cff\2049022702_001.cff";
+        const string CFF_204_data = @"C:\Users\jg\Downloads\Benz\CxFViewer\jg_cff\2049022802_001.cff";
+        */
+
+
+        const string UITextBtnConnect = "Connect";
+        const string UITextBtnDisconnect = "Disconnect";
+
+        const string UITextLblCbfNotLoaded = "CBF not loaded";
+        const string UITextLblCbfNoVariant = "No Variant";
+
+        const string UITextLblOffline = "Offline";
+        const string UITextLblOnline = "Online";
+
+        public TextWriter TraceWriter = null;
+        PersistentRecentFiles RecentCbfFiles = null;
+        DiagServicesView DiagServicesViewControl = null;
 
         public MainForm()
         {
             InitializeComponent();
-        }
 
-        TraceForm TraceFormSingleInstance;
-        List<CaesarContainer> Containers = new List<CaesarContainer>();
-        ImageList treeImages = null;
-        TextboxWriter LogTextbox;
+            dgvPreConnectComParams.DataSource = DiogenesSharedContext.Singleton.PreConnectParameters;
+            dgvPreConnectComParams.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            
+            UpdateUIForConnectionStateChange();
+            UpdateUIForCbfLoadUnload();
+            UpdateUIForVariantChange();
+
+            TraceWriter = new TextboxWriter(txtTrace, 200);
+            Console.SetOut(new TextboxWriter(txtConsoleLog));
+            RecentCbfFiles = new PersistentRecentFiles(tsmiOpenRecent, LoadCBF);
+
+            var memoryEditor = new MemoryEditorView();
+            tabMemoryEditor.Controls.Add(memoryEditor);
+            memoryEditor.Dock = DockStyle.Fill;
+
+            DiagServicesViewControl = new DiagServicesView();
+            tabDiagServices.Controls.Add(DiagServicesViewControl);
+            DiagServicesViewControl.Dock = DockStyle.Fill;
+
+            this.Text = $"Diogenes II (Build: {LinkerTime.GetLinkerTime().ToShortDateString()})";
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            RedirectConsole();
-            LoadContainers();
-            UnmanagedUtility.SendMessage(txtJ2534Input.Handle, UnmanagedUtility.EM_SETCUEBANNER, 0, "J2534 Console : Enter hex values (01 23 45 57) and press enter to send a raw J2534 command");
-#if (!DEBUG)
-            genericDebugToolStripMenuItem.Visible = false;
-            downloadBlocksToolStripMenuItem.Visible = false;
-#endif
-            SetDisconnectedState(false);
+            LoadComDeviceList();
         }
 
-        private void RedirectConsole()
+        private void LoadCBF(string path)
         {
-            LogTextbox = new TextboxWriter(txtLog);
-            Console.SetOut(LogTextbox);
-        }
-
-        private void LoadContainers()
-        {
-            Containers.Clear();
-            foreach (string file in Directory.GetFiles(Application.StartupPath))
+            if (!File.Exists(path)) 
             {
-                if (Path.GetExtension(file).ToLower() == ".cbf")
+                Console.WriteLine($"CBF file could not be found at {path}");
+                RecentCbfFiles.RemoveEntry(path);
+                return;
+            }
+            UnloadCBF();
+            DiogenesSharedContext.Singleton.TryLoadCBF(path);
+            RefreshProtocolList();
+            RecentCbfFiles?.AddRecentFile(path);
+            UpdateUIForCbfLoadUnload();
+            DiagServicesViewControl.NotifyCbfOrVariantChange();
+        }
+
+        private void LoadComDeviceList()
+        {
+            cbComDevices.Items.Clear();
+            var devices = CaesarConnection.Connection.GetDevices();
+            int lastDevice = Properties.Settings.Default.LastSelectedDevice;
+            foreach (var device in devices)
+            {
+                cbComDevices.Items.Add(device);
+                if (device.GetPersistentHash() == lastDevice)
                 {
-                    CaesarContainer cbfContainer = new CaesarContainer(File.ReadAllBytes(file));
-                    Containers.Add(cbfContainer);
-                    //PostInitDebug(cbfContainer);
+                    cbComDevices.SelectedItem = device;
                 }
             }
-            LoadTree();
-        }
-
-        private void PostInitDebug(CaesarContainer cbfContainer) 
-        {
-        }
-
-        private void InitializeTree()
-        {
-            if (treeImages is null)
+            if ((cbComDevices.SelectedItem is null) && (cbComDevices.Items.Count > 0))
             {
-                treeImages = new ImageList();
-                treeImages.Images.Add(Resources.blank); // 0
-                treeImages.Images.Add(Resources.box);
-                treeImages.Images.Add(Resources.brick);
-                treeImages.Images.Add(Resources.cog);
-                treeImages.Images.Add(Resources.house);
-                treeImages.Images.Add(Resources.connect);
-                treeImages.Images.Add(Resources.information); // 6
-
-                treeImages.Images.Add(Resources.bullet_go); // 7
-                treeImages.Images.Add(Resources.bullet_star);
-
-                treeImages.Images.Add(Resources.bullet_black); // 9
-                treeImages.Images.Add(Resources.bullet_blue);
-                treeImages.Images.Add(Resources.bullet_green);
-                treeImages.Images.Add(Resources.bullet_orange);
-                treeImages.Images.Add(Resources.bullet_pink);
-                treeImages.Images.Add(Resources.bullet_purple);
-                treeImages.Images.Add(Resources.bullet_red);
-                treeImages.Images.Add(Resources.bullet_white);
-                treeImages.Images.Add(Resources.bullet_yellow); // 17
-
-                treeImages.Images.Add(Resources.computer_go); // 18
-                treeImages.Images.Add(Resources.lock_edit); // 19
-                treeImages.Images.Add(Resources.key); // 20
-                treeImages.Images.Add(Resources.application_xp_terminal); // 21
-                treeImages.Images.Add(Resources.page_white_edit); // 22
-
-                treeImages.Images.Add(Resources.asterisk_orange); // 23
-                treeImages.Images.Add(Resources.folder); // 24
-                treeImages.Images.Add(Resources.accept); // 25
-                treeImages.Images.Add(Resources.report); // 26
-
-                tvMain.ImageList = treeImages;
-
-                UnmanagedUtility.SendMessage(tvMain.Handle, UnmanagedUtility.TVM_SETEXTENDEDSTYLE, (IntPtr)UnmanagedUtility.TVS_EX_DOUBLEBUFFER, (IntPtr)UnmanagedUtility.TVS_EX_DOUBLEBUFFER);
+                cbComDevices.SelectedItem = cbComDevices.Items[0];
             }
         }
 
-        private void AddDiagServicesToNode(TreeNode parentNode, ECUVariant variant)
+        private void RefreshProtocolList()
         {
-
-            string newTag = $"Exec{nameof(DiagService)}:{variant.Qualifier}";
-
-            TreeNode diagUnlockingOptions = new TreeNode($"Security Access", 19, 19);
-            diagUnlockingOptions.Tag = newTag;
-
-            TreeNode diagStoredData = new TreeNode($"Diagnostics: Stored Data", 24, 24);
-            diagStoredData.Tag = newTag;
-
-            TreeNode diagData = new TreeNode($"Diagnostics: Data", 24, 24);
-            diagData.Tag = newTag;
-
-            TreeNode diagFunction = new TreeNode($"Diagnostics: Function", 24, 24);
-            diagFunction.Tag = newTag;
-
-            TreeNode diagRoutine = new TreeNode($"Diagnostics: Routine", 24, 24);
-            diagRoutine.Tag = newTag;
-
-            TreeNode diagIO = new TreeNode($"Diagnostics: IO", 24, 24);
-            diagIO.Tag = newTag;
-
-            TreeNode diagDownload = new TreeNode($"Diagnostics: Download", 24, 24);
-            diagDownload.Tag = newTag;
-
-
-            for (int i = 0; i < variant.DiagServices.Length; i++)
+            cbProtocol.Items.Clear();
+            if (DiogenesSharedContext.Singleton.PrimaryContainer is null) 
             {
-                DiagService currentDiagService = variant.DiagServices[i];
+                return;
+            }
+            foreach (var iface in DiogenesSharedContext.Singleton.PrimaryEcu.ECUInterfaceSubtypes)
+            {
+                var physicalProtocol = iface.PhysicalProtocol;
+                var diagProtocol = DiogenesSharedContext.Singleton.PrimaryEcu.ECUInterfaces[iface.ParentInterfaceIndex].Qualifier;
+                cbProtocol.Items.Add(iface.Qualifier);
+            }
+            if (cbProtocol.Items.Count > 0)
+            {
+                cbProtocol.SelectedItem = cbProtocol.Items[0];
+                cbProtocol_SelectionChangeCommitted(null, null);
+            }
+        }
 
-                TreeNode diagNode = new TreeNode(currentDiagService.Qualifier, 9, 9);
-                diagNode.Tag = i.ToString();
+        /*
+        private async void InitTest()
+        {
+            // dbg: remove
+            var devices = CaesarConnection.Connection.GetDevices();
+            foreach (var device in devices)
+            {
+                Console.WriteLine($"{device.GetType().Name} : {device.Name} {device.Parameter}");
+            }
+            var selectedDevice = devices.FirstOrDefault(x => x.Name == "OpenPort 2.0 J2534 ISO/CAN/VPW/PWM"); // OkayJ2534 or J2534-Shim or `OpenPort 2.0 J2534 ISO/CAN/VPW/PWM`
 
-                if ((currentDiagService.RequestBytes.Length > 1) && (currentDiagService.RequestBytes[0] == 0x27))
+
+            DiogenesSharedContext.Singleton.TryLoadCBF(CBF_ic204);
+
+            var primaryEcu = DiogenesSharedContext.Singleton.PrimaryEcu();
+
+            var ifacetype = primaryEcu.ECUInterfaceSubtypes[0];
+            var comParams = ifacetype.CommunicationParameters.ToDictionary(t => t.ParamName, t => t.ComParamValue);
+            comParams.ToList().ForEach(x => Console.WriteLine($"{x.Key} -> {x.Value}"));
+
+            var physicalProtocol = ifacetype.PhysicalProtocol;
+            var diagProtocol = primaryEcu.ECUInterfaces[ifacetype.ParentInterfaceIndex].Qualifier;
+
+            var connection = CaesarConnection.Connection.Create(selectedDevice);
+
+            Console.WriteLine("cc open");
+
+            var channel = connection.OpenChannel($"{physicalProtocol}", diagProtocol, comParams, TraceWriter);
+            Console.WriteLine("ch open");
+
+            int variant = channel.GetEcuVariant();
+            Console.WriteLine($"variant: {variant:X8}");
+
+            byte[] sk = channel.Send(new byte[] { 0x27, 0x09 });
+            Console.WriteLine($"sk: {BitConverter.ToString(sk)}");
+
+            List<byte> resp1 = new List<byte>(new byte[] { 0x27, 0x0A });
+            resp1.AddRange(BitUtility.BytesFromHex(Console.ReadLine()));
+            byte[] sk2 = channel.Send(resp1.ToArray());
+            Console.WriteLine($"sk2: {BitConverter.ToString(sk2)}");
+
+            byte[] sk3 = channel.Send(new byte[] { 0x27, 0x0D });
+            Console.WriteLine($"sk3: {BitConverter.ToString(sk3)}");
+
+            List<byte> resp2 = new List<byte>(new byte[] { 0x27, 0x0E });
+            resp2.AddRange(BitUtility.BytesFromHex(Console.ReadLine()));
+            byte[] sk4 = channel.Send(resp1.ToArray());
+            Console.WriteLine($"sk4: {BitConverter.ToString(sk4)}");
+
+            byte[] wait = channel.Send(new byte[] { 0x23, 0x14, 0x80, 0x00, 0x00, 0x00, 0x20 });
+            Console.WriteLine($"wait resp: {BitConverter.ToString(wait)}");
+
+            await Task.Delay(7000);
+
+            channel.Dispose();
+            Console.WriteLine("ch closed");
+            connection.Dispose();
+            Console.WriteLine($"cc close");
+        }
+        */
+
+        private void cbComDevices_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            // remember the last used vci so that it can be automatically picked on next restart
+            if ((cbComDevices.SelectedItem != null) && (cbComDevices.SelectedItem.GetType().BaseType == typeof(CaesarConnection.VCI.BaseDevice)))
+            {
+                int deviceHash = (cbComDevices.SelectedItem as CaesarConnection.VCI.BaseDevice).GetPersistentHash();
+                Properties.Settings.Default.LastSelectedDevice = deviceHash;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void cbProtocol_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            dgvPreConnectComParams.Suspend();
+
+            DiogenesSharedContext.Singleton.PreConnectParameters.Clear();
+            foreach (var iface in DiogenesSharedContext.Singleton.PrimaryEcu.ECUInterfaceSubtypes)
+            {
+                if (iface.Qualifier != cbProtocol.SelectedItem.ToString())
                 {
-                    diagUnlockingOptions.Nodes.Add(diagNode);
                     continue;
                 }
-
-                if (currentDiagService.DataClass_ServiceType == (int)DiagService.ServiceType.StoredData)
-                {
-                    diagStoredData.Nodes.Add(diagNode);
-                }
-                else if (currentDiagService.DataClass_ServiceType == (int)DiagService.ServiceType.DiagnosticFunction)
-                {
-                    diagFunction.Nodes.Add(diagNode);
-                }
-                else if (currentDiagService.DataClass_ServiceType == (int)DiagService.ServiceType.Data)
-                {
-                    diagData.Nodes.Add(diagNode);
-                }
-                else if (currentDiagService.DataClass_ServiceType == (int)DiagService.ServiceType.Routine)
-                {
-                    diagRoutine.Nodes.Add(diagNode);
-                }
-                else if (currentDiagService.DataClass_ServiceType == (int)DiagService.ServiceType.IoControl)
-                {
-                    diagIO.Nodes.Add(diagNode);
-                }
-                else if (currentDiagService.DataClass_ServiceType == (int)DiagService.ServiceType.Download)
-                {
-                    diagDownload.Nodes.Add(diagNode);
-                }
+                var comParams = iface.CommunicationParameters.ToDictionary(t => t.ParamName, t => t.ComParamValue);
+                comParams.ToList().ForEach(x => DiogenesSharedContext.Singleton.PreConnectParameters.Add(new DiogenesSharedContext.RawComParam { Name = x.Key, Value = x.Value }));
             }
 
-            parentNode.Nodes.Add(diagUnlockingOptions);
-            parentNode.Nodes.Add(diagStoredData);
-            parentNode.Nodes.Add(diagData);
-            parentNode.Nodes.Add(diagFunction);
-            parentNode.Nodes.Add(diagRoutine);
-            parentNode.Nodes.Add(diagIO);
-            parentNode.Nodes.Add(diagDownload);
+            dgvPreConnectComParams.Resume();
         }
 
-
-        private void AddEcuMetadataToNode(TreeNode parentNode, CaesarContainer container, ECU ecu)
+        private void btnConnectDisconnect_Click(object sender, EventArgs e)
         {
-            TreeNode rootMetadata = new TreeNode("Metadata", 26, 26);
-            rootMetadata.Tag = $"RootMetadata";
+            cbComDevices.Enabled = false;
+            cbProtocol.Enabled = false;
+            dgvPreConnectComParams.Enabled = false;
+            btnConnectDisconnect.Enabled = false;
+            cbAutoVariantID.Enabled = false;
 
-            TreeNode metadataRowNode;
-
-            metadataRowNode = new TreeNode($"Container File Size: {container.GetFileSize()}", 9, 9);
-            metadataRowNode.Tag = "RootMetadataEntry";
-            rootMetadata.Nodes.Add(metadataRowNode);
-
-            metadataRowNode = new TreeNode($"Container Checksum: {container.FileChecksum:X8}", 9, 9);
-            metadataRowNode.Tag = "RootMetadataEntry";
-            rootMetadata.Nodes.Add(metadataRowNode);
-
-            metadataRowNode = new TreeNode($"CBF Version: {container.CaesarCFFHeader.CbfVersionString}", 9, 9);
-            metadataRowNode.Tag = "RootMetadataEntry";
-            rootMetadata.Nodes.Add(metadataRowNode);
-
-            metadataRowNode = new TreeNode($"GPD Version: {container.CaesarCFFHeader.GpdVersionString}", 9, 9);
-            metadataRowNode.Tag = "RootMetadataEntry";
-            rootMetadata.Nodes.Add(metadataRowNode);
-
-            metadataRowNode = new TreeNode($"ECU Version: {ecu.EcuXmlVersion}", 9, 9);
-            metadataRowNode.Tag = "RootMetadataEntry";
-            rootMetadata.Nodes.Add(metadataRowNode);
-
-            metadataRowNode = new TreeNode($"ECU Ignition Required: {ecu.IgnitionRequired}", 9, 9);
-            metadataRowNode.Tag = "RootMetadataEntry";
-            rootMetadata.Nodes.Add(metadataRowNode);
-
-
-            parentNode.Nodes.Add(rootMetadata);
-        }
-
-        private void LoadTree()
-        {
-            InitializeTree();
-            tvMain.Nodes.Clear();
-
-            foreach (CaesarContainer container in Containers)
+            if (DiogenesSharedContext.Singleton.Channel is null)
             {
-                foreach (ECU ecu in container.CaesarECUs)
-                {
-                    TreeNode ecuNode = new TreeNode(ecu.Qualifier, 1, 1);
-                    ecuNode.Tag = nameof(ECU);
-
-                    TreeNode execDiagAtRoot = new TreeNode("Execute Diagnostic Service (Root)", 21, 21);
-                    execDiagAtRoot.Tag = $"{nameof(DiagService)}:{nameof(ECU)}:{ecu.Qualifier}";
-                    ecuNode.Nodes.Add(execDiagAtRoot);
-
-                    AddEcuMetadataToNode(ecuNode, container, ecu);
-
-                    foreach (ECUInterfaceSubtype subtype in ecu.ECUInterfaceSubtypes)
-                    {
-                        if (Connection?.VariantIsAvailable ?? false)
-                        {
-                            // interfaces don't matter anymore when we are connected
-                            break;
-                        }
-                        TreeNode interfaceNode = new TreeNode(subtype.Qualifier, 5, 5);
-                        interfaceNode.Tag = "";
-
-                        TreeNode initiateContactNode = new TreeNode("Initiate Contact", 18, 18);
-                        initiateContactNode.Tag = $"{nameof(ECUInterfaceSubtype)}:{subtype.Qualifier}";
-                        interfaceNode.Nodes.Add(initiateContactNode);
-
-                        TreeNode comparamParentNode = new TreeNode("Communications Parameters", 6, 6);
-                        comparamParentNode.Tag = $"ComParamParent";
-
-                        foreach (ComParameter parameter in subtype.CommunicationParameters)
-                        {
-                            TreeNode comNode = new TreeNode($"{parameter.ParamName} : {parameter.ComParamValue} (0x{parameter.ComParamValue:X})", 9, 9);
-                            // Console.WriteLine(comNode.Text);
-                            comNode.Tag = nameof(ComParameter);
-                            comparamParentNode.Nodes.Add(comNode);
-                        }
-                        interfaceNode.Nodes.Add(comparamParentNode);
-
-                        ecuNode.Nodes.Add(interfaceNode);
-                        interfaceNode.Expand();
-                    }
-
-                    // offer the ability to switch sessions at all times, in case user runs functions like FN_Reset
-                    TreeNode sessionContainer = new TreeNode("Session", 23, 23);
-                    sessionContainer.Tag = $"Session";
-                    foreach (DiagService ds in ecu.GlobalDiagServices)
-                    {
-                        if (ds.DataClass_ServiceType == (ushort)DiagService.ServiceType.Session)
-                        {
-                            TreeNode dsNode = new TreeNode(ds.Qualifier, 12, 12);
-                            dsNode.Tag = ds.Qualifier;
-                            sessionContainer.Nodes.Add(dsNode);
-                        }
-                    }
-                    ecuNode.Nodes.Add(sessionContainer);
-
-                    foreach (ECUVariant variant in ecu.ECUVariants)
-                    {
-                        TreeNode ecuVariantNode = new TreeNode(variant.Qualifier, 2, 2);
-                        ecuVariantNode.Tag = nameof(ECUVariant);
-
-                        // check if variant should be filtered
-                        if (Connection?.VariantIsAvailable ?? false) 
-                        {
-                            bool foundCorrectVariant = false;
-                            foreach (ECUVariantPattern pattern in variant.VariantPatterns) 
-                            {
-                                if (pattern.VariantID == Connection.ECUVariantID) 
-                                {
-                                    foundCorrectVariant = true;
-                                    break;
-                                }
-                            }
-                            if (!foundCorrectVariant) 
-                            {
-                                continue;
-                            }
-                            ecuVariantNode.ImageIndex = 25;
-                            ecuVariantNode.SelectedImageIndex = 25;
-                            ecuVariantNode.Expand();
-                        }
-
-
-                        // exec diag button
-                        TreeNode execDiagAtVariant = new TreeNode("Execute Diagnostic Service", 21, 21);
-                        execDiagAtVariant.Tag = $"{nameof(DiagService)}:{nameof(ECUVariant)}:{variant.Qualifier}";
-                        ecuVariantNode.Nodes.Add(execDiagAtVariant);
-
-                        // metadata
-                        TreeNode metadataNode = new TreeNode($"Metadata", 6, 6);
-                        metadataNode.Tag = $"{nameof(ECUVariant)}Metadata";
-                        foreach (ECUVariantPattern pattern in variant.VariantPatterns)
-                        {
-                            string vendorText = pattern.PatternType == 3 ? $", Vendor: {pattern.VendorName}" : "";
-                            TreeNode patternNode = new TreeNode($"Variant ID: {pattern.VariantID} ({pattern.VariantID:X4}){vendorText}", 9, 9);
-                            patternNode.Tag = nameof(ECUVariantPattern);
-                            metadataNode.Nodes.Add(patternNode);
-                        }
-
-                        AddDiagServicesToNode(ecuVariantNode, variant);
-
-                        ecuVariantNode.Nodes.Add(metadataNode);
-
-                        // vc domains
-                        foreach (VCDomain domain in variant.VCDomains)
-                        {
-                            TreeNode vcDomainNode = new TreeNode(domain.Qualifier, 3, 3);
-                            vcDomainNode.Tag = nameof(VCDomain);
-                            ecuVariantNode.Nodes.Add(vcDomainNode);
-                        }
-
-                        TreeNode backupNode = new TreeNode("Backup Variant Strings", 3, 3);
-                        backupNode.Tag = "VCBackup";
-                        ecuVariantNode.Nodes.Add(backupNode);
-
-                        ecuNode.Nodes.Add(ecuVariantNode);
-                    }
-                    tvMain.Nodes.Add(ecuNode);
-                    ecuNode.Expand();
-                }
+                Connect();
             }
+            else
+            {
+                CloseConnection();
+            }
+            UpdateUIForConnectionStateChange();
         }
 
-        private void FixCALs(CaesarContainer container)
+        // refreshes the ui, toggling enable state for left panel controls based on connection state
+        private void UpdateUIForConnectionStateChange() 
         {
-            int newLevel = 1;
-            byte[] newFile = new byte[container.FileBytes.Length];
-            Buffer.BlockCopy(container.FileBytes, 0, newFile, 0, container.FileBytes.Length);
+            bool connected = DiogenesSharedContext.Singleton.Channel != null;
+            btnConnectDisconnect.Text = connected ? UITextBtnDisconnect : UITextBtnConnect;
+            
+            cbComDevices.Enabled = !connected;
+            cbProtocol.Enabled = !connected;
+            dgvPreConnectComParams.Enabled = !connected;
+            cbAutoVariantID.Enabled = !connected;
+            btnConnectDisconnect.Enabled = true;
 
-            Console.WriteLine($"Creating a new CBF with access level requirements set at {newLevel}");
-            List<DiagService> dsPendingFix = new List<DiagService>();
-
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(container.FileBytes)))
+            if (connected)
             {
-                foreach (ECU ecu in container.CaesarECUs)
-                {
-                    foreach (DiagService ds in ecu.GlobalDiagServices)
-                    {
-                        if (ds.ClientAccessLevel > newLevel)
-                        {
-                            dsPendingFix.Add(ds);
-                            Console.WriteLine($"-> {ds.Qualifier} (Level {ds.ClientAccessLevel})");
-                            long fileOffset = ds.GetCALInt16Offset(reader);
-                            if (fileOffset != -1)
-                            {
-                                newFile[fileOffset] = (byte)newLevel;
-                                newFile[fileOffset + 1] = (byte)(newLevel >> 8);
-                            }
-                        }
-                    }
-                }
-                uint checksum = CaesarReader.ComputeFileChecksum(newFile);
-                byte[] checksumBytes = BitConverter.GetBytes(checksum);
-                Array.ConstrainedCopy(checksumBytes, 0, newFile, newFile.Length - 4, checksumBytes.Length);
-            }
-
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Specify a location to save your new CBF file";
-            sfd.Filter = "CBF files (*.cbf)|*.cbf|All files (*.*)|*.*";
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                File.WriteAllBytes(sfd.FileName, newFile);
-            }
-        }
-
-        private void TreeViewDoubleClickCheckIfSession(TreeNode node)
-        {
-            if (node.Parent != null && node.Parent.Tag.ToString() == "Session")
-            {
-                string ecuName = node.Parent.Parent.Text;
-                string serviceName = node.Tag.ToString();
-
-                foreach (CaesarContainer container in Containers)
-                {
-                    ECU ecu = container.CaesarECUs.Find(x => x.Qualifier == ecuName);
-                    if (ecu != null)
-                    {
-                        DiagService ds = ecu.GlobalDiagServices.Find(x => x.Qualifier == serviceName);
-                        if (ds != null)
-                        {
-                            PresentRunDiagDialog(ds);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void TreeViewDoubleClickCheckIfVariantDiag(TreeNode node)
-        {
-            string validNodePrefix = $"Exec{nameof(DiagService)}:";
-
-            if (node.Parent is null)
-            {
-                return;
-            }
-            if (node.Parent.Tag.ToString().StartsWith(validNodePrefix))
-            {
-                string variantName = node.Parent.Tag.ToString().Substring(validNodePrefix.Length);
-
-                ECUVariant foundVariant = null;
-                foreach (CaesarContainer container in Containers)
-                {
-                    foreach (ECU ecu in container.CaesarECUs)
-                    {
-                        foreach (ECUVariant variant in ecu.ECUVariants)
-                        {
-                            if (variant.Qualifier == variantName)
-                            {
-                                foundVariant = variant;
-                            }
-                        }
-                    }
-                }
-                // variant found, exec the diag service
-                if (foundVariant != null)
-                {
-                    DiagService ds = foundVariant.DiagServices[int.Parse(node.Tag.ToString())];
-
-                    bool connectionSupportsUnlocking = Connection?.ConnectionProtocol?.SupportsUnlocking() ?? false;
-
-                    // can we help to skip the modal if the ds doesn't require additional user input? common for data, stored data
-                    if ((ds.DataClass_ServiceType == (int)DiagService.ServiceType.StoredData) || (ds.DataClass_ServiceType == (int)DiagService.ServiceType.Data))
-                    {
-                        Connection?.ExecUserDiagJob(ds.RequestBytes, ds);
-                    }
-                    else if (connectionSupportsUnlocking && (ds.RequestBytes.Length == 2) && (ds.RequestBytes[0] == 0x27))
-                    {
-                        // request seed, no need to prompt
-                        Connection?.ExecUserDiagJob(ds.RequestBytes, ds);
-                    }
-                    else
-                    {
-                        PresentRunDiagDialog(ds);
-                    }
-                }
-            }
-        }
-
-        private void PresentRunDiagDialog(DiagService ds)
-        {
-            RunDiagForm runDiagForm = new RunDiagForm(ds);
-            if (runDiagForm.ShowDialog() == DialogResult.OK)
-            {
-                Connection.ExecUserDiagJob(runDiagForm.Result, ds);
-            }
-        }
-
-
-        private void treeViewSelectVariantCoding(TreeNode node) 
-        {
-            string domainName = node.Text;
-            string variantName = node.Parent.Text;
-            string ecuName = node.Parent.Parent.Text;
-
-            Console.WriteLine($"Starting VC Dialog for {ecuName} ({variantName}) with domain as {domainName}");
-            CaesarContainer container = Containers.Find(x => x.GetECUVariantByName(variantName) != null);
-
-            // prompt the user for vc changes via VCForm
-            VCForm vcForm = new VCForm(container, ecuName, variantName, domainName, Connection);
-            if (vcForm.ShowDialog() == DialogResult.OK)
-            {
-                VariantCoding.DoVariantCoding(Connection, vcForm, allowWriteVariantCodingToolStripMenuItem.Checked);
-            }
-        }
-
-        private void tvMain_DoubleClick(object sender, EventArgs e)
-        {
-            TreeNode node = tvMain.SelectedNode;
-            if (node is null)
-            {
-                return;
-            }
-
-            if (node.Tag.ToString() == nameof(VCDomain))
-            {
-                // variant coding
-                treeViewSelectVariantCoding(node);
-            }
-            else if (node.Tag.ToString() == "VCBackup")
-            {
-                // variant coding backup
-                VCReport.treeViewSelectVariantCodingBackup(node, Connection, Containers);
-            }
-            else if (node.Tag.ToString().StartsWith(nameof(ECUInterfaceSubtype)))
-            {
-                // initiate contact
-                string connectionProfileName = node.Tag.ToString().Substring(nameof(ECUInterfaceSubtype).Length + 1);
-                string ecuName = node.Parent.Parent.Text;
-
-                foreach (CaesarContainer container in Containers)
-                {
-                    ECU ecu = container.CaesarECUs.Find(x => x.Qualifier == ecuName);
-                    if (ecu != null)
-                    {
-                        ECUInterfaceSubtype subtype = ecu.ECUInterfaceSubtypes.Find(x => x.Qualifier == connectionProfileName);
-                        if (subtype != null)
-                        {
-                            Console.WriteLine($"Attempting to open a connection to ({ecuName}) with profile '{connectionProfileName}'");
-                            ECUConnection.ConnectResponse response = Connection.Connect(subtype, ecu);
-                            if (response == ECUConnection.ConnectResponse.OK)
-                            {
-                                ProtocolPostConnect();
-                            }
-                            else if (response == ECUConnection.ConnectResponse.NoValidInterface)
-                            {
-                                BlinkConnectionMenu();
-                                connectionToolStripMenuItem.ShowDropDown();
-                                j2534InterfacesToolStripMenuItem.ShowDropDown();
-                            }
-                            else 
-                            {
-                                // uhoh
-                                Console.WriteLine($"ECU connection was unsuccessful : {response}");
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (node.Tag.ToString().StartsWith(nameof(DiagService)))
-            {
-                // execute diag service (modal)
-                string diagOrigin = node.Tag.ToString().Substring(nameof(DiagService).Length + 1);
-                string variantName = "";
-                string ecuName = "";
-
-                if (diagOrigin.StartsWith($"{nameof(ECUVariant)}:"))
-                {
-                    variantName = node.Parent.Text;
-                    ecuName = node.Parent.Parent.Text;
-                }
-                else 
-                {
-                    ecuName = node.Parent.Text;
-                }
-
-                foreach (CaesarContainer container in Containers)
-                {
-                    ECU ecu = container.CaesarECUs.Find(x => x.Qualifier == ecuName);
-                    if (ecu != null)
-                    {
-                        PickDiagForm picker;
-                        ECUVariant variant = ecu.ECUVariants.Find(x => x.Qualifier == variantName);
-                        if (variant != null)
-                        {
-                            //Console.WriteLine($"Starting Diagnostic Service picker modal for variant {variantName}");
-                            picker = new PickDiagForm(variant.DiagServices);
-                        }
-                        else
-                        {
-                            //Console.WriteLine($"Starting Diagnostic Service picker modal for root {ecuName}");
-                            picker = new PickDiagForm(ecu.GlobalDiagServices.ToArray());
-                        }
-                        if (picker.ShowDialog() == DialogResult.OK) 
-                        {
-                            PresentRunDiagDialog(picker.SelectedDiagService);
-                        }
-                        break;
-                    }
-                }
-            }
-            TreeViewDoubleClickCheckIfSession(node);
-            TreeViewDoubleClickCheckIfVariantDiag(node);
-        }
-
-        private void ProtocolPostConnect()
-        {
-            if (Connection.ConnectionProtocol != null) 
-            {
-                Connection.ConnectionProtocol.ConnectionEstablishedHandler(Connection);
-                LoadTree();
-            }
-        }
-
-        private void ShowAbout() 
-        {
-            AboutForm about = new AboutForm($"Diogenes {GetVersion()} (Caesar {CaesarContainer.GetCaesarVersionString()})");
-            about.ShowDialog();
-        }
-        public static string GetVersion()
-        {
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fvi.FileVersion;
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ShowAbout();
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void unloadExistingFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Containers.Clear();
-            LoadTree();
-        }
-
-        private void loadCBFFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a CBF File";
-            ofd.Filter = "CBF files (*.cbf)|*.cbf|All files (*.*)|*.*";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK) 
-            {
-                TryLoadFile(ofd.FileName);
-            }
-        }
-
-        private void TryLoadFile(string fileName)
-        {
-            byte[] fileBytes = File.ReadAllBytes(fileName);
-            if (CaesarContainer.VerifyChecksum(fileBytes, out uint checksum))
-            {
-                Containers.Add(new CaesarContainer(fileBytes));
-                LoadTree();
+                tsslConnectionState.Text = UITextLblOnline;
+                tsslConnectionState.BackColor = SystemColors.Highlight;
             }
             else 
             {
-                Console.WriteLine($"File {Path.GetFileName(fileName)} was not loaded as the checksum is invalid");
+                tsslConnectionState.Text = UITextLblOffline;
+                tsslConnectionState.BackColor = SystemColors.ControlDark;
             }
         }
 
-        private void setSecurityLevelToolStripMenuItem_Click(object sender, EventArgs e)
+        private void UpdateUIForCbfLoadUnload()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a Security DLL File";
-            ofd.Filter = "DLL files (*.dll)|*.dll|All files (*.*)|*.*";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
+            tsslLoadedCbf.Text = DiogenesSharedContext.Singleton.PrimaryEcu?.Qualifier ?? UITextLblCbfNotLoaded;
+            if (DiogenesSharedContext.Singleton.PrimaryEcu is null)
             {
+                tsslLoadedCbf.BackColor = SystemColors.ControlDark;
+            }
+            else
+            {
+                tsslLoadedCbf.BackColor = SystemColors.Highlight;
+            }
+            DiagServicesViewControl?.NotifyCbfOrVariantChange();
+        }
+        private void UpdateUIForVariantChange()
+        {
+            tsslVariant.Text = DiogenesSharedContext.Singleton.PrimaryVariant?.Qualifier ?? UITextLblCbfNoVariant;
+            if (DiogenesSharedContext.Singleton.PrimaryVariant is null)
+            {
+                tsslVariant.BackColor = SystemColors.ControlDark;
+            }
+            else
+            {
+                tsslVariant.BackColor = SystemColors.Highlight;
+            }
+            DiagServicesViewControl?.NotifyCbfOrVariantChange();
+        }
 
-                DllContext ctx = new DllContext(ofd.FileName);
-                if (ctx.KeyGenerationCapability)
+        // attempts a connection to an ecu
+        private void Connect()
+        {
+            if (DiogenesSharedContext.Singleton.PrimaryContainer is null)
+            {
+                Console.WriteLine($"Please load a CBF file first");
+                return;
+            }
+
+            var ecu = DiogenesSharedContext.Singleton.PrimaryEcu;
+            var iface = ecu.ECUInterfaceSubtypes.FirstOrDefault(x => x.Qualifier == cbProtocol.SelectedItem.ToString());
+            if (iface is null)
+            {
+                Console.WriteLine($"Please select a connection interface under Connection > Interface");
+                return;
+            }
+
+            var physicalProtocol = iface.PhysicalProtocol;
+            var diagProtocol = ecu.ECUInterfaces[iface.ParentInterfaceIndex].Qualifier;
+
+            if (cbComDevices.SelectedItem is null)
+            {
+                Console.WriteLine($"Please select a VCI under Connection > Device");
+                return;
+            }
+
+            try
+            {
+                // create a connection and channel
+                DiogenesSharedContext.Singleton.Connection = CaesarConnection.Connection.Create(cbComDevices.SelectedItem as CaesarConnection.VCI.BaseDevice);
+
+                Dictionary<string, int> comParams = new Dictionary<string, int>();
+                foreach (var row in DiogenesSharedContext.Singleton.PreConnectParameters)
                 {
-                    SecurityLevelForm slForm = new SecurityLevelForm(ctx);
-                    if (slForm.ShowDialog() == DialogResult.OK)
+                    comParams.Add(row.Name, row.Value);
+                }
+                DiogenesSharedContext.Singleton.Channel = DiogenesSharedContext.Singleton.Connection.OpenChannel($"{physicalProtocol}", diagProtocol, comParams, TraceWriter);
+                Console.WriteLine($"Channel opened");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to open connection: {ex.Message}");
+                CloseConnection();
+                return;
+            }
+
+            if (cbAutoVariantID.Checked)
+            {
+                IdentifyEcuVariant();
+            }
+        }
+
+        private void IdentifyEcuVariant() 
+        {
+            try
+            {
+                // variant detection will throw an exception if it fails
+                int variantId = DiogenesSharedContext.Singleton.Channel.GetEcuVariant();
+                Console.WriteLine($"ECU responded with variant ID: {variantId:X4}");
+                
+                ECUVariant result = null;
+                foreach (var variant in DiogenesSharedContext.Singleton.PrimaryEcu.ECUVariants) 
+                {
+                    if (variant.VariantPatterns.Any(x => (x.VariantID & 0xFFFF) == variantId))
                     {
-                        Console.WriteLine($"Authentication: Selected level {slForm.RequestedSecurityLevel} : {BitUtility.BytesToHex(slForm.KeyResponse)}");
+                        Console.WriteLine($"Found matching variant: {variant.Qualifier}");
+                        result = variant;
+                        break;
                     }
                 }
-                else 
+                if (result is null) 
                 {
-                    MessageBox.Show("The selected DLL is not capable of configuring ECU security levels. Please try another file.", "Security Level Configuration");
+                    Console.WriteLine($"No variant was found within this CBF that matches {variantId:X4}");
                 }
+                SetEcuVariant(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to identify ECU variant: {ex.Message}");
+                SetEcuVariant(null);
             }
         }
 
-        private void debugJ2534ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SetEcuVariant(ECUVariant variant) 
         {
-
+            // also accepts null to clear active variant
+            DiogenesSharedContext.Singleton.PrimaryVariant = variant;
+            // optionally refresh ui later
+            UpdateUIForVariantChange();
         }
 
-        private void j2534InterfacesToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        private void UnloadCBF() 
         {
-            j2534InterfacesToolStripMenuItem.DropDownItems.Clear();
-            ToolStripItem defaultItem = j2534InterfacesToolStripMenuItem.DropDownItems.Add("(No devices found)");
-            defaultItem.Enabled = false;
+            CloseConnection();
+            DiogenesSharedContext.Singleton.PreConnectParameters.Clear();
+            DiogenesSharedContext.Singleton.PrimaryContainer = null;
+            RefreshProtocolList();
+            UpdateUIForCbfLoadUnload();
+        }
 
-            foreach (Tuple<string,string> device in ECUConnection.GetAvailableJ2534NamesAndDrivers()) 
+        private void CloseConnection()
+        {
+            SetEcuVariant(null);
+            DiogenesSharedContext.Singleton.Channel?.Dispose();
+            DiogenesSharedContext.Singleton.Connection?.Dispose();
+            DiogenesSharedContext.Singleton.Channel = null;
+            DiogenesSharedContext.Singleton.Connection = null;
+            UpdateUIForConnectionStateChange();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            CloseConnection();
+        }
+
+        private void txtConsoleInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
             {
-                defaultItem.Visible = false;
-                ToolStripItem newItem = j2534InterfacesToolStripMenuItem.DropDownItems.Add(device.Item1);
-                newItem.Tag = device.Item2;
-                newItem.Click += J2534InterfaceItem_Click;
-            }
-        }
-
-        private void J2534InterfaceItem_Click(object sender, EventArgs e)
-        {
-            ToolStripItem caller = (ToolStripItem)sender;
-            if (Connection != null) 
-            {
-                Connection.TryCleanup();
-            }
-            Connection = new ECUConnection(caller.Tag.ToString(), caller.Text);
-            Connection.ConnectionStateChangeEvent += ConnectionStateChangedHandler;
-            Connection.OpenDevice();
-            // loadtree should not be necessary if the prior state was disconnected
-            // LoadTree();
-        }
-
-        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SetDisconnectedState();
-        }
-
-        private void SetDisconnectedState(bool refresh = true) 
-        {
-            // disconnected really means "running in simulation mode"
-            if (Connection != null)
-            {
-                Connection.TryCleanup();
-            }
-            Connection = new ECUConnection();
-            Connection.ConnectionStateChangeEvent += ConnectionStateChangedHandler;
-            if (refresh) 
-            {
-                LoadTree();
-            }
-        }
-
-        private void ConnectionStateChangedHandler(string newStateDescription)
-        {
-            lblConnectionType.Text = newStateDescription;
-            txtJ2534Input.Enabled = Connection.State > ECUConnection.ConnectionState.DeviceSelectedPendingChannelConnection;
-        }
-
-        private void txtJ2534Input_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter) 
-            {
+                TextBox txtSender = sender as TextBox;
                 e.Handled = true;
-                string inText = txtJ2534Input.Text;
-                txtJ2534Input.Text = "";
-                if (BitUtility.CheckHexValid(inText))
+                e.SuppressKeyPress = true;
+                string inText = txtSender.Text;
+                txtSender.Text = "";
+
+                // if disconnected, discard and ignore
+                if (DiogenesSharedContext.Singleton.Channel is null)
                 {
-                    byte[] requestData = BitUtility.BytesFromHex(inText.Replace(" ", "").ToUpper());
-                    byte[] response = Connection.SendMessage(requestData);
-                    Console.WriteLine($"ECU:  {BitUtility.BytesToHex(response, true)}");
+                    return;
                 }
-                else 
+                // if content is valid hex, send raw j2534 request
+                if (BitUtility.TryParseHex(inText, out byte[] requestData))
+                {
+                    Console.WriteLine($"REQ: {BitUtility.BytesToHex(requestData, true)}");
+                    byte[] response = DiogenesSharedContext.Singleton.Channel.Send(requestData, true);
+                    Console.WriteLine($"ECU: {BitUtility.BytesToHex(response, true)}");
+                }
+                else
                 {
                     Console.WriteLine($"Could not understand provided hex input: '{inText}'");
                 }
             }
         }
 
-        private void cFFExportFlashSegmentsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiOpenCbf_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a CFF File";
-            ofd.Filter = "CFF files (*.cff)|*.cff|All files (*.*)|*.*";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    CaesarFlashContainer.ExportCFFMemorySegments(ofd.FileName);
-                }
-                catch (Exception ex) 
-                {
-                    Console.WriteLine($"CFF Export failed: {ex.Message}");
-                }
-            }
-        }
-
-        private void fixClientAccessPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a CBF File to apply new permissions on";
-            ofd.Filter = "CBF files (*.cbf)|*.cbf|All files (*.*)|*.*";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                FixCALs(new CaesarContainer(File.ReadAllBytes(ofd.FileName)));
-            }
-        }
-
-        private void cFFFlashSplicerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FlashSplicer splicer = new FlashSplicer();
-            splicer.Show();
-        }
-
-        private void allowWriteVariantCodingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            allowWriteVariantCodingToolStripMenuItem.Checked = !allowWriteVariantCodingToolStripMenuItem.Checked;
-            Preferences.SetValue(Preferences.PreferenceKey.AllowVC, allowWriteVariantCodingToolStripMenuItem.Checked ? "true" : "false");
-        }
-
-        private void showTraceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TraceFormSingleInstance is null || TraceFormSingleInstance.IsDisposed)
-            {
-                TraceFormSingleInstance = new TraceForm(this);
-            }
-            TraceFormSingleInstance.Show();
-        }
-
-        private void clearConsoleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LogTextbox?.Clear();
-        }
-
-        // originally this was intended to blink the menuitem, but this requires overriding the draw call
-        private void tmrBlinkConnectionMenu_Tick(object sender, EventArgs e)
-        {
-            if (connectionToolStripMenuItem.ForeColor != SystemColors.ControlText)
-            {
-                connectionToolStripMenuItem.ForeColor = SystemColors.ControlText;
-                ConnectionMenuBlinksRemaining--;
-                if (ConnectionMenuBlinksRemaining <= 0)
-                {
-                    ConnectionMenuBlinksRemaining = 0;
-                    tmrBlinkConnectionMenu.Enabled = false;
-                }
-            }
-            else 
-            {
-                if (ConnectionMenuBlinksRemaining > 0) 
-                {
-                    connectionToolStripMenuItem.ForeColor = SystemColors.Control;
-                }
-            }
-        }
-
-        private int ConnectionMenuBlinksRemaining = 0;
-        private void BlinkConnectionMenu() 
-        {
-            ConnectionMenuBlinksRemaining = 8;
-            tmrBlinkConnectionMenu.Enabled = true;
-        }
-
-        private void connectionToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            disconnectToolStripMenuItem.Enabled = Connection?.ConnectionDevice != null;
-            j2534InterfacesToolStripMenuItem.Enabled = Connection?.ConnectionDevice == null;
-        }
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            SetDisconnectedState();
-        }
-
-        private void copyConsoleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(txtLog.Text);
-        }
-
-        private void uDSHexEditorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Connection.ConnectionProtocol is null)
-            {
-                MessageBox.Show("Please initiate contact with a target first.");
-                return;
-            }
-            string protocolName = Connection.ConnectionProtocol.GetProtocolName();
-            if (protocolName != "UDS")
-            {
-                MessageBox.Show($"Only UDS targets are officially supported (current protocol: {protocolName}). \r\n\r\n" +
-                    $"The editor will still open, however please ensure that the ECU accepts UDS-like read and write commands");
-            }
-            UDSHexEditor editor = new UDSHexEditor(Connection); 
-            editor.ShowDialog();
-        }
-
-        private void preferencesToolStripMenuItem1_DropDownOpening(object sender, EventArgs e)
-        {
-            RefreshPreferencesDropdown();
-        }
-
-        private void RefreshPreferencesDropdown()
-        {
-            // VC safety switch
-            allowWriteVariantCodingToolStripMenuItem.Checked = Preferences.GetValue(Preferences.PreferenceKey.AllowVC) == "true";
-
-            // scn mode
-            bool scnZero = Preferences.GetValue(Preferences.PreferenceKey.EnableSCNZero) == "true";
-            writeZerosVediamoToolStripMenuItem.Checked = scnZero;
-            useLastSCNToolStripMenuItem.Checked = !writeZerosVediamoToolStripMenuItem.Checked;
-
-            // fingerprint mode
-            bool fingerprintClone = Preferences.GetValue(Preferences.PreferenceKey.EnableFingerprintClone) == "true";
-            useLastFingerprintToolStripMenuItem.Checked = fingerprintClone;
-            customValueToolStripMenuItem.Checked = !fingerprintClone;
-
-            // fingerprint custom value
-            uint customFingerprint = uint.Parse(Preferences.GetValue(Preferences.PreferenceKey.FingerprintValue));
-            customValueToolStripMenuItem.Text = $"Custom Value: {customFingerprint}";
-        }
-
-        private void useLastSCNToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Preferences.SetValue(Preferences.PreferenceKey.EnableSCNZero, "false");
-            RefreshPreferencesDropdown();
-        }
-
-        private void writeZerosVediamoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Preferences.SetValue(Preferences.PreferenceKey.EnableSCNZero, "true");
-            RefreshPreferencesDropdown();
-        }
-
-        private void useLastFingerprintToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Preferences.SetValue(Preferences.PreferenceKey.EnableFingerprintClone, "true");
-            RefreshPreferencesDropdown();
-        }
-
-        private void customValueToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Preferences.SetValue(Preferences.PreferenceKey.EnableFingerprintClone, "false");
-            // prompt for new fingerprint value
-            RefreshPreferencesDropdown();
-        }
-
-        private void tvMain_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-        }
-
-        private void tvMain_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files)
-            {
-                TryLoadFile(file);
-            }
-        }
-
-        // maybe this should belong in ECUConnection
-        private ECUVariant GetCurrentVariantInstance()
-        {
-            if (!(Connection?.VariantIsAvailable ?? false))
-            {
-                return null;
-            }
-
-            foreach (CaesarContainer container in Containers)
-            {
-                foreach (ECU ecu in container.CaesarECUs)
-                {
-                    foreach (ECUVariant variant in ecu.ECUVariants)
-                    {
-                        foreach (ECUVariantPattern pattern in variant.VariantPatterns)
-                        {
-                            if (pattern.VariantID == Connection.ECUVariantID)
-                            {
-                                return variant;
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        private void diagnosticTroubleCodesDTCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Connection.ConnectionProtocol is null)
-            {
-                MessageBox.Show("Please initiate contact with a target first.");
-                return;
-            }
-            if (Connection.ConnectionProtocol.GetProtocolName() != "UDS")
-            {
-                MessageBox.Show("Sorry, only UDS is supported at this time.");
-                // return was removed from here, to allow for kw2c3pe debugging
-            }
-            if (!(Connection?.VariantIsAvailable ?? false))
-            {
-                MessageBox.Show("DTCs require the variant to be identified first");
-                return;
-            }
-            ECUVariant currentVariant = GetCurrentVariantInstance();
-
-            DTCForm dtcForm = new DTCForm(Connection, currentVariant);
-            dtcForm.ShowDialog();
-        }
-
-        private void viewECUMetadataToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ECUMetadata.ShowMetadataModal(Connection);
-        }
-
-        private void identifyECUToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (ECUIdentification.TryReadChassisNumber(Connection, out string vin))
-            {
-                Console.WriteLine($"VIN: {vin}");
-            }
-            else
-            {
-                Console.WriteLine($"Target could not be identified");
-            }
-        }
-
-        private void loadCompressedJsonToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a Compressed Caesar Binary (JSON) File";
-            ofd.Filter = "CCB files (*.ccb)|*.ccb|All files (*.*)|*.*";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                Containers.Add(CaesarContainer.DeserializeCompressedContainer(File.ReadAllBytes(ofd.FileName)));
-                LoadTree();
-            }
-        }
-
-        private CaesarContainer PickContainer() 
-        {
-            if (Containers.Count == 0)
-            {
-                MessageBox.Show("No containers have been loaded yet.");
-                return null;
-            }
-            CaesarContainer targetContainer = Containers[0];
-            if (Containers.Count > 1)
-            {
-                // there isn't an embedded qualifier to identify containers easily; the ecu name is probably an easier name to identify with
-                List<string[]> table = new List<string[]>();
-                foreach (CaesarContainer container in Containers)
-                {
-                    if (container.CaesarECUs.Count > 0)
-                    {
-                        table.Add(new string[] { container.CaesarECUs[0].Qualifier });
-                    }
-                }
-                GenericPicker picker = new GenericPicker(table.ToArray(), new string[] { "Container" }, 0);
-                picker.Text = "Please select a container";
-                if (picker.ShowDialog() != DialogResult.OK)
-                {
-                    return null;
-                }
-                string selectedEcuQualifier = picker.SelectedResult[0];
-                targetContainer = Containers.Find(x => ((x.CaesarECUs.Count > 0) && (x.CaesarECUs[0].Qualifier == selectedEcuQualifier)));
-            }
-            return targetContainer;
-        }
-
-        private void exportContainerAsCompressedJSONToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CaesarContainer targetContainer = PickContainer();
-            if (targetContainer is null)
-            {
-                Console.WriteLine("Internal error: target container is null");
-            }
-            else
-            {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Title = "Specify a location to save your new Compressed Caesar Binary (JSON) file";
-                sfd.Filter = "CCB files (*.ccb)|*.ccb|All files (*.*)|*.*";
-                sfd.FileName = targetContainer.CaesarECUs[0].Qualifier;
-                if (sfd.ShowDialog() == DialogResult.OK)
-                {
-                    File.WriteAllBytes(sfd.FileName, CaesarContainer.SerializeCompressedContainer(targetContainer));
-                }
-            }
-        }
-
-        private void dSCDebugToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a PAL File";
-            ofd.Filter = "PAL files (*.pal)|*.pal|All files (*.*)|*.*";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                DSCContext ctx = new DSCContext(File.ReadAllBytes(ofd.FileName));
-            }
-        }
-
-        private void loadJSONToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a Caesar JSON File";
-            ofd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                Containers.Add(CaesarContainer.DeserializeContainer(Encoding.UTF8.GetString(File.ReadAllBytes(ofd.FileName))));
-                LoadTree();
-            }
-        }
-
-        private void exportContainerAsJSONToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CaesarContainer targetContainer = PickContainer();
-            if (targetContainer is null)
-            {
-                Console.WriteLine("Internal error: target container is null");
-            }
-            else
-            {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Title = "Specify a location to save your new Caesar JSON file";
-                sfd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                sfd.FileName = targetContainer.CaesarECUs[0].Qualifier;
-                if (sfd.ShowDialog() == DialogResult.OK)
-                {
-                    File.WriteAllBytes(sfd.FileName, Encoding.UTF8.GetBytes(CaesarContainer.SerializeContainer(targetContainer)));
-                }
-            }
-        }
-
-        // this is normally not exposed to the user, the button has to be manually enabled in the Designer
-        private void genericDebugToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (CaesarContainer container in Containers)
-            {
-                foreach (ECU ecu in container.CaesarECUs)
-                {
-                    foreach (DiagPresentation pres in ecu.GlobalPresentations) 
-                    {
-                        Console.WriteLine($"Pres : {pres.Qualifier} : {pres.GetDataType()}");
-                        if (pres.InternalDataType == 8) 
-                        {
-                            throw new NotImplementedException("found a iee754 float!");
-                        }
-                    }
-                }
-            }
-            return;
-            foreach (CaesarContainer container in Containers) 
-            {
-                foreach (ECU ecu in container.CaesarECUs) 
-                {
-                    foreach (DiagService ds in ecu.GlobalDiagServices) 
-                    {
-                        if (ds.Qualifier != "DT_Istgang") 
-                        {
-                            //continue;
-                        }
-                        foreach (List<DiagPreparation> dpl in ds.OutputPreparations) 
-                        {
-                            foreach (DiagPreparation prep in dpl) 
-                            {
-                                DiagPresentation pres = ecu.GlobalPresentations[prep.PresPoolIndex];
-                                if (pres.EnumMaxValue == 0) 
-                                {
-                                    continue;
-                                }
-                                foreach (Scale scale in pres.Scales) 
-                                {
-                                    if (scale.EnumUpBound >= 0) 
-                                    {
-                                        string presOut = pres.InterpretData(BitUtility.BytesFromHex("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), prep);
-                                        Console.WriteLine($"{ds.Qualifier} : {prep.Qualifier} @ {presOut} = {pres.InternalDataType}, {pres.EnumMaxValue}");
-                                    }
-                                }
-                                if (pres.Qualifier == "PRES_ZIELGANG") 
-                                {
-                                    pres.PrintDebug();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            Console.WriteLine("done");
-        }
-
-        private void listVariantIDsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CaesarContainer targetContainer = PickContainer();
-            if (targetContainer is null)
-            {
-                Console.WriteLine("Internal error: target container is null");
-            }
-            else
-            {
-                foreach (ECU ecu in targetContainer.CaesarECUs) 
-                {
-                    foreach (ECUVariant variant in ecu.ECUVariants) 
-                    {
-                        foreach (ECUVariantPattern pattern in variant.VariantPatterns) 
-                        {
-                            Console.WriteLine($"{variant.Qualifier}: {pattern.VariantID:X4}");
-                        }
-                    }
-                }
-            }
-        }
-
-        private void downloadBlocksToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Connection.ConnectionProtocol is null)
-            {
-                //MessageBox.Show("Please initiate contact with a target first.");
-                //return;
-            }
-            BlockDownload blockDownload = new BlockDownload(Connection);
-            blockDownload.ShowDialog();
-        }
-
-        private void fixCBFChecksumToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // repairs the checksum on a CBF that may have been modified, so that it can be loaded by c32s (e.g. Vediamo) again
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Select a CBF File";
             ofd.Filter = "CBF files (*.cbf)|*.cbf|All files (*.*)|*.*";
             ofd.Multiselect = false;
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                byte[] file = File.ReadAllBytes(ofd.FileName);
-                Console.WriteLine($"Current checksum: {BitUtility.BytesToHex(file.Skip(file.Length - 4).Reverse().ToArray())}");
-                // restore the checksum
-                uint checksum = CaesarReader.ComputeFileChecksumLazy(file);
-                Console.WriteLine($"New checksum: {checksum:X8}");
-
-                file[file.Length - 4] = (byte)((checksum >> 0) & 0xFF);
-                file[file.Length - 3] = (byte)((checksum >> 8) & 0xFF);
-                file[file.Length - 2] = (byte)((checksum >> 16) & 0xFF);
-                file[file.Length - 1] = (byte)((checksum >> 24) & 0xFF);
-                File.WriteAllBytes(ofd.FileName, file);
-                Console.WriteLine($"Fixed CBF file saved at {ofd.FileName}");
+                LoadCBF(ofd.FileName);
             }
+        }
+
+        private void tsmiUnloadCbf_Click(object sender, EventArgs e)
+        {
+            UnloadCBF();
+        }
+
+        private void tsmiExplorerHere_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", ".");
         }
     }
 }

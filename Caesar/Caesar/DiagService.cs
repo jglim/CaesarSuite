@@ -38,7 +38,7 @@ namespace Caesar
             VariantCodingRead = 27,
         }
 
-        public string Qualifier;
+        public string Qualifier { get; set; }
 
         public int Name_CTF;
         public int Description_CTF;
@@ -84,6 +84,7 @@ namespace Caesar
 
         private int DiagServiceCodeCount;
         private int DiagServiceCodeOffset;
+        public List<DSCContext> DiagServiceCode = new List<DSCContext>();
 
         private int S_Count;
         private int S_Offset;
@@ -99,6 +100,10 @@ namespace Caesar
 
         public byte[] RequestBytes;
 
+        // for previewing only
+        public string Dump { get { return BitUtility.BytesToHex(RequestBytes, true); } }
+
+
         private long BaseAddress;
         public int PoolIndex;
 
@@ -107,7 +112,7 @@ namespace Caesar
         public List<List<DiagPreparation>> OutputPreparations = new List<List<DiagPreparation>>();
         public List<ComParameter> DiagComParameters = new List<ComParameter>();
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public ECU ParentECU;
         private CTFLanguage Language;
 
@@ -156,9 +161,9 @@ namespace Caesar
             DataClass_ServiceType = CaesarReader.ReadBitflagUInt16(ref bitflags, reader);
             DataClass_ServiceTypeShifted = 1 << (DataClass_ServiceType - 1);
 
-            IsExecutable = CaesarReader.ReadBitflagUInt16(ref bitflags, reader); ;
-            ClientAccessLevel = CaesarReader.ReadBitflagUInt16(ref bitflags, reader); ;
-            SecurityAccessLevel = CaesarReader.ReadBitflagUInt16(ref bitflags, reader); ;
+            IsExecutable = CaesarReader.ReadBitflagUInt16(ref bitflags, reader);
+            ClientAccessLevel = CaesarReader.ReadBitflagUInt16(ref bitflags, reader);
+            SecurityAccessLevel = CaesarReader.ReadBitflagUInt16(ref bitflags, reader);
 
             T_ComParam_Count = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             T_ComParam_Offset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -275,35 +280,13 @@ namespace Caesar
                 long cpEntryBaseAddress = comParamTableBaseAddress + resultCpOffset;
                 ComParameter cp = new ComParameter(reader, cpEntryBaseAddress, parentEcu.ECUInterfaces, language);
                 DiagComParameters.Add(cp);
+
+                // this is a reserved qualifier for a system function
+                if (Qualifier == parentEcu.EcuClassName)
+                {
+                    cp.InsertIntoEcu(parentEcu);
+                }
             }
-
-            // DJ_Zugriffsberechtigung_Abgleich
-            // DJ_Zugriffsberechtigung
-            // DT_Abgasklappe_kontinuierlich
-            // FN_HardReset
-            // WVC_Implizite_Variantenkodierung_Write
-
-            // NR_Disable_Resp_required noexec
-            // DT_Laufzeiten_Resetzaehler_nicht_implementiert exec
-            /*
-            if (false && qualifierName.Contains("RVC_SCN_Variantencodierung_VGS_73_Lesen"))
-            {
-
-                Console.WriteLine($"{nameof(field50)} : {field50}");
-                Console.WriteLine($"{nameof(IsExecutable)} : {IsExecutable} {IsExecutable != 0}");
-                Console.WriteLine($"{nameof(AccessLevel)} : {AccessLevel}");
-                Console.WriteLine($"{nameof(SecurityAccessLevel)} : {SecurityAccessLevel}");
-                Console.WriteLine($"{nameof(DataClass)} : {DataClass}");
-
-
-
-                Console.WriteLine($"{qualifierName} - ReqBytes: {RequestBytes_Count}, P: {P_Count}, Q: {Q_Count}, R: {R_Count}, S: {S_Count}, T: {T_Count}, Preparation: {U_prep_Count}, V: {V_Count}, W: {W_Count}, X: {X_Count}, Y: {Y_Count}, Z: {Z_Count}, DSC {DiagServiceCodeCount}");
-                Console.WriteLine($"at 0x{baseAddress:X}, W @ 0x{W_Offset:X}, DSC @ 0x{DiagServiceCodeOffset:X}");
-                Console.WriteLine($"ReqBytes: {BitUtility.BytesToHex(RequestBytes)}");
-            }
-            */
-            //Console.WriteLine($"{qualifierName} - O: {RequestBytes_Count}, P: {P_Count}, Q: {Q_Count}, R: {R_Count}, S: {S_Count}, T: {T_Count}, U: {U_Count}, V: {V_Count}, W: {W_Count}, X: {X_Count}, Y: {Y_Count}, Z: {Z_Count}, DSC {DiagServiceCodeCount}");
-
             
             byte[] dscPool = parentEcu.ParentContainer.CaesarCFFHeader.DSCPool;
             long dscTableBaseAddress = BaseAddress + DiagServiceCodeOffset;
@@ -330,6 +313,8 @@ namespace Caesar
 
                     // Console.WriteLine($"DSC {qualifierName} @ 0x{dscTableBaseAddress:X8} {idk1}/{idk2} pool @ 0x{dscPoolOffset:X}, name: {dscQualifier}");
                     byte[] dscBytes = reader.ReadBytes(dscRecordSize);
+
+                    DiagServiceCode.Add(new DSCContext(dscQualifier, dscBytes));
 #if DEBUG
                     //string dscName = $"{parentEcu.Qualifier}_{Qualifier}_{dscIndex}.pal";
                     //Console.WriteLine($"Exporting DSC: {dscName}");
@@ -340,7 +325,6 @@ namespace Caesar
                 }
 
             }
-
         }
 
         public string GetDescription()
@@ -383,81 +367,3 @@ namespace Caesar
         }
     }
 }
-
-
-
-
-/*
-// originally EnvironmentContext, removed because of overlap
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Caesar
-{
-    public class EnvironmentContext
-    {
-        // see : const char *__cdecl DIGetComfortErrorCode(DI_ECUINFO *ecuh, unsigned int dtcIndex)
-        public string Qualifier;
-
-        public long BaseAddress;
-        public int PoolIndex;
-        public int Name_CTF;
-        public int Description_CTF;
-        public int ServiceTypeMaybe;
-        public int AccessLevelType_Maybe;
-        public int AccessLevelType_Maybe2;
-        public int PresentationTableCount;
-        public int PresentationTableOffset;
-        public int PresentationTableRowSize_Maybe; // see diagservice for similar layout, seems unused (uint16)
-
-        public ECU ParentECU;
-        CTFLanguage Language;
-
-        public EnvironmentContext(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu)
-        {
-            ParentECU = parentEcu;
-            PoolIndex = poolIndex;
-            BaseAddress = baseAddress;
-            Language = language;
-            reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
-
-            // layout seems very similar to DiagService
-            ulong bitflags = reader.ReadUInt32();
-            ulong bitflagsExtended = reader.ReadUInt32();
-
-            Qualifier = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
-            Name_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-            Description_CTF = CaesarReader.ReadBitflagInt32(ref bitflags, reader, -1);
-
-            ServiceTypeMaybe = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
-            AccessLevelType_Maybe = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
-            AccessLevelType_Maybe2 = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
-
-            // doesn't seem to be set for any files in my library
-            for (int i = 0; i < 14; i++) 
-            {
-                if (CaesarReader.CheckAndAdvanceBitflag(ref bitflags))
-                {
-                    throw new Exception("Sorry, The parser for EnvironmentContext has encountered an unknown bitflag; please open an issue and indicate your CBF file name.");
-                }
-            }
-
-            // these describe the table to the presentation
-            PresentationTableCount = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            PresentationTableOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            PresentationTableRowSize_Maybe = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
-
-            // ... looks like DiagService?!
-        }
-
-        public void PrintDebug()
-        {
-            Console.WriteLine(Qualifier);
-        }
-    }
-}
-*/

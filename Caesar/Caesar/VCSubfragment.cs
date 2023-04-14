@@ -18,10 +18,10 @@ namespace Caesar
         public string SupplementKey;
 
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public string NameResolved { get { return Language.GetString(Description_CTF); } }
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         CTFLanguage Language;
 
         public void Restore(CTFLanguage language) 

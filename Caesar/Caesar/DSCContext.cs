@@ -10,6 +10,15 @@ namespace Caesar
 {
     public class DSCContext
     {
+        public string Qualifier;
+        public byte[] ScriptBytes;
+        public DSCContext(string name, byte[] script) 
+        {
+            Qualifier = name;
+            ScriptBytes = script;
+        }
+
+        // actual interpretation should be moved to separate interpreter project
         public DSCContext(byte[] dscContainerBytes) 
         {
             const int fnTableEntrySize = 50;

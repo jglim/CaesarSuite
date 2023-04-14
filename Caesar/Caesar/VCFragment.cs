@@ -36,11 +36,11 @@ namespace Caesar
 
         public List<VCSubfragment> Subfragments = new List<VCSubfragment>();
 
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         private static readonly byte[] FragmentLengthTable = new byte[] { 0, 1, 4, 8, 0x10, 0x20, 0x40 };
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public VCDomain ParentDomain;
-        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public ECU ParentECU;
 
         public void Restore(ECU parentEcu, VCDomain parentDomain, CTFLanguage language) 
@@ -177,7 +177,7 @@ namespace Caesar
 
                 using (BinaryReader poolReader = new BinaryReader(new MemoryStream(infoPool))) 
                 {
-                    DiagPresentation pres = ParentECU.GlobalInternalPresentations[InfoPoolIndex];
+                    DiagPresentation pres = ParentECU.GlobalPrepPresentations[InfoPoolIndex];
                     /*
                     // depreciate use of ReadCBFWithOffset
                     poolReader.BaseStream.Seek(ecu.Info_EntrySize * InfoPoolIndex, SeekOrigin.Begin);

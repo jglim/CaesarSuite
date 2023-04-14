@@ -56,7 +56,7 @@ namespace Caesar
             BlockLength = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             DataFormat = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             FileName = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            NumberOfFilters = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            NumberOfFilters = CaesarReader.ReadBitflagInt32(ref bitflags, reader); // unparsed
 
             FiltersOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             NumberOfSegments = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -65,7 +65,7 @@ namespace Caesar
 
             KeyLength = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             KeyBuffer = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            NumberOfOwnIdents = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            NumberOfOwnIdents = CaesarReader.ReadBitflagInt32(ref bitflags, reader); // unparsed
             IdentsOffset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
             NumberOfSecurities = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -78,8 +78,6 @@ namespace Caesar
             FlashDataInfoDescription = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
             FlashDataInfoUniqueObjectId = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
-
-            // CtfUnk1 = CaesarReader.ReadBitflagInt32(ref ctfBitflags, reader);
             FlashSegments = new List<FlashSegment>();
             for (int segmentIndex = 0; segmentIndex < NumberOfSegments; segmentIndex++) 
             {
@@ -102,78 +100,6 @@ namespace Caesar
                 FlashSecurity security = new FlashSecurity(reader, securitiesBaseAddress);
                 FlashSecurities.Add(security);
             }
-
-        }
-
-
-        public long GetBlockLengthOffset(BinaryReader reader)
-        {
-            reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
-
-            ulong bitflags = reader.ReadUInt32();
-            reader.ReadUInt16();
-
-            CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, BaseAddress); // Qualifier 
-            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // LongName 
-            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // Description 
-            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // FlashData 
-
-            if (CaesarReader.CheckAndAdvanceBitflag(ref bitflags))
-            {
-                return reader.BaseStream.Position;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-        public long GetFlashDataOffset(BinaryReader reader)
-        {
-            reader.BaseStream.Seek(BaseAddress, SeekOrigin.Begin);
-
-            ulong bitflags = reader.ReadUInt32();
-            reader.ReadUInt16();
-
-            CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, BaseAddress); // Qualifier 
-            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // LongName 
-            CaesarReader.ReadBitflagInt32(ref bitflags, reader); // Description 
-
-            if (CaesarReader.CheckAndAdvanceBitflag(ref bitflags))
-            {
-                return reader.BaseStream.Position;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
-        public void PrintDebug()
-        {
-            Console.WriteLine($"{nameof(Qualifier)} : {Qualifier}");
-            Console.WriteLine($"{nameof(LongName)} : {LongName}");
-            Console.WriteLine($"{nameof(Description)} : {Description}");
-            Console.WriteLine($"{nameof(FlashData)} : {FlashData}");
-            Console.WriteLine($"{nameof(BlockLength)} : 0x{BlockLength:X}");
-            Console.WriteLine($"{nameof(DataFormat)} : {DataFormat}");
-            Console.WriteLine($"{nameof(FileName)} : {FileName}");
-            Console.WriteLine($"{nameof(NumberOfFilters)} : {NumberOfFilters}");
-            Console.WriteLine($"{nameof(FiltersOffset)} : {FiltersOffset}");
-            Console.WriteLine($"{nameof(NumberOfSegments)} : {NumberOfSegments}");
-            Console.WriteLine($"{nameof(SegmentOffset)} : {SegmentOffset}");
-            Console.WriteLine($"{nameof(EncryptionMode)} : {EncryptionMode}");
-            Console.WriteLine($"{nameof(KeyLength)} : {KeyLength}");
-            Console.WriteLine($"{nameof(KeyBuffer)} : {KeyBuffer}");
-            Console.WriteLine($"{nameof(NumberOfOwnIdents)} : {NumberOfOwnIdents}");
-            Console.WriteLine($"{nameof(IdentsOffset)} : {IdentsOffset}");
-            Console.WriteLine($"{nameof(NumberOfSecurities)} : {NumberOfSecurities}");
-            Console.WriteLine($"{nameof(SecuritiesOffset)} : {SecuritiesOffset}");
-            Console.WriteLine($"{nameof(DataBlockType)} : {DataBlockType}");
-            Console.WriteLine($"{nameof(UniqueObjectId)} : {UniqueObjectId}");
-            Console.WriteLine($"{nameof(FlashDataInfoQualifier)} : {FlashDataInfoQualifier}");
-            Console.WriteLine($"{nameof(FlashDataInfoLongName)} : {FlashDataInfoLongName}");
-            Console.WriteLine($"{nameof(FlashDataInfoDescription)} : {FlashDataInfoDescription}");
-            Console.WriteLine($"{nameof(FlashDataInfoUniqueObjectId)} : {FlashDataInfoUniqueObjectId}");
 
         }
     }
