@@ -23,7 +23,7 @@ namespace CaesarInterpreter.Instructions
                         string diagServiceName = InterpreterMemory.GetCStringAtAddress(ih, namePointer);
                         ih.ActiveStep.AddDescription($"Creating DSIO, unk: {unk:X4}, DiagService: {diagServiceName}");
 
-                        DiagServiceIO io = new DiagServiceIO(ih) { Name = diagServiceName, Unknown1 = unk };
+                        DiagServiceIO io = new DiagServiceIO(ih, diagServiceName, unk);
                         ih.Stack.WriteI32(io.GetPointer());
                         break;
                     }

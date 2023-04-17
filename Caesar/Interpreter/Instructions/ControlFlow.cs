@@ -902,10 +902,10 @@ namespace CaesarInterpreter.Instructions
                 ushort condition = ih.Script.ReadU16();
                 int offset = ih.Script.ReadU16();
                 branches.Add(new Tuple<ushort, int>(condition, offset));
-                Console.WriteLine($"Branch: {condition:X4} offset {offset:X4}");
+                //Console.WriteLine($"Branch: {condition:X4} offset {offset:X4}");
             }
             int defaultBranch = ih.Script.ReadU16();
-            Console.WriteLine($"Default: {defaultBranch:X4}");
+            //Console.WriteLine($"Default: {defaultBranch:X4}");
 
             // find the case that matches our condition on the stack
             var foundBranch = branches.FirstOrDefault(x => x.Item1 == caseCompareSource);
@@ -914,7 +914,7 @@ namespace CaesarInterpreter.Instructions
             int matchingOffset = foundBranch is null ? defaultBranch : foundBranch.Item2;
             matchingOffset += currentPc;
 
-            Console.WriteLine($"Resolved path: {matchingOffset:X8}");
+            //Console.WriteLine($"Resolved path: {matchingOffset:X8}");
             // jump to correct destination
             ih.Script.Seek(matchingOffset, System.IO.SeekOrigin.Begin);
 

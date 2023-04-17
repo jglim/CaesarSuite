@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CaesarConnection.Protocol;
 using CaesarInterpreter;
 using CaesarInterpreter.Host;
 
@@ -19,8 +20,25 @@ namespace Diogenes
 
         public bool CollectionMessageSend(ChannelRequest request, byte[] receivedMessage)
         {
-            Inbox.Enqueue(receivedMessage);
-            Console.WriteLine($"HACK: enqueued message `{BitUtility.BytesToHex(receivedMessage)}`");
+            if (DiogenesSharedContext.Singleton.Channel is null) 
+            {
+                throw new Exception("Attempted to send a message through CollectionMessageSend without a valid channel");
+            }
+
+            try
+            {
+                Envelope.RequestType ecuType = DiogenesSharedContext.Singleton.Channel.EcuIsFunctional() ? Envelope.RequestType.Functional : Envelope.RequestType.Physical;
+                Console.WriteLine($"[I] ECU >> {BitUtility.BytesToHex(receivedMessage, true)}");
+                byte[] response = DiogenesSharedContext.Singleton.Channel.Send(receivedMessage, true, ecuType, true);
+                Console.WriteLine($"[I] ECU << {BitUtility.BytesToHex(response, true)}");
+                Inbox.Enqueue(response);
+            }
+            catch
+            {
+                // should log to interpreter error channel
+                RaiseError(999); // randomly picked nonzero number, haven't seen this in use yet
+                return false;
+            }
 
             return true;
         }
@@ -29,63 +47,18 @@ namespace Diogenes
         {
             if (Inbox.Count == 0)
             {
-                throw new Exception("this shouldn't normally happen in a simulation");
-                // return false;
+                return false; // nothing received (normally the transaction should be done during tx)
             }
 
             byte[] message = Inbox.Dequeue();
-            bool messageAnswered = false;
 
-            foreach (SimulatedMessageResponse mr in MessageResponses)
-            {
-                if (mr.MatchMask.Length != mr.MatchValue.Length)
-                {
-                    throw new Exception("Simulated response message and mask must be of equal length");
-                }
-
-                // length is not constrained
-                int shortestBuffer = message.Length;
-                if (mr.MatchMask.Length < shortestBuffer)
-                {
-                    shortestBuffer = mr.MatchMask.Length;
-                }
-
-                bool isMatch = true;
-                for (int i = 0; i < shortestBuffer; i++)
-                {
-                    byte messageByte = message[i];
-                    messageByte &= mr.MatchMask[i];
-                    if (messageByte != mr.MatchValue[i])
-                    {
-                        isMatch = false;
-                        break;
-                    }
-                }
-
-                if (isMatch)
-                {
-                    response.Content.ContentBytes = mr.ResponseValue;
-                    response.ContextLength = mr.ResponseValue.Length;
-                    response.ContextStart = 0;
-                    response.SourceAddress = 0;
-                    response.ResponseStatus = 1;
-                    response.ResponseType = 0x4C;
-                    response.ResponseControl = 0x5A;
-                    messageAnswered = true;
-                    Console.WriteLine($"HACK: responding to collectmessage {BitUtility.BytesToHex(message)} with {response}");
-
-                    if (mr.Callback != null)
-                    {
-                        mr.Callback(message);
-                    }
-                }
-
-            }
-
-            if (!messageAnswered)
-            {
-                throw new Exception($"No message handler specified for request: {BitUtility.BytesToHex(message)}");
-            }
+            response.Content.ContentBytes = message;
+            response.ContextLength = message.Length;
+            response.ContextStart = 0;
+            response.SourceAddress = 0;
+            response.ResponseStatus = 1;
+            response.ResponseType = 0x4C;
+            response.ResponseControl = 0x5A;
             return true;
         }
 
@@ -127,7 +100,7 @@ namespace Diogenes
 
         public bool SetCommunicationParameter(string paramName, int newParameter)
         {
-            // sim: don't need to do anything
+            DiogenesSharedContext.Singleton.Channel.ComParameters.SetParameter(paramName, newParameter);
             return true;
         }
     }

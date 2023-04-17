@@ -10,7 +10,12 @@ namespace CaesarInterpreter
     {
         public string Name;
         public ushort Unknown1;
-        public DiagServiceIO(Interpreter ih) : base(ih) { }
+        public DiagServiceIO(Interpreter ih, string name, ushort unk1) : base(ih) 
+        {
+            Name = name;
+            Unknown1 = unk1;
+            // create a runner in the host
+        }
 
         public override string ToString()
         {
@@ -93,20 +98,6 @@ PRES_Login_BC	0	2	NativePresentationType	Output (0)
             throw new Exception($"GetPresentationDumpValue unimplemented for {Name}");
         }
 
-        public void SetDumpPreparationParam(int index, byte[] value) 
-        {
-        
-        }
-
-        public void SetUWordPreparationParam(int index, ushort value)
-        {
-
-        }
-        public void SetSLongPreparationParam(int index, int value)
-        {
-
-        }
-
         public string GetStringPresentationParam(int index) 
         {
             // seems to read the scaled value (name) from the output presentation
@@ -134,6 +125,20 @@ String compare (equal: False) 1@30000208: 'Timer noch nicht abgelaufen', 2@10000
 
              */
         }
+        public void SetDumpPreparationParam(int index, byte[] value) 
+        {
+        
+        }
+
+        public void SetUWordPreparationParam(int index, ushort value)
+        {
+
+        }
+        public void SetSLongPreparationParam(int index, int value)
+        {
+
+        }
+
 
 
     }

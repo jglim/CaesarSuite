@@ -72,7 +72,6 @@ namespace Diogenes
 
         public void ExecuteDiagService() 
         {
-
             // executes a prepared request
             if (DiogenesSharedContext.Singleton.Channel is null)
             {
@@ -123,7 +122,6 @@ namespace Diogenes
                 {
                     RunSingleDiagScript(script.Qualifier, script.ScriptBytes);
                 }
-
             }
 
         }
