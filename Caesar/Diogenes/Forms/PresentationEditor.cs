@@ -78,7 +78,10 @@ namespace Diogenes.Forms
                         }
                         if (!foundValueMatchingEnum) 
                         {
-                            throw new Exception($"Could not find a matching enum for value {sourceValue} in {ActivePresentation.Qualifier}");
+                            // this can sometimes occur when starting from an empty dump
+                            // help the user pick a default value
+                            cbEnum.SelectedIndex = 0;
+                            //throw new Exception($"Could not find a matching enum for value {sourceValue} in {ActivePresentation.Qualifier}");
                         }
 
                         cbEnum.Visible = true;

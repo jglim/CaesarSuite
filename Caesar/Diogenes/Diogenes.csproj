@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CaesarConnection\CaesarConnection.csproj" />
     <ProjectReference Include="..\Caesar\Caesar.csproj" />
+    <ProjectReference Include="..\Interpreter\Interpreter.csproj" />
   </ItemGroup>
 
   <ItemGroup>
