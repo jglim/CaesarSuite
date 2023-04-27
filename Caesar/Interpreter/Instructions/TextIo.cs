@@ -133,6 +133,25 @@ namespace CaesarInterpreter.Instructions
                     }
             }
         }
+        public static void Strlen(Interpreter ih)
+        {
+            switch (ih.Opcode)
+            {
+                case 0x2C7:
+                    {
+                        // og
+                        ih.Stack.Seek(-4);
+                        int sourceString = ih.Stack.PeekI32();
+
+                        string src = InterpreterMemory.GetCStringAtAddress(ih, sourceString);
+                        int len = src.Length;
+
+                        ih.ActiveStep.AddDescription($"Strlen: [{len}u] 0x{sourceString:X8} : `{src}`");
+                        ih.Stack.WriteI16((short)len); // write back result
+                        break;
+                    }
+            }
+        }
 
 
     }

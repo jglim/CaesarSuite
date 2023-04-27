@@ -188,7 +188,7 @@ namespace Caesar
 
         public string Interpret(BitArray valueToInterpret) 
         {
-            string response = $"{DescriptionString}: ";
+            string response = "";
             var dataType = GetDataType();
             switch (dataType) 
             {

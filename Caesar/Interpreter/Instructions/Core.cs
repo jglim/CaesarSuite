@@ -182,6 +182,21 @@ namespace CaesarInterpreter.Instructions
                     }
             }
         }
+        public static void GetPreparedMessage(Interpreter ih)
+        {
+            switch (ih.Opcode)
+            {
+                case 0x3C7:
+                    {
+                        // fixme: no idea what this expects
+                        ih.Stack.Seek(-4);
+                        int unk1 = ih.Stack.PeekI32();
+                        ih.ActiveStep.AddDescription($"GetPreparedMessage: unk 0x{unk1:X8} fixme");
+                        ih.Stack.WriteI32(0);
+                        break;
+                    }
+            }
+        }
 
         public static void GetTesterID(Interpreter ih)
         {

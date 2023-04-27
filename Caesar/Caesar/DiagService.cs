@@ -61,11 +61,11 @@ namespace Caesar
 
         public string InputRefNameMaybe;
 
-        private int U_prep_Count;
-        private int U_prep_Offset;
+        private int U_InputPreparations_Count;
+        private int U_InputPreparations_Offset;
 
-        private int V_Count;
-        private int V_Offset;
+        private int V_PrepPresSubset_Count;
+        private int V_PrepPresSubset_Offset;
 
         private int RequestBytes_Count;
         private int RequestBytes_Offset;
@@ -100,6 +100,8 @@ namespace Caesar
 
         public byte[] RequestBytes;
 
+        public uint Config; // inherited from dj parent array
+
         // for previewing only
         public bool HasScript { get { return DiagServiceCode.Count > 0; } }
         public string Dump { get { return BitUtility.BytesToHex(RequestBytes, true); } }
@@ -110,6 +112,8 @@ namespace Caesar
 
         // these are inlined preparations
         public List<DiagPreparation> InputPreparations = new List<DiagPreparation>();
+        public List<DiagPreparation> InputPreparationPresentations = new List<DiagPreparation>();
+
         public List<List<DiagPreparation>> OutputPreparations = new List<List<DiagPreparation>>();
         public List<ComParameter> DiagComParameters = new List<ComParameter>();
 
@@ -143,12 +147,14 @@ namespace Caesar
 
         public DiagService() { }
 
-        public DiagService(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, ECU parentEcu) 
+        public DiagService(BinaryReader reader, CTFLanguage language, long baseAddress, int poolIndex, uint config, ECU parentEcu) 
         {
             ParentECU = parentEcu;
             Language = language;
             PoolIndex = poolIndex;
             BaseAddress = baseAddress;
+            Config = config;
+
             reader.BaseStream.Seek(baseAddress, SeekOrigin.Begin);
 
             ulong bitflags = reader.ReadUInt32();
@@ -177,12 +183,12 @@ namespace Caesar
 
             InputRefNameMaybe = CaesarReader.ReadBitflagStringWithReader(ref bitflags, reader, baseAddress);
 
-            U_prep_Count = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            U_prep_Offset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            U_InputPreparations_Count = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            U_InputPreparations_Offset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
             // array of DWORDs, probably reference to elsewhere
-            V_Count = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
-            V_Offset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            V_PrepPresSubset_Count = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
+            V_PrepPresSubset_Offset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
 
             RequestBytes_Count = CaesarReader.ReadBitflagInt16(ref bitflags, reader);
             RequestBytes_Offset = CaesarReader.ReadBitflagInt32(ref bitflags, reader);
@@ -227,10 +233,10 @@ namespace Caesar
             }
 
             // u_table to u_entries
+            long presentationTableOffset = baseAddress + U_InputPreparations_Offset;
             InputPreparations = new List<DiagPreparation>();
-            for (int prepIndex = 0; prepIndex < U_prep_Count; prepIndex++)
+            for (int prepIndex = 0; prepIndex < U_InputPreparations_Count; prepIndex++)
             {
-                long presentationTableOffset = baseAddress + U_prep_Offset;
                 reader.BaseStream.Seek(presentationTableOffset + (prepIndex * 10), SeekOrigin.Begin);
 
                 // DIOpenDiagService (reads 4, 4, 2 then calls DiagServiceReadPresentation) to build a presentation
@@ -243,6 +249,16 @@ namespace Caesar
                 InputPreparations.Add(preparation);
             }
 
+            // input editable pres list
+            long prepPresentationTableOffset = baseAddress + V_PrepPresSubset_Offset;
+            reader.BaseStream.Seek(prepPresentationTableOffset, SeekOrigin.Begin);
+            InputPreparationPresentations = new List<DiagPreparation>();
+            for (int presIndex = 0; presIndex < V_PrepPresSubset_Count; presIndex++)
+            {
+                int index = reader.ReadInt32();
+                InputPreparationPresentations.Add(InputPreparations[index]);
+                //Console.WriteLine($"{Qualifier} [{presIndex+1}/{V_Count}] @ 0x{presentationTableOffset:X8}");
+            }
 
             OutputPreparations = new List<List<DiagPreparation>>();
             long outPresBaseAddress = BaseAddress + W_OutPres_Offset;
@@ -258,15 +274,15 @@ namespace Caesar
                 List<DiagPreparation> ResultPresentationSet = new List<DiagPreparation>();
                 for (int presInnerIndex = 0; presInnerIndex < resultPresentationCount; presInnerIndex++)
                 {
-                    long presentationTableOffset = outPresBaseAddress + resultPresentationOffset;
+                    long presBaseOffset = outPresBaseAddress + resultPresentationOffset;
 
-                    reader.BaseStream.Seek(presentationTableOffset + (presIndex * 10), SeekOrigin.Begin);
+                    reader.BaseStream.Seek(presBaseOffset + (presIndex * 10), SeekOrigin.Begin);
 
                     int prepEntryOffset = reader.ReadInt32(); // file: 0 (DW)
                     int prepEntryBitPos = reader.ReadInt32(); // file: 4 (DW)
                     ushort prepEntryMode = reader.ReadUInt16(); // file: 8 (W)
 
-                    DiagPreparation preparation = new DiagPreparation(reader, language, presentationTableOffset + prepEntryOffset, prepEntryBitPos, prepEntryMode, parentEcu, this);
+                    DiagPreparation preparation = new DiagPreparation(reader, language, presBaseOffset + prepEntryOffset, prepEntryBitPos, prepEntryMode, parentEcu, this);
                     ResultPresentationSet.Add(preparation);
                 }
                 OutputPreparations.Add(ResultPresentationSet);
@@ -283,7 +299,7 @@ namespace Caesar
                 DiagComParameters.Add(cp);
 
                 // this is a reserved qualifier for a system function
-                if (Qualifier == parentEcu.EcuClassName)
+                if (Qualifier == parentEcu.EcuInitializationDiagServiceName)
                 {
                     cp.InsertIntoEcu(parentEcu);
                 }
@@ -362,9 +378,9 @@ namespace Caesar
 
         public void PrintDebug() 
         {
-            Console.WriteLine($"{Qualifier} - ReqBytes: {RequestBytes_Count}, P: {P_Count}, Q: {Q_Count}, R: {R_Count}, S: {S_Count}, ComParams: {T_ComParam_Count}, Preparation: {U_prep_Count}, V: {V_Count}, OutPres: {W_OutPres_Count}, X: {X_Count}, Y: {Y_Count}, Z: {Z_Count}, DSC {DiagServiceCodeCount}, field50: {Field50}");
+            Console.WriteLine($"{Qualifier} - ReqBytes: {RequestBytes_Count}, P: {P_Count}, Q: {Q_Count}, R: {R_Count}, S: {S_Count}, ComParams: {T_ComParam_Count}, Preparation: {U_InputPreparations_Count}, V: {V_PrepPresSubset_Count}, OutPres: {W_OutPres_Count}, X: {X_Count}, Y: {Y_Count}, Z: {Z_Count}, DSC {DiagServiceCodeCount}, field50: {Field50}");
             Console.WriteLine($"BaseAddress @ 0x{BaseAddress:X}, NR: {NegativeResponseName}");
-            Console.WriteLine($"V @ 0x{BaseAddress + V_Offset:X}, count: {V_Count}");
+            Console.WriteLine($"V @ 0x{BaseAddress + V_PrepPresSubset_Offset:X}, count: {V_PrepPresSubset_Count}");
         }
     }
 }

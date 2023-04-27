@@ -18,6 +18,14 @@ namespace CaesarInterpreter.Instructions
                     {
                         ih.Stack.Seek(-4);
                         int blockIndex = ih.Stack.PeekI32();
+
+                        // since a block index is specified, set this as our active block
+                        // download, getchecksum, getsignature do not specify a datablock, they assume that a working block is already "set"
+                        ih.HostFlash.SetActiveBlockIndex(blockIndex);
+
+                        // actually start transferring
+                        ih.HostFlash.Download(blockIndex);
+
                         ih.ActiveStep.AddDescription($"MLDoDownload: {blockIndex:X8}");
                         break;
                     }
@@ -35,9 +43,9 @@ namespace CaesarInterpreter.Instructions
                         ih.Stack.Seek(-4);
                         int crcLengthBuffer = ih.Stack.PeekI32(); // Writing pointer of lCRCLength to stack: 0x202E0000
 
-                        byte[] hypotheticalChecksum = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
+                        byte[] checksum = ih.HostFlash.GetChecksum(); //new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
 
-                        int csLength = hypotheticalChecksum.Length;
+                        int csLength = checksum.Length;
 
                         // write cs length
                         InterpreterMemory.SetMemoryAtAddress(ih, crcLengthBuffer, BitConverter.GetBytes(csLength));
@@ -46,7 +54,7 @@ namespace CaesarInterpreter.Instructions
                         {
                             // write cs buffer
                             Buffer csContent = new Buffer(ih, $"Alloc by MLGetDatablockChecksum at {ih.Opcode:X4}");
-                            csContent.ContentBytes = hypotheticalChecksum;
+                            csContent.ContentBytes = checksum;
                             ih.Stack.WriteI32(csContent.GetPointer());
                         }
                         else
@@ -59,6 +67,7 @@ namespace CaesarInterpreter.Instructions
                     }
             }
         }
+
         public static void GetDatablockSecuritySignature(Interpreter ih)
         {
             // see MLGetDatablockChecksum, also requires block tracking
@@ -70,9 +79,9 @@ namespace CaesarInterpreter.Instructions
                         int signatureLengthBuffer = ih.Stack.PeekI32(); // Writing pointer of lSignatureLength to stack: 0x202F0000
 
                         // 204: expects 0x80 bytes
-                        byte[] hypotheticalSignature = new byte[0x80];
+                        byte[] signature = ih.HostFlash.GetSignature(); // new byte[0x80];
 
-                        int sigLength = hypotheticalSignature.Length;
+                        int sigLength = signature.Length;
 
                         // write cs length
                         InterpreterMemory.SetMemoryAtAddress(ih, signatureLengthBuffer, BitConverter.GetBytes(sigLength));
@@ -81,7 +90,7 @@ namespace CaesarInterpreter.Instructions
                         {
                             // write cs buffer
                             Buffer content = new Buffer(ih, $"Alloc by GetDatablockSecuritySignature at {ih.Opcode:X4}");
-                            content.ContentBytes = hypotheticalSignature;
+                            content.ContentBytes = signature;
                             ih.Stack.WriteI32(content.GetPointer());
                         }
                         else
@@ -97,13 +106,17 @@ namespace CaesarInterpreter.Instructions
 
         public static void MLOpenSessionDataBlockByIndex(Interpreter ih)
         {
-            // writes flash data given a specified block index
+            // not very sure on why this is required
+            // seems to open a handle to a flashdatablock for use later in DIGetDataBlockNumberOfSecurities
+            // doesn't require the host to do anything
             switch (ih.Opcode)
             {
                 case 0x3F3:
                     {
                         ih.Stack.Seek(-4);
                         int looksLikeAPtrToTrackedObj = ih.Stack.PeekI32(); // fixme: wtf ; param doesn't seem useful?
+                        // ptr points to stack
+
                         ih.Stack.Seek(-4);
                         int blockIndex = ih.Stack.PeekI32();
 
@@ -133,7 +146,7 @@ namespace CaesarInterpreter.Instructions
                         ih.Stack.Seek(-4);
                         int dataBlockPointer = ih.Stack.PeekI32();
                         FlashSessionDataBlock flashDataBlock = InterpreterMemory.GetTrackedObjectAtAddress(ih, dataBlockPointer) as FlashSessionDataBlock;
-                        int securitiesCount = 1;
+                        int securitiesCount = ih.HostFlash.GetNumberOfSecurities(flashDataBlock.BlockIndex); // 2;
                         
                         ih.Stack.WriteI32(securitiesCount);
                         ih.ActiveStep.AddDescription($"DIGetDataBlockNumberOfSecurities for block {flashDataBlock.BlockIndex}: {securitiesCount}");

@@ -71,7 +71,7 @@ namespace Diogenes.Forms
                     // likely an issue if the bindinglist is replaced
                     foreach (var row in DiogenesSharedContext.Singleton.PrimaryVariant.DiagServices)
                     {
-                        if (row.Qualifier.ToLower().Contains(filter))
+                        if (row.Qualifier.ToLower().Contains(filter)) // && (row.DiagServiceCode.Count > 0)
                         {
                             VisibleDiagServices.Add(row); // no addrange for bindinglist..?
                         }
@@ -238,7 +238,8 @@ namespace Diogenes.Forms
                 return;
             }
 
-            DiagServiceToExecute.ExecuteDiagService();
+            DiagServiceToExecute.DoDiagService();
+            Console.WriteLine(DiagServiceToExecute.GetOutputPreparationResultString());
 
 
         }

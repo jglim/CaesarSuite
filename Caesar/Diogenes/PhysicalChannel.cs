@@ -101,6 +101,9 @@ namespace Diogenes
         public bool SetCommunicationParameter(string paramName, int newParameter)
         {
             DiogenesSharedContext.Singleton.Channel.ComParameters.SetParameter(paramName, newParameter);
+#if DEBUG
+            Console.WriteLine($"SetCommunicationParameter: {paramName} = {newParameter} (0x{newParameter:X})");
+#endif
             return true;
         }
     }

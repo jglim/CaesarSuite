@@ -17,6 +17,17 @@ namespace CaesarConnection.Protocol
         public BaseChannel Channel;
         public ParameterSet ComParameters;
 
+        public enum DataFormatCompression : int 
+        {
+            NoCompression = 0,
+            // no idea how to handle the rest
+        }
+        public enum DataFormatEncryption : int
+        {
+            NoEncryption = 0,
+            // no idea how to handle the rest
+        }
+
         public virtual Dictionary<string, decimal> GetDefaultComParamValues()
         {
             return new Dictionary<string, decimal>();
@@ -110,5 +121,77 @@ namespace CaesarConnection.Protocol
         {
             throw new Exception($"Variant detection is unimplemented for this protocol");
         }
+
+        public virtual Target.SoftwareBlock[] GetSoftwareBlocks() 
+        {
+            // this shouldn't be fatal..?
+            return new Target.SoftwareBlock[] { };
+        }
+
+        public virtual void TransferBlock(long address, Span<byte> payload) 
+        {
+            throw new Exception($"Block transfer is unimplemented for this protocol");
+        }
+
+        public static byte CreateDataFormatIdentifier(DataFormatCompression compression, DataFormatEncryption encryption) 
+        {
+            // one nibble each
+            int compInt = (int)compression & 0xF;
+            int encInt = (int)encryption & 0xF;
+            int result = (compInt << 4) | encInt;
+            return (byte)result;
+        }
+
+        public static byte CreateAddressAndLengthFormatIdentifier(int addressSizeInBytes, int memorySizeInBytes)
+        {
+            // fixme: duplicate function in memory editor
+            if ((addressSizeInBytes < 1) || (addressSizeInBytes > 5))
+            {
+                throw new ArgumentOutOfRangeException("Invalid address size for ALFID");
+            }
+            if ((memorySizeInBytes < 1) || (memorySizeInBytes > 5))
+            {
+                throw new ArgumentOutOfRangeException("Invalid memory size for ALFID");
+            }
+            return (byte)((memorySizeInBytes << 4) | addressSizeInBytes);
+        }
+
+        // converts a long into a big-endian byte array
+        public List<byte> LongToBytesBigEndian(long inValue, int constrainedSize = -1)
+        {
+            // fixme: duplicate function in memory editor
+            List<byte> result = new List<byte>();
+            if (constrainedSize == -1)
+            {
+                while (inValue > 0)
+                {
+                    byte row = (byte)(inValue & 0xFF);
+                    result.Insert(0, row);
+                    inValue >>= 8;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < constrainedSize; i++)
+                {
+                    byte row = (byte)(inValue & 0xFF);
+                    result.Insert(0, row);
+                    inValue >>= 8;
+                }
+            }
+            return result;
+        }
+
+        public long BytesBigEndianToLong(Span<byte> inValue) 
+        {
+            long result = 0;
+            for (int i = 0; i < inValue.Length; i++)
+            {
+                result <<= 8;
+                result |= inValue[i];
+            }
+            return result;
+        }
+
     }
 }

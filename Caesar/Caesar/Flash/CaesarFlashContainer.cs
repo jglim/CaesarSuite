@@ -13,6 +13,8 @@ namespace Caesar
         public CTFHeader CaesarCTFHeader;
 
         public byte[] FileBytes = new byte[] { };
+        public uint ProvidedChecksum = 0;
+
         public CaesarFlashContainer(byte[] fileBytes)
         {
             FileBytes = fileBytes;
@@ -31,6 +33,8 @@ namespace Caesar
                 {
                     Console.WriteLine($"WARNING: Checksum mismatch : computed/provided: {computedChecksum:X8}/{providedChecksum:X8}");
                 }
+                ProvidedChecksum = providedChecksum;
+
                 CaesarFlashHeader = new FlashHeader(reader);
                 ReadCTF(reader);
             }

@@ -63,5 +63,10 @@ namespace CaesarConnection.VCI.Channel
                 ChannelReceivedMessage(env);
             }
         }
+
+        public virtual void ReloadIsoTpTimings() 
+        {
+        
+        }
     }
 }

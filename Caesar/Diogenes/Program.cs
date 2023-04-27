@@ -14,7 +14,7 @@ namespace Diogenes
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
 
-        const bool SeparateConsole = false;
+        public const bool SeparateConsole = false;
 
 
         /// <summary>

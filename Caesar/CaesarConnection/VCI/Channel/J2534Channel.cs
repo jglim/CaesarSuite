@@ -124,8 +124,19 @@ namespace CaesarConnection.VCI.Channel
             // this specific msg creation arrangement is required to include frame_pad
             // normally 0x00000040 (ISO15765_FRAME_PAD)
             // some ecus (e.g. ic204) will survive without frame_pad, others (e.g. CRD3) will not accept those frames
-            Message msg = new Message(e.Request, TxFlag.ISO15765_FRAME_PAD); 
-            PhysicalChannel.SendMessage(msg);
+            try
+            {
+                Message msg = new Message(e.Request, TxFlag.ISO15765_FRAME_PAD);
+                PhysicalChannel.SendMessage(msg);
+            }
+            catch (Exception ex) 
+            {
+                string log = $"Exception raised from physical channel: {ex.Message}";
+                Console.WriteLine(log);
+                // System.Exception: 'Exception raised from physical channel: GetLastError failed with result: TIMEOUT'
+                throw new Exception(log);
+            }
+            
             // Console.WriteLine($"sent to phys channel");
 
             // log to trace
@@ -179,6 +190,11 @@ namespace CaesarConnection.VCI.Channel
                 RaiseReceiveEvent(env);
 
             }
+        }
+
+        public override void ReloadIsoTpTimings()
+        {
+            SetIsoTpTimings();
         }
     }
 }

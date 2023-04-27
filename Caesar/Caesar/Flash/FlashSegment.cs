@@ -39,6 +39,8 @@ namespace Caesar
 
             // confusing as to why this is a string
             UniqueObjectID = CaesarReader.ReadBitflagStringWithReader(ref bitFlags, reader, BaseAddress); 
+
+            // segment only has a relative pointer to the actual data bytes
         }
 
     }

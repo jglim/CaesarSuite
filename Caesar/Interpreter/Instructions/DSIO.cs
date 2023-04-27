@@ -100,10 +100,21 @@ namespace CaesarInterpreter.Instructions
                         int dsioPointer = ih.Stack.PeekI32();
                         DiagServiceIO dsio = InterpreterMemory.GetTrackedObjectAtAddress(ih, dsioPointer) as DiagServiceIO;
 
-                        int paramType = dsio.GetPrepPresType(paramIndex);
+                        // DMDiagServiceIOGetRealPresParamType
+                        // paramType = *(_DWORD *)(dsioPtr->PresFormat + 16 * index + 8); // stride is 16 bytes?
+                        // paramType = *(_DWORD *)(dsioPtr->PresFormat[index]->off8); 
 
-                        ih.Stack.WriteU16((ushort)paramType);
-                        ih.ActiveStep.AddDescription($"GetPresParamType: {dsio.Name} with paramindex {paramIndex}u, returning type {paramType}");
+                        // see build_dsio1_sub_10086F30
+                        // dsio2_out->PresFormat = *(_DWORD *)&dsio2_out->PresPtr + 16 * numPrepParam_;
+
+                        int realParamType = dsio.GetPrepPresType(paramIndex);
+                        if (realParamType == 21) 
+                        {
+                            realParamType = 17;
+                        }
+
+                        ih.Stack.WriteU16((ushort)realParamType);
+                        ih.ActiveStep.AddDescription($"GetPresParamType: {dsio.Name} with paramindex {paramIndex}u, returning type {realParamType}");
                         break;
                     }
             }

@@ -17,7 +17,7 @@ namespace Caesar
         public int InterfaceTableOffset;
         public int SubinterfacesCount;
         public int SubinterfacesOffset;
-        public string EcuClassName;
+        public string EcuInitializationDiagServiceName;
         public string UnkStr7;
         public string UnkStr8;
 
@@ -253,7 +253,7 @@ namespace Caesar
             InterfaceTableOffset = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
             SubinterfacesCount = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
             SubinterfacesOffset = CaesarReader.ReadBitflagInt32(ref ecuBitFlags, reader);
-            EcuClassName = CaesarReader.ReadBitflagStringWithReader(ref ecuBitFlags, reader, BaseAddress);
+            EcuInitializationDiagServiceName = CaesarReader.ReadBitflagStringWithReader(ref ecuBitFlags, reader, BaseAddress);
             UnkStr7 = CaesarReader.ReadBitflagStringWithReader(ref ecuBitFlags, reader, BaseAddress);
             UnkStr8 = CaesarReader.ReadBitflagStringWithReader(ref ecuBitFlags, reader, BaseAddress);
 
@@ -383,7 +383,7 @@ namespace Caesar
                     long diagjobBaseAddress = offset + DiagJob_BlockOffset;
                     // Console.WriteLine($"DJ @ {offset:X} with size {size:X}");
 
-                    DiagService dj = new DiagService(reader, language, diagjobBaseAddress, diagjobIndex, this);
+                    DiagService dj = new DiagService(reader, language, diagjobBaseAddress, diagjobIndex, config, this);
                     // GlobalDiagServices.Add(dj);
                     globalDiagServices[diagjobIndex] = dj;
                 }
@@ -432,24 +432,6 @@ namespace Caesar
 
         public void CreateEnvironments(BinaryReader reader, CTFLanguage language)
         {
-            /*
-            byte[] envPool = ReadECUEnvPool(reader);
-            EnvironmentContext[] globalEnvs = new EnvironmentContext[Env_EntryCount];
-            using (BinaryReader poolReader = new BinaryReader(new MemoryStream(envPool)))
-            {
-                for (int envIndex = 0; envIndex < Env_EntryCount; envIndex++)
-                {
-                    int offset = poolReader.ReadInt32();
-                    int size = poolReader.ReadInt32();
-                    long envBaseAddress = offset + Env_BlockOffset;
-
-                    // Console.WriteLine($"0x{envBaseAddress:X}");
-                    EnvironmentContext env = new EnvironmentContext(reader, language, envBaseAddress, envIndex, this);
-                    globalEnvs[envIndex] = env;
-                }
-            }
-            GlobalEnvironmentContexts = new List<EnvironmentContext>(globalEnvs);
-            */
             byte[] envPool = ReadECUEnvPool(reader);
             DiagService[] globalEnvs = new DiagService[Env_EntryCount];
             using (BinaryReader poolReader = new BinaryReader(new MemoryStream(envPool)))
@@ -461,7 +443,7 @@ namespace Caesar
                     long envBaseAddress = offset + Env_BlockOffset;
 
                     // Console.WriteLine($"0x{envBaseAddress:X}");
-                    DiagService env = new DiagService(reader, language, envBaseAddress, envIndex, this);
+                    DiagService env = new DiagService(reader, language, envBaseAddress, envIndex, 0, this);
                     globalEnvs[envIndex] = env;
                 }
             }
@@ -563,7 +545,7 @@ namespace Caesar
             Console.WriteLine($"{nameof(InterfaceTableOffset)} : 0x{InterfaceTableOffset:X}");
             Console.WriteLine($"{nameof(SubinterfacesCount)} : {SubinterfacesCount}");
             Console.WriteLine($"{nameof(SubinterfacesOffset)} : {SubinterfacesOffset}");
-            Console.WriteLine($"ECU ecuClassName: {EcuClassName}");
+            Console.WriteLine($"ECU ecuClassName: {EcuInitializationDiagServiceName}");
             Console.WriteLine($"ECU ecuIdk7: {UnkStr7}");
             Console.WriteLine($"ECU ecuIdk8: {UnkStr8}");
 

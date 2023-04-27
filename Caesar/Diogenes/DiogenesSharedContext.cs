@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Diogenes
@@ -20,6 +21,7 @@ namespace Diogenes
         public CaesarConnection.Protocol.BaseProtocol Channel = null;
         public ECUVariant PrimaryVariant = null;
 
+        private int UserInitiatedRequestActive = 0;
 
         public class RawComParam : INotifyPropertyChanged
         {
@@ -65,5 +67,14 @@ namespace Diogenes
             }
         }
 
+        public bool StartUserInitiatedRequest() 
+        {
+            return Interlocked.CompareExchange(ref UserInitiatedRequestActive, 1, 0) == 0;
+        }
+
+        public void EndUserInitiatedRequest() 
+        {
+            Interlocked.Decrement(ref UserInitiatedRequestActive);
+        }
     }
 }

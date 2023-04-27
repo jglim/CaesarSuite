@@ -1,5 +1,6 @@
 ﻿using CaesarConnection.ComParam;
 using CaesarConnection.Protocol.Internal;
+using CaesarConnection.Target;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -13,10 +14,11 @@ namespace CaesarConnection.Protocol
 {
     public class UDS : BaseProtocol
     {
-        List<Envelope> MessagesWaitingForResponse = new List<Envelope>();
+        List<Envelope> MessagesWaitingForResponse = new List<Envelope>(); // FIXME: this needs to be locked during dispatch/cleanup
         System.Timers.Timer TesterPresentTimer = new System.Timers.Timer();
         bool disposed = false;
         private object TxLock = new object(); // locking object for threadsafe transmit
+        private object RxLock = new object();
 
         public override void Initialize()
         {
@@ -218,7 +220,9 @@ namespace CaesarConnection.Protocol
 
             // search the outbound messages queue, check if any requests match the response id
             Envelope foundMessage = null;
-            foreach (var waitingMessage in MessagesWaitingForResponse) 
+
+            // fixme: forloop since a foreach gets upset when collection changes (when a message is inserted)
+            foreach (var waitingMessage in MessagesWaitingForResponse)
             {
                 bool messageRequestLengthValid = waitingMessage.Request.Length > 4;
                 bool currentMessageIdMatchesSourceMessageId = waitingMessage.Request[4] == originalMessageId;
@@ -240,11 +244,12 @@ namespace CaesarConnection.Protocol
                 MessagesWaitingForResponse.Remove(foundMessage);
                 foundMessage.ResponseEvent.Set();
             }
-            else 
+            else
             {
                 // throw new Exception($"Debug: orphaned message");
                 Console.WriteLine($"Warning: received an orphaned PDU: {BitConverter.ToString(actualContent.ToArray())}");
             }
+
         }
 
         public override void Dispose()
@@ -281,13 +286,13 @@ namespace CaesarConnection.Protocol
             env.Request = newRequest;
             env.ResponseRequired = responseRequired;
 
-            bool response = false;
+            bool sendSuccess = false;
             
             // locking for send because threaded access will break wait timings (e.g. simultaneous user request + testerpresent)
             // some ecus will drop messages if wait intervals are not observed
             lock (TxLock) 
             {
-                response = Send(env);
+                sendSuccess = Send(env);
             }
 
             // no response required, no further checks required
@@ -297,7 +302,7 @@ namespace CaesarConnection.Protocol
             }
 
             // if a response is available, grab the actual content without the can id
-            if (response)
+            if (sendSuccess)
             {
                 return env.GetResponseContent().ToArray();
             }
@@ -355,6 +360,7 @@ namespace CaesarConnection.Protocol
             }
             catch 
             {
+                Console.WriteLine($"Warning: Failing on SendSingleRequest while requesting VCI to send");
                 return false;
             }
             
@@ -372,15 +378,16 @@ namespace CaesarConnection.Protocol
                     // if listen timed out, log 
                     if (!resultSuccess) 
                     {
-                        Console.WriteLine($"Warning: listen timeout for request {BitConverter.ToString(env.Request)}");
+                        Console.WriteLine($"Warning: listen timeout ({waitTime.TotalMilliseconds}ms) for request {BitConverter.ToString(env.Request)}");
                     }
 
                     // check if response is 7f xx 78
                     if (IsRawMessageTypeofNRC(env, UDSNegativeResponse.RequestCorrectlyReceived_ResponsePending))
                     {
                         // if response pending, re-enter the listen loop, but use 7f xx 78 timings
-                        resultSuccess = false;
+                        resultSuccess = false; // this was true above, since we technically received a response. should be false now
                         waitTime = Get7F78Timeout(); // different wait time when waiting for 7fxx78
+                        // Console.WriteLine($"RequestCorrectlyReceived_ResponsePending, timeout {waitTime.TotalMilliseconds}ms repeatmax {repeatMax}");
                         continue;
                     }
 
@@ -388,7 +395,10 @@ namespace CaesarConnection.Protocol
                     // at this point, we either have a proper, valid response, or an empty buffer (bus timeout)
                     break;
                 }
-
+                if (!resultSuccess) 
+                {
+                    Console.WriteLine($"Warning: transmit failure for single request {BitConverter.ToString(env.Request)}");
+                }
                 // success state (also) depends if it was cancelled
                 return resultSuccess;
             }
@@ -535,6 +545,195 @@ namespace CaesarConnection.Protocol
                 throw new Exception($"No suitable ComParam was available for Get7F21Timeout");
             }
             return response.Add(GetCanNetworkDelay());
+        }
+
+        public override SoftwareBlock[] GetSoftwareBlocks()
+        {
+            List<SoftwareBlock> result = new List<SoftwareBlock>();
+
+            // read partnumbers
+            byte[] response = Send(new byte[] { 0x22, 0xF1, 0x21 });
+
+            // if no blocks, or NR via 7F xx, stop
+            if (response.Length <= 3) 
+            {
+                return result.ToArray();
+            }
+
+            const int nameLength = 10;
+            int blockCount = (response.Length - 3) / nameLength;
+            for (int blockIndex = 0; blockIndex < blockCount; blockIndex++) 
+            {
+                SoftwareBlock sb = new SoftwareBlock();
+                sb.Index = blockIndex;
+
+                byte[] nameBytes = response.Skip(3 + blockIndex * nameLength).Take(nameLength).ToArray();
+                sb.PartNumber = Encoding.ASCII.GetString(nameBytes);
+                result.Add(sb);
+            }
+
+            // read versions
+            response = Send(new byte[] { 0x22, 0xF1, 0x51 });
+            const int versionLength = 3;
+            if (response.Length > 3)
+            {
+                for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
+                {
+                    result[blockIndex].Version = response.Skip(3 + blockIndex * versionLength).Take(versionLength).ToArray();
+                }
+            }
+
+            // read fingerprint, flash date, flash vendor, validity
+            response = Send(new byte[] { 0x22, 0xF1, 0x5B });
+            // 01   ff ff   ff ff ff   ff ff ff ff 
+            // 01   00 04   15 02 13   00 00 00 00
+            // pres_gueltige_software @ 3
+            // supplier id @ 4, 2bytes
+            const int blockMetadataLength = 10;
+            if (response.Length > 3)
+            {
+                for (int blockIndex = 0; blockIndex < blockCount; blockIndex++)
+                {
+                    byte[] row = response.Skip(3 + blockIndex * blockMetadataLength).Take(blockMetadataLength).ToArray();
+                    var block = result[blockIndex];
+                    block.Valid = row[0] != 0;
+                    block.LastFlashVendor = (row[1] << 8) | row[2];
+                    block.FlashYear = row[3];
+                    block.FlashMonth = row[4];
+                    block.FlashDay = row[5];
+                    block.Fingerprint = row.Skip(6).ToArray();
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        public override void TransferBlock(long address, Span<byte> payload)
+        {
+            int blockSize = StartTransfer(address, payload);
+            int dataSize = blockSize - 2;
+
+            int fullBlockCount = (int)((double)payload.Length / dataSize);
+
+            byte blockSequenceCounter = 0; // when writing, this starts from 1, increments, can also wrap around 0 
+
+            // write complete blocks
+            for (int i = 0; i < fullBlockCount; i++)
+            {
+                var dataSlice = payload.Slice(dataSize * i, dataSize);
+                byte[] request = CreateTransferRequest(ref blockSequenceCounter, dataSlice);
+                SendTransferRequest(request);
+            }
+
+            int partialData = payload.Length % dataSize;
+            if (partialData > 0)
+            {
+                var dataSlice = payload.Slice(dataSize * fullBlockCount, partialData);
+                byte[] request = CreateTransferRequest(ref blockSequenceCounter, dataSlice);
+                SendTransferRequest(request);
+            }
+
+            EndTransfer();
+        }
+
+        private byte[] CreateTransferRequest(ref byte blockSequenceCounter, Span<byte> payload)
+        {
+            const byte SID = 0x36;
+
+            unchecked { blockSequenceCounter++; }
+            byte[] request = new byte[payload.Length + 2];
+            request[0] = SID;
+            request[1] = blockSequenceCounter;
+
+            Span<byte> payloadSpan = new Span<byte>(request, 2, payload.Length);
+            payload.CopyTo(payloadSpan);
+            return request;
+        }
+
+        private void SendTransferRequest(byte[] request) 
+        {
+            byte[] response = Send(request, responseRequired: true, recipientType: Envelope.RequestType.Physical, throwExceptionOnError: true);
+            if (response.Length < 2) 
+            {
+                throw new Exception($"Invalid response length from ECU while transferring block");
+            }
+            if (response[0] == 0x7F) 
+            {
+                throw new Exception($"Negative Response from ECU while transferring block: {BitConverter.ToString(response.ToArray())}");
+            }
+            if (response[1] != request[1])
+            {
+                throw new Exception($"Block index from ECU ({response[1]}) does not match outbound request ({request[1]})");
+            }
+        }
+
+        private int StartTransfer(long address, Span<byte> payload)
+        {
+            // get ecu transfer preferences
+            int addressFormat = (int)ComParameters.GetParameter("CP_MEM_ADDRESS_FORMAT");
+            int lengthFormat = (int)ComParameters.GetParameter("CP_MEM_SIZE_FORMAT");
+
+            const byte SID = 0x34;
+
+            // will always be zero since compression and encryption is unsupported
+            byte dataFormatIdentifier = CreateDataFormatIdentifier(DataFormatCompression.NoCompression, DataFormatEncryption.NoEncryption);
+
+            byte alfid = CreateAddressAndLengthFormatIdentifier(addressFormat, lengthFormat);
+
+            // address, size are almost always big-endian
+            List<byte> addressBytes = LongToBytesBigEndian(address, addressFormat);
+            List<byte> lengthBytes = LongToBytesBigEndian(payload.Length, lengthFormat);
+
+            List<byte> transferRequestBuilder = new List<byte>(3 + addressFormat + lengthFormat);
+            transferRequestBuilder.Add(SID);
+            transferRequestBuilder.Add(dataFormatIdentifier);
+            transferRequestBuilder.Add(alfid);
+            transferRequestBuilder.AddRange(addressBytes);
+            transferRequestBuilder.AddRange(lengthBytes);
+
+            // example transfer: 00 00 06 0a     34 00 44   00 1f ff 88   00 00 00 48
+            // typical response: 00 00 04 81    74 20 0f 02
+
+            byte[] responseBytes = Send(transferRequestBuilder.ToArray(), responseRequired: true, recipientType: Envelope.RequestType.Physical, throwExceptionOnError: true);
+            Span<byte> response = new Span<byte>(responseBytes);
+
+            if (response.Length < 2)
+            {
+                throw new Exception($"Invalid response length from ECU while initiating transfer");
+            }
+            if (response[0] == 0x7F)
+            {
+                throw new Exception($"Negative Response from ECU while initiating transfer: {BitConverter.ToString(response.ToArray())}");
+                // 0x13: incorrectMessageLengthOrInvalidFormat
+                // 0x22: conditionsNotCorrect
+                // 0x31: requestOutOfRange
+                // 0x33: securityAccessDenied
+                // 0x70: uploadDownloadNotAccepted
+            }
+
+            int responseLengthSize = response[1] >> 4; // "alfid" without the "a" part
+            if (responseLengthSize > 4)
+            {
+                throw new Exception($"Unsupported response length (more than 32 bits) : {responseLengthSize}");
+            }
+
+            // ecu will reply with the maximum block length that it can accept, including non-payload such as SID
+            int maxBlockLength = (int)BytesBigEndianToLong(response.Slice(2, responseLengthSize));
+            return maxBlockLength;
+        }
+
+        private void EndTransfer() 
+        {
+            byte[] response = Send(new byte[] { 0x37 }, responseRequired: true, recipientType: Envelope.RequestType.Physical, throwExceptionOnError: true);
+            if (response.Length != 1)
+            {
+                throw new Exception($"Invalid response length from ECU while exiting transfer");
+            }
+            // expects 0x77
+            if (response[0] == 0x7F)
+            {
+                throw new Exception($"Negative Response from ECU while exiting transfer: {BitConverter.ToString(response.ToArray())}");
+            }
         }
 
         public override List<ParameterMapping> GetDefaultProtocolComParamMaps()

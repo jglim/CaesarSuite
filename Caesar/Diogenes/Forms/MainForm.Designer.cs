@@ -64,6 +64,7 @@ namespace Diogenes.Forms
             this.txtConsoleInput = new System.Windows.Forms.TextBox();
             this.txtConsoleLog = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -196,7 +197,6 @@ namespace Diogenes.Forms
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 24);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -370,6 +370,7 @@ namespace Diogenes.Forms
             this.tabControl3.Controls.Add(this.tabDiagServices);
             this.tabControl3.Controls.Add(this.tabVarCoding);
             this.tabControl3.Controls.Add(this.tabMemoryEditor);
+            this.tabControl3.Controls.Add(this.tabPage5);
             this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl3.Location = new System.Drawing.Point(0, 0);
             this.tabControl3.Name = "tabControl3";
@@ -467,6 +468,16 @@ namespace Diogenes.Forms
             this.tabPage2.Text = "Interpreter Log";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // tabPage5
+            // 
+            this.tabPage5.Location = new System.Drawing.Point(4, 24);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(1063, 570);
+            this.tabPage5.TabIndex = 3;
+            this.tabPage5.Text = "Flash";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -544,6 +555,7 @@ namespace Diogenes.Forms
         private System.Windows.Forms.TabPage tabDiagServices;
         private System.Windows.Forms.TabPage tabVarCoding;
         private System.Windows.Forms.TabPage tabMemoryEditor;
+        private System.Windows.Forms.TabPage tabPage5;
     }
 }
 

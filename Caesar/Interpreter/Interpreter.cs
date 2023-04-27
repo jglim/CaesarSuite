@@ -30,6 +30,8 @@ namespace CaesarInterpreter
 
         // script host interaction
         public IChannel HostChannel;
+        public IDiagService HostDiagService;
+        public IFlash HostFlash;
 
         // disassembler-specific, not required for emulation
         public Step ActiveStep;
@@ -48,7 +50,7 @@ namespace CaesarInterpreter
         public bool AllowSelfModifyingCode = true;
         public bool CodeWasSelfModified = false;
 
-        public static Interpreter Create(byte[] palBytes, string functionName, byte[] paramBytes, IChannel hostChannel)
+        public static Interpreter Create(byte[] palBytes, string functionName, byte[] paramBytes, IChannel hostChannel, IDiagService hostDiagService, IFlash flashHost)
         {
             Interpreter ih = new Interpreter();
             ih.ScriptBytes = palBytes;
@@ -58,6 +60,8 @@ namespace CaesarInterpreter
 
             // attach host interfaces
             ih.HostChannel = hostChannel;
+            ih.HostDiagService = hostDiagService;
+            ih.HostFlash = flashHost;
 
             // parse the pal file
             ih.Context = new DSCContext(palBytes);
@@ -120,7 +124,7 @@ namespace CaesarInterpreter
 
         public static void Run(Interpreter ih) 
         {
-            Console.WriteLine($"Starting script execution");
+            Console.WriteLine($"Starting script execution for `{ih.EntryFunction.Name}`");
 
             int breakpointAddress = -1; // -1 to disable
             while (true)
@@ -141,7 +145,7 @@ namespace CaesarInterpreter
                 ih.CycleCount++;
             }
 
-            Console.WriteLine($"Script execution has completed successfully in {ih.CycleCount}u cycles");
+            Console.WriteLine($"Script execution of `{ih.EntryFunction.Name}` has completed successfully in {ih.CycleCount}u cycles");
             if (ih.CodeWasSelfModified)
             {
                 Console.WriteLine($"Self-modifying code was present in this script");
@@ -669,6 +673,10 @@ namespace CaesarInterpreter
                     Instructions.TextIo.Strcpy(ih);
                     break;
 
+                case 0x2C7:
+                    Instructions.TextIo.Strlen(ih);
+                    break;
+
                 case 0x2D1:
                     Instructions.TextIo.BiSprintf(ih);
                     break;
@@ -831,6 +839,10 @@ namespace CaesarInterpreter
 
                 case 0x3C5:
                     Instructions.Core.GetTesterID(ih);
+                    break;
+
+                case 0x3C7:
+                    Instructions.Core.GetPreparedMessage(ih);
                     break;
 
                 case 0x3C8:

@@ -48,6 +48,7 @@ namespace Diogenes.Forms
         public TextWriter TraceWriter = null;
         PersistentRecentFiles RecentCbfFiles = null;
         DiagServicesView DiagServicesViewControl = null;
+        FlashView FlashViewControl = null;
 
         public MainForm()
         {
@@ -61,7 +62,11 @@ namespace Diogenes.Forms
             UpdateUIForVariantChange();
 
             TraceWriter = new TextboxWriter(txtTrace, 200);
-            Console.SetOut(new TextboxWriter(txtConsoleLog));
+            if (!Program.SeparateConsole) 
+            {
+                Console.SetOut(new TextboxWriter(txtConsoleLog));
+            }
+            
             RecentCbfFiles = new PersistentRecentFiles(tsmiOpenRecent, LoadCBF);
 
             var memoryEditor = new MemoryEditorView();
@@ -71,6 +76,10 @@ namespace Diogenes.Forms
             DiagServicesViewControl = new DiagServicesView();
             tabDiagServices.Controls.Add(DiagServicesViewControl);
             DiagServicesViewControl.Dock = DockStyle.Fill;
+
+            FlashViewControl = new FlashView();
+            FlashViewControl.Dock = DockStyle.Fill;
+            tabPage5.Controls.Add(FlashViewControl);
 
             this.Text = $"Diogenes II (Build: {LinkerTime.GetLinkerTime().ToShortDateString()})";
         }
