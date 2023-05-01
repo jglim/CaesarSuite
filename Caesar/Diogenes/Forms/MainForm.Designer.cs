@@ -59,12 +59,12 @@ namespace Diogenes.Forms
             this.tabDiagServices = new System.Windows.Forms.TabPage();
             this.tabVarCoding = new System.Windows.Forms.TabPage();
             this.tabMemoryEditor = new System.Windows.Forms.TabPage();
+            this.tabFlash = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.txtConsoleInput = new System.Windows.Forms.TextBox();
             this.txtConsoleLog = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -370,7 +370,7 @@ namespace Diogenes.Forms
             this.tabControl3.Controls.Add(this.tabDiagServices);
             this.tabControl3.Controls.Add(this.tabVarCoding);
             this.tabControl3.Controls.Add(this.tabMemoryEditor);
-            this.tabControl3.Controls.Add(this.tabPage5);
+            this.tabControl3.Controls.Add(this.tabFlash);
             this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl3.Location = new System.Drawing.Point(0, 0);
             this.tabControl3.Name = "tabControl3";
@@ -407,6 +407,16 @@ namespace Diogenes.Forms
             this.tabMemoryEditor.TabIndex = 2;
             this.tabMemoryEditor.Text = "Memory Editor";
             this.tabMemoryEditor.UseVisualStyleBackColor = true;
+            // 
+            // tabFlash
+            // 
+            this.tabFlash.Location = new System.Drawing.Point(4, 24);
+            this.tabFlash.Name = "tabFlash";
+            this.tabFlash.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFlash.Size = new System.Drawing.Size(1063, 570);
+            this.tabFlash.TabIndex = 3;
+            this.tabFlash.Text = "Flash";
+            this.tabFlash.UseVisualStyleBackColor = true;
             // 
             // tabControl1
             // 
@@ -467,16 +477,6 @@ namespace Diogenes.Forms
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Interpreter Log";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // tabPage5
-            // 
-            this.tabPage5.Location = new System.Drawing.Point(4, 24);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(1063, 570);
-            this.tabPage5.TabIndex = 3;
-            this.tabPage5.Text = "Flash";
-            this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -555,7 +555,7 @@ namespace Diogenes.Forms
         private System.Windows.Forms.TabPage tabDiagServices;
         private System.Windows.Forms.TabPage tabVarCoding;
         private System.Windows.Forms.TabPage tabMemoryEditor;
-        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.TabPage tabFlash;
     }
 }
 

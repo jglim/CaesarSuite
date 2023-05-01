@@ -49,6 +49,7 @@ namespace Diogenes.Forms
         PersistentRecentFiles RecentCbfFiles = null;
         DiagServicesView DiagServicesViewControl = null;
         FlashView FlashViewControl = null;
+        VarcodingView VarcodingViewControl = null;
 
         public MainForm()
         {
@@ -79,7 +80,11 @@ namespace Diogenes.Forms
 
             FlashViewControl = new FlashView();
             FlashViewControl.Dock = DockStyle.Fill;
-            tabPage5.Controls.Add(FlashViewControl);
+            tabFlash.Controls.Add(FlashViewControl);
+
+            VarcodingViewControl = new VarcodingView();
+            VarcodingViewControl.Dock = DockStyle.Fill;
+            tabVarCoding.Controls.Add(VarcodingViewControl);
 
             this.Text = $"Diogenes II (Build: {LinkerTime.GetLinkerTime().ToShortDateString()})";
         }
@@ -103,6 +108,7 @@ namespace Diogenes.Forms
             RecentCbfFiles?.AddRecentFile(path);
             UpdateUIForCbfLoadUnload();
             DiagServicesViewControl.NotifyCbfOrVariantChange();
+            VarcodingViewControl.NotifyCbfOrVariantChange();
         }
 
         private void LoadComDeviceList()
@@ -289,6 +295,7 @@ namespace Diogenes.Forms
                 tsslLoadedCbf.BackColor = SystemColors.Highlight;
             }
             DiagServicesViewControl?.NotifyCbfOrVariantChange();
+            VarcodingViewControl?.NotifyCbfOrVariantChange();
         }
         private void UpdateUIForVariantChange()
         {
@@ -302,6 +309,7 @@ namespace Diogenes.Forms
                 tsslVariant.BackColor = SystemColors.Highlight;
             }
             DiagServicesViewControl?.NotifyCbfOrVariantChange();
+            VarcodingViewControl?.NotifyCbfOrVariantChange();
         }
 
         // attempts a connection to an ecu

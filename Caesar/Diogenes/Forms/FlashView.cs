@@ -105,7 +105,14 @@ namespace Diogenes.Forms
 
         private async void btnFlash_Click(object sender, EventArgs e)
         {
-            await Task.Run(() => Flash());
+            string messageBody = "The flash capability is preliminary and has a very high possibility of failure, and should only be used if you are absolutely sure of what you are doing. \r\n\r\n" +
+                "Please ensure that you have an alternative recovery mechanism e.g. Vediamo in case the flash process is interrupted.\r\n\r\n" +
+                "Also, remember to back up your varcoding parameters as some ECUs will reset those values after flashing.\r\n\r\n\r\n" +
+                "Would you like to continue with the flash process?";
+            if (MessageBox.Show(messageBody, "Flash Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) 
+            {
+                await Task.Run(() => Flash());
+            }
         }
 
         private void Flash() 

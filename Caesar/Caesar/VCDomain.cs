@@ -171,5 +171,10 @@ namespace Caesar
             Console.WriteLine($"{nameof(Unk1)} : {Unk1}");
 
         }
+
+        public override string ToString()
+        {
+            return Qualifier;
+        }
     }
 }
