@@ -17,5 +17,6 @@ namespace CaesarInterpreter.Host
         bool CollectionMessageSend(ChannelRequest request, byte[] receivedMessage);
         bool CollectMessageRun(ChannelReadResponse response);
         bool SetCommunicationParameter(string paramName, int newParameter);
+        bool GetCommunicationParameter(string paramName, out int comParam);
     }
 }

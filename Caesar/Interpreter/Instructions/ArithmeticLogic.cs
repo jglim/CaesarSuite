@@ -137,8 +137,39 @@ namespace CaesarInterpreter.Instructions
 
         public static void BitwiseAnd(Interpreter ih) 
         {
-            switch (ih.Opcode) 
+            switch (ih.Opcode)
             {
+                case 0x24D:
+                    {
+                        /*
+                        // this is probably 4 bytes & 1 byte; 1 byte is extended to int16 by design, but there will not be any changes to the output
+Step PC: 0000133D, OP: 00AA, F: 0000133D, SP: 00000036, SyncSP 00000032 CC: 1889u VST: 00001388 (C)
+Jump if 0x0000 == 0, displacement: 0x14
+
+Step PC: 00001352, OP: 0041, F: 00001352, SP: 00000034, SyncSP 00000030 CC: 1890u VST: 00001388 (C)
+Push immediate FF
+
+Step PC: 00001354, OP: 0003, F: 00001354, SP: 00000036, SyncSP 00000032 CC: 1891u VST: 00001388 (C)
+Push stack absolute: source address 0x00000012, value: 0xD35B27DE
+
+Step PC: 00001356, OP: 00FE, F: 00001356, SP: 0000003A, SyncSP 00000036 CC: 1892u VST: 00001388 (C)
+EI:024D
+
+Step PC: 00001357, OP: 024D, F: 00001357, SP: 0000003A, SyncSP 00000036 CC: 1893u VST: 00001388 (C)
+0x27DE00FF &= 0xD35B = 0x0000005B // was broken, expecting 0xD35B27DE & FF
+
+Step PC: 00001358, OP: 0041, F: 00001358, SP: 00000038, SyncSP 00000034 CC: 1894u VST: 00001388 (C)
+Push immediate 03
+                         */
+                        ih.Stack.Seek(-4);
+                        int source = ih.Stack.PeekI32();
+                        ih.Stack.Seek(-2);
+                        int andMask = ih.Stack.PeekU16();
+                        int result = source & andMask;
+                        ih.Stack.WriteI32(result);
+                        ih.ActiveStep.AddDescription($"0x{source:X8} &= 0x{andMask:X4} = 0x{result:X8}");
+                        break;
+                    }
                 case 0x250:
                     {
                         ih.Stack.Seek(-2);

@@ -106,5 +106,16 @@ namespace Diogenes
 #endif
             return true;
         }
+
+        public bool GetCommunicationParameter(string paramName, out int newParameter)
+        {
+            if (!DiogenesSharedContext.Singleton.Channel.ComParameters.HasParameter(paramName)) 
+            {
+                newParameter = 0;
+                return false;
+            }
+            newParameter = (int)DiogenesSharedContext.Singleton.Channel.ComParameters.GetParameter(paramName);
+            return true;
+        }
     }
 }

@@ -188,6 +188,36 @@ namespace CaesarInterpreter.Instructions
         }
 
 
+        public static void GetCommunicationParameter(Interpreter ih)
+        {
+            switch (ih.Opcode)
+            {
+                case 0x2F0:
+                    {
+                        // fixme: hack
+                        ih.Stack.Seek(-4);
+                        int resultBuffer = ih.Stack.PeekI32();
+
+                        ih.Stack.Seek(-4);
+                        int paramNamePointer = ih.Stack.PeekI32();
+
+                        string comParamName = InterpreterMemory.GetCStringAtAddress(ih, paramNamePointer);
+                        bool found = ih.HostChannel.GetCommunicationParameter(comParamName, out int comParamVal);
+
+                        // probably 16 bit, bigendian? fixme
+                        byte[] comParamBytes = new byte[] { 0, 0 };
+                        comParamBytes[0] = (byte)((comParamVal >> 8) & 0xFF);
+                        comParamBytes[1] = (byte)(comParamVal & 0xFF);
+                        
+                        InterpreterMemory.SetMemoryAtAddress(ih, resultBuffer, comParamBytes);
+                        ih.ActiveStep.AddDescription($"Channel GetCommunicationParameter: {comParamName}, found? {found}, result {comParamVal} (0x{comParamVal:X}) : ptr {paramNamePointer:X4}");
+
+                        ih.Stack.WriteI16(found ? (short)1 : (short)0);
+                        break;
+                    }
+            }
+        }
+
         public static void CollectionMessageSendRequest(Interpreter ih)
         {
             switch (ih.Opcode)

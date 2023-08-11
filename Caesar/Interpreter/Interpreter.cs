@@ -653,7 +653,8 @@ namespace CaesarInterpreter
                 case 0x22F:
                     Instructions.ControlFlow.Compare(ih);
                     break;
-
+                
+                case 0x24D:
                 case 0x250:
                 case 0x251:
                 case 0x252:
@@ -728,6 +729,10 @@ namespace CaesarInterpreter
 
                 case 0x2EF:
                     Instructions.ChannelIo.SetCommunicationParameter(ih);
+                    break;
+
+                case 0x2F0:
+                    Instructions.ChannelIo.GetCommunicationParameter(ih);
                     break;
 
                 case 0x30B:
