@@ -13,10 +13,22 @@ namespace Diogenes.Forms
 {
     public partial class VarcodingView : UserControl
     {
+
+        BindingList<VCFragmentView> Fragments = new BindingList<VCFragmentView>();
+
         public VarcodingView()
         {
             InitializeComponent();
             PopulateVcdPicker();
+
+            // fragment datagrid
+            dgvVcFragments.DataSource = Fragments;
+            for (int i = 1; i < dgvVcFragments.Columns.Count; i++)
+            {
+                dgvVcFragments.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+            dgvVcFragments.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
         }
 
         public void NotifyCbfOrVariantChange()
@@ -47,9 +59,17 @@ namespace Diogenes.Forms
                 return;
             }
             Console.WriteLine($"R:{vcd.ReadServiceName}, W:{vcd.WriteServiceName}");
+
+            Fragments.Clear();
             foreach (var fragment in vcd.VCFragments) 
             {
-                Console.WriteLine($"{fragment.Qualifier}");
+                //Console.WriteLine($"{fragment}");
+                Fragments.Add(new VCFragmentView(vcd, fragment));
+            }
+
+            foreach (var huh in vcd.DefaultData) 
+            {
+                Console.WriteLine($"{huh.Item1} {BitConverter.ToString(huh.Item2)}");
             }
             
         }

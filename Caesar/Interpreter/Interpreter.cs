@@ -382,6 +382,7 @@ namespace CaesarInterpreter
 
                 case 0x9F:
                 case 0x27C:
+                case 0x280:
                     Instructions.ArithmeticLogic.BitwiseXor(ih);
                     break;
 

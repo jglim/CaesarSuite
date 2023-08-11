@@ -103,7 +103,8 @@ namespace Caesar
         public uint Config; // inherited from dj parent array
 
         // for previewing only
-        public bool HasScript { get { return DiagServiceCode.Count > 0; } }
+        private bool HasScript { get { return DiagServiceCode.Count > 0; } }
+
         public string Dump { get { return BitUtility.BytesToHex(RequestBytes, true); } }
 
 

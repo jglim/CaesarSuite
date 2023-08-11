@@ -273,5 +273,10 @@ namespace Caesar
             }
 
         }
+
+        public override string ToString()
+        {
+            return Qualifier;
+        }
     }
 }

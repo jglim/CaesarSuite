@@ -77,6 +77,7 @@ namespace CaesarInterpreter.Instructions
             switch (ih.Opcode)
             {
                 case 0x4F:
+                case 0x145:
                     {
                         ih.Stack.Seek(-4);
                         uint op = ih.Stack.PeekU32();
@@ -234,6 +235,7 @@ namespace CaesarInterpreter.Instructions
             switch (ih.Opcode)
             {
                 case 0x9F:
+                case 0x280:
                     {
                         ih.Stack.Seek(-4);
                         int op = ih.Stack.PeekI32();
