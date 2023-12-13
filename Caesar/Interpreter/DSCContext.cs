@@ -52,6 +52,8 @@ namespace CaesarInterpreter
 
                 int fnEntryPoint = reader.ReadInt32(); // @ 6 // confirmed as 32-bit
 
+                // position 18: 16-bit value, if lower 3 bits are set (0x7), fails on loading program counter 
+
                 reader.BaseStream.Seek(fnBaseAddress + 38, SeekOrigin.Begin);
                 int inputParamOffset = reader.ReadInt32(); // @ 38
                 int inputParamCount = reader.ReadInt16(); // @ 42
@@ -123,13 +125,18 @@ namespace CaesarInterpreter
             {
                 PALBytes = dscContainerBytes;
 
-                reader.BaseStream.Seek(0x10, SeekOrigin.Begin);
+                //reader.BaseStream.Seek(0x10, SeekOrigin.Begin);
+                uint magic = reader.ReadUInt32(); // expects 0x004C4150 "PAL\0"
+                uint unk0 = reader.ReadUInt32(); // expects 0, version?
+                int sizeOrOffset = reader.ReadInt32(); // seems to be an offset to file crc, filesize-4
+                int debugFlagUnk = reader.ReadInt32(); // seems to be checked for debug stuff ( >= 0x178)
+
                 int fnTableOffset = reader.ReadInt32(); // @ 0x10, originally i16
                 int numberOfFunctions = reader.ReadInt16(); // @ 0x14
-                int dscOffsetA = reader.ReadInt32(); // @ 0x16, originally i16
-                int caesarHash = reader.ReadInt16(); // @ 0x1A, size is u32?
+                int fnTableHashmapOffset = reader.ReadInt32(); // @ 0x16, originally i16
+                int fnTableHashmapItemCount = reader.ReadInt16(); // @ 0x1A, size is u32?
 
-                int idk_field_1c = reader.ReadInt16(); // ?? @ 1C, padding
+                int idk_field_1c = reader.ReadInt16(); // ?? @ 1C, typically 0x1000?
 
                 int globalVarAllocSize = reader.ReadInt16(); // @ 1E
 
