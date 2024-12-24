@@ -653,7 +653,9 @@ namespace CaesarInterpreter
                 case 0x22F:
                     Instructions.ControlFlow.Compare(ih);
                     break;
-                
+
+                case 0x94:
+                case 0x95:
                 case 0x24D:
                 case 0x250:
                 case 0x251:

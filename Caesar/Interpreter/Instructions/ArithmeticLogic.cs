@@ -170,6 +170,7 @@ Push immediate 03
                         ih.ActiveStep.AddDescription($"0x{source:X8} &= 0x{andMask:X4} = 0x{result:X8}");
                         break;
                     }
+                case 0x94:
                 case 0x250:
                     {
                         ih.Stack.Seek(-2);
@@ -182,6 +183,7 @@ Push immediate 03
                         ih.ActiveStep.AddDescription($"0x{source:X4} &= 0x{andMask:X4} = 0x{result:X4}");
                         break;
                     }
+                case 0x95:
                 case 0x251:
                     {
                         ih.Stack.Seek(-2);
