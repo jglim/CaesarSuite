@@ -153,7 +153,7 @@ namespace CaesarConnection.Protocol
                 //{ CP.SWSUPPLIERBLOCK, 1 },
                 //{ CP.SWVERSIONBLOCK, 1 },
 
-                { CP.TESTERPRESENT_MESSAGE, 0x3E01 },
+                { CP.TESTERPRESENT_MESSAGE, 0x3E02 },
                 { CP.TIMEOUTP2CANREACT, 192 },
                 { CP.TIMEOUTB12REQREACT, 192 },
                 { CP.TIMEOUTCFREACT, 192 },
