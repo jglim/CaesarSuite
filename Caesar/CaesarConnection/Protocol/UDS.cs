@@ -68,7 +68,7 @@ namespace CaesarConnection.Protocol
                 {
                     // during functional initialization, vediamo transmits session change (10 92) twice. There isn't a comparam for this value
                     Console.WriteLine($"EnterSessionDiagnostic : EcuIsFunctional T: {sw.ElapsedMilliseconds}");
-                    const int FunctionalInitializationSessionInitCount = 2; // FIXME:HARDCODED
+                    int FunctionalInitializationSessionInitCount = (int)ComParameters.GetParameterOrDefault(CP.NONSTANDARD_FUNCTIONAL_INIT_TXCOUNT, 2);
                     for (int i = 0; i < FunctionalInitializationSessionInitCount; i++)
                     {
                         Console.WriteLine($"Index: {i}, FunctionalInitializationSessionInitCount: {FunctionalInitializationSessionInitCount} T: {sw.ElapsedMilliseconds}");

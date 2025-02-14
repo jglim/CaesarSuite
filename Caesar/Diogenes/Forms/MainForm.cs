@@ -234,6 +234,23 @@ namespace Diogenes.Forms
                     continue;
                 }
                 var comParams = iface.CommunicationParameters.ToDictionary(t => t.ParamName, t => t.ComParamValue);
+                
+                // check if there are quirks to be applied for the currently selected target
+                var quirks = ComParamQuirks.GetQuirksForTarget(DiogenesSharedContext.Singleton.PrimaryEcu.Qualifier, iface.Qualifier);
+
+                // if available, apply, overriding prior values from the CBF if duplicates are found
+                foreach (var quirk in quirks) 
+                {
+                    if (comParams.ContainsKey(quirk.Key))
+                    {
+                        comParams[quirk.Key] = quirk.Value;
+                    }
+                    else 
+                    {
+                        comParams.Add(quirk.Key, quirk.Value);
+                    }
+                }
+
                 comParams.ToList().ForEach(x => DiogenesSharedContext.Singleton.PreConnectParameters.Add(new DiogenesSharedContext.RawComParam { Name = x.Key, Value = x.Value }));
             }
 
