@@ -732,6 +732,20 @@ namespace CaesarConnection.ComParam
         /// </summary>
         public static readonly string ModifyTiming = "CP_ModifyTiming";
 
+
+        // Hacks:
+
+
+        /// <summary>
+        /// Session init TX count
+        /// </summary>
+        public static readonly string NONSTANDARD_FUNCTIONAL_INIT_TXCOUNT = "CP_NONSTANDARD_INIT_TXCOUNT";
+
+        /// <summary>
+        /// KW2C3PE: Session testerpresent response required
+        /// </summary>
+        public static readonly string NONSTANDARD_TP_RESPONSEREQUIRED = "CP_NONSTANDARD_TP_RESPONSEREQUIRED";
+
     }
 }
 

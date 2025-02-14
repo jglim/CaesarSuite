@@ -216,11 +216,15 @@ namespace CaesarConnection.Protocol
                 //{ CP.SPARE_9, 0 },
                 //{ CP.SPARE_10, 0 },
 
+                // Hacks, nonstandard stuff follows:
 
                 // this value is unofficially added by jg to reduce false timeouts on j2534 devices
                 // uds has this ~130ms period to reduce false timeouts
                 // this value will be remapped to CanTransmissionTime (ASAM)
                 { CP.CAN_TRANSMIT, 130 },
+
+                // Some KW2C3PE devices init by sending 10 92 multiple times
+                { CP.NONSTANDARD_FUNCTIONAL_INIT_TXCOUNT, 1 },
             };
         }
     }
