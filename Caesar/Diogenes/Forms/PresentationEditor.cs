@@ -113,7 +113,9 @@ namespace Diogenes.Forms
                             // see DL_Oelresettabelle_ASSYST, km stand
                             var activeScale = pres.Scales[0];
                             decimal val = BitArrayExtension.PromoteToInt32(SourceBits, bigEndian: true);
-                            val /= (decimal)activeScale.MultiplyFactor;
+                            // KI211 threw a divide by zero for one of the pres when this was /= . Was this supposed to be *= ?
+                            // A zero value for MultiplyFactor doesn't make sense regardless of mul/div
+                            val *= (decimal)activeScale.MultiplyFactor;
                             val -= (decimal)activeScale.AddConstOffset;
                             txtValue.Text = val.ToString();
                             txtValue.Visible = true;
