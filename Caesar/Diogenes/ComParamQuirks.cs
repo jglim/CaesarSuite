@@ -18,7 +18,7 @@ namespace Diogenes
                 if (ifaceQualifier == "HSCAN_KW2C3PE_500")
                 {
                     quirks.Add(CP.NONSTANDARD_FUNCTIONAL_INIT_TXCOUNT, 5);
-                    quirks.Add(CP.TESTERPRESENT_MESSAGE, 0x3E01);
+                    quirks.Add(CP.TESTERPRESENT_MESSAGE, 0x3E02);
                 }
             }
 
