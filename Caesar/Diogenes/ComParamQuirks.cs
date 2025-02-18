@@ -19,6 +19,7 @@ namespace Diogenes
                 {
                     quirks.Add(CP.NONSTANDARD_FUNCTIONAL_INIT_TXCOUNT, 5);
                     quirks.Add(CP.TESTERPRESENT_MESSAGE, 0x3E02);
+                    quirks.Add(CP.TesterPresentTime, 1000);
                 }
             }
 
