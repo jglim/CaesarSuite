@@ -21,11 +21,13 @@ namespace Diogenes.Forms
         PresentationEditor PresEditor;
 
         static readonly string RequestBuilderTitle = "Request Builder";
-        
+
 
         public DiagServicesView()
         {
             InitializeComponent();
+            DataGridViewCellCopy.AddCopyCellMenu(dgvDiagPicker);
+            DataGridViewCellCopy.AddCopyCellMenu(dgvRequestBuilder);
 
             // add presentation editor component
             PresEditor = new PresentationEditor();
@@ -45,15 +47,14 @@ namespace Diogenes.Forms
             // initialize req builder (preparations)
             dgvRequestBuilder.DataSource = new BindingList<DiagPreparation>();
             dgvRequestBuilder.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
         }
 
-        public void NotifyCbfOrVariantChange() 
+        public void NotifyCbfOrVariantChange()
         {
             InternalReRenderGrid();
         }
 
-        private void InternalReRenderGrid() 
+        private void InternalReRenderGrid()
         {
             // pause updates
             dgvDiagPicker.Suspend();
@@ -114,7 +115,7 @@ namespace Diogenes.Forms
                 SelectedDiagService = dgvDiagPicker.SelectedRows[0].DataBoundItem as DiagService;
                 string groupboxLabel = $"{RequestBuilderTitle} : {SelectedDiagService.Qualifier} ";
 
-                foreach (var dsc in SelectedDiagService.DiagServiceCode) 
+                foreach (var dsc in SelectedDiagService.DiagServiceCode)
                 {
                     groupboxLabel += $"[Script: {dsc.Qualifier}] ";
                 }
@@ -123,7 +124,7 @@ namespace Diogenes.Forms
                 gbRequestBuilder.Text = groupboxLabel;
                 btnExecuteRequest.Enabled = true;
             }
-            else 
+            else
             {
                 // list cleared
                 SelectedDiagService = null;
@@ -148,10 +149,10 @@ namespace Diogenes.Forms
         }
 
         // regenerates bitarray from existing preparations, then updates the textbox preview
-        private void UpdateRequestPreview() 
+        private void UpdateRequestPreview()
         {
             txtRequestPreview.Text = "";
-            if (DiagServiceToExecute is null) 
+            if (DiagServiceToExecute is null)
             {
                 return;
             }
@@ -162,16 +163,16 @@ namespace Diogenes.Forms
 
         // when presentation editor receives a user-committed change, this is called
         // pull out the new value from the editor and write it into the respective preparation
-        private void PresEditor_ValueChanged() 
+        private void PresEditor_ValueChanged()
         {
             var selectedPrep = dgvRequestBuilder.SelectedRows[0].DataBoundItem as DiagPreparation;
             selectedPrep.Content = PresEditor.SourceBits;
             UpdateRequestPreview();
         }
 
-        private void HighlightSelectedPreparationInTextboxPreview() 
+        private void HighlightSelectedPreparationInTextboxPreview()
         {
-            if (dgvRequestBuilder.SelectedRows.Count != 1) 
+            if (dgvRequestBuilder.SelectedRows.Count != 1)
             {
                 return;
             }
@@ -201,7 +202,7 @@ namespace Diogenes.Forms
                 UpdateRequestPreview();
 
                 // show selected bits on textbox
-                var selectedPrep = dgvRequestBuilder.SelectedRows[0].DataBoundItem as DiagPreparation; 
+                var selectedPrep = dgvRequestBuilder.SelectedRows[0].DataBoundItem as DiagPreparation;
                 HighlightSelectedPreparationInTextboxPreview();
 
                 // if it's a presentation, enable the editor
@@ -211,7 +212,7 @@ namespace Diogenes.Forms
 
                     // variable-length unicode strings will break things here, disable it
                     bool sliceLengthExceedsCurrentBitarrayLength = (selectedPrep.BitPosition + selectedPrep.SizeInBits) > DiagServiceToExecute.DiagBits.Length;
-                    if (!sliceLengthExceedsCurrentBitarrayLength) 
+                    if (!sliceLengthExceedsCurrentBitarrayLength)
                     {
                         // string log = $"{selectedPrep.Qualifier} : slicing {SelectedDiagBitArray.Length} at {selectedPrep.BitPosition} with size {selectedPrep.SizeInBits}, ending at {selectedPrep.BitPosition + selectedPrep.SizeInBits}";
 
@@ -222,17 +223,19 @@ namespace Diogenes.Forms
                 }
             }
 
-            if (!presentationWasSet) 
+            if (!presentationWasSet)
             {
                 PresEditor.SetPresentation(null);
             }
         }
 
+
+
         private void btnExecuteRequest_Click(object sender, EventArgs e)
         {
-            
+
             // executes a prepared request
-            if (DiogenesSharedContext.Singleton.Channel is null) 
+            if (DiogenesSharedContext.Singleton.Channel is null)
             {
                 Console.WriteLine($"An active ECU connection is required for this request");
                 return;
