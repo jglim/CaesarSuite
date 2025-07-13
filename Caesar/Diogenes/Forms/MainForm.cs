@@ -54,10 +54,11 @@ namespace Diogenes.Forms
         public MainForm()
         {
             InitializeComponent();
+            DataGridViewCellCopy.AddCopyCellMenu(dgvPreConnectComParams);
 
             dgvPreConnectComParams.DataSource = DiogenesSharedContext.Singleton.PreConnectParameters;
             dgvPreConnectComParams.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            
+
             UpdateUIForConnectionStateChange();
             UpdateUIForCbfLoadUnload();
             UpdateUIForVariantChange();

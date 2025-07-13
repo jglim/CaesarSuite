@@ -28,7 +28,7 @@ namespace Diogenes.Forms
                 dgvVcFragments.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
             dgvVcFragments.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
+            DataGridViewCellCopy.AddCopyCellMenu(dgvVcFragments);
         }
 
         public void NotifyCbfOrVariantChange()
