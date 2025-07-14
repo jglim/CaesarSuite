@@ -51,7 +51,7 @@ namespace Diogenes.Forms
         FlashView FlashViewControl = null;
         VarcodingView VarcodingViewControl = null;
 
-        public MainForm()
+        public MainForm(string commandLinePath)
         {
             InitializeComponent();
             DataGridViewCellCopy.AddCopyCellMenu(dgvPreConnectComParams);
@@ -87,7 +87,12 @@ namespace Diogenes.Forms
             VarcodingViewControl.Dock = DockStyle.Fill;
             tabVarCoding.Controls.Add(VarcodingViewControl);
 
-            this.Text = $"Diogenes II (Build: {LinkerTime.GetLinkerTime().ToShortDateString()})";
+            Text = $"Diogenes II (Build: {LinkerTime.GetLinkerTime().ToShortDateString()})";
+
+            if (!String.IsNullOrEmpty(commandLinePath))
+            {
+                LoadCBF(commandLinePath);
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)

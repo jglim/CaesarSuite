@@ -84,9 +84,12 @@ namespace Diogenes
 
         public void RemoveEntry(string path)
         {
-            Properties.Settings.Default.RecentlyOpenedCBF.Remove(path);
-            Properties.Settings.Default.Save();
-            PopulateMenu();
+            int index = Properties.Settings.Default.RecentlyOpenedCBF.IndexOf(path);
+            if (index != -1) {
+                Properties.Settings.Default.RecentlyOpenedCBF.Remove(path);
+                Properties.Settings.Default.Save();
+                PopulateMenu();
+            }
         }
     }
 }
