@@ -1,4 +1,4 @@
-﻿
+
 namespace Diogenes.Forms
 {
     partial class MemoryEditorView
@@ -82,7 +82,7 @@ namespace Diogenes.Forms
             this.groupBox1.Size = new System.Drawing.Size(244, 52);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Source Address (Hex)";
+            this.groupBox1.Text = "Start Address (Hex)";
             // 
             // txtSrcAddress
             // 
@@ -389,7 +389,7 @@ namespace Diogenes.Forms
             this.groupBox2.Size = new System.Drawing.Size(244, 76);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Destination (Hex)";
+            this.groupBox2.Text = "End Address (Hex)";
             // 
             // rbSize
             // 
