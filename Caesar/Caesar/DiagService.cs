@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -98,6 +98,7 @@ namespace Caesar
         private int Z_Offset;
 
         public byte[] RequestBytes;
+        public byte[] DSCBytes;
 
         private long BaseAddress;
         public int PoolIndex;
@@ -241,15 +242,15 @@ namespace Caesar
             OutputPreparations = new List<List<DiagPreparation>>();
             long outPresBaseAddress = BaseAddress + W_OutPres_Offset;
 
-            // FIXME: run it through the entire dbr cbf directory, check if any file actually has more than 1 item in ResultPresentationSet
+            // Most observed CBFs expose a single result-presentation set, but the parser keeps the outer list
+            // because the file format allows multiple groups here.
             for (int presIndex = 0; presIndex < W_OutPres_Count; presIndex++)
             {
                 reader.BaseStream.Seek(outPresBaseAddress + (presIndex * 8), SeekOrigin.Begin);
-                // FIXME
-                int resultPresentationCount = reader.ReadInt32(); // index? if true, will fix the "wtf" list<list<diagprep>>
+                int resultPresentationCount = reader.ReadInt32(); // entry count for this result-presentation group
                 int resultPresentationOffset = reader.ReadInt32();
 
-                List<DiagPreparation> ResultPresentationSet = new List<DiagPreparation>();
+                List<DiagPreparation> resultPresentationSet = new List<DiagPreparation>();
                 for (int presInnerIndex = 0; presInnerIndex < resultPresentationCount; presInnerIndex++)
                 {
                     long presentationTableOffset = outPresBaseAddress + resultPresentationOffset;
@@ -261,9 +262,9 @@ namespace Caesar
                     ushort prepEntryMode = reader.ReadUInt16(); // file: 8 (W)
 
                     DiagPreparation preparation = new DiagPreparation(reader, language, presentationTableOffset + prepEntryOffset, prepEntryBitPos, prepEntryMode, parentEcu, this);
-                    ResultPresentationSet.Add(preparation);
+                    resultPresentationSet.Add(preparation);
                 }
-                OutputPreparations.Add(ResultPresentationSet);
+                OutputPreparations.Add(resultPresentationSet);
             }
 
             DiagComParameters = new List<ComParameter>();
@@ -329,7 +330,7 @@ namespace Caesar
                     reader.BaseStream.Seek(dscRecordOffset, SeekOrigin.Begin);
 
                     // Console.WriteLine($"DSC {qualifierName} @ 0x{dscTableBaseAddress:X8} {idk1}/{idk2} pool @ 0x{dscPoolOffset:X}, name: {dscQualifier}");
-                    byte[] dscBytes = reader.ReadBytes(dscRecordSize);
+                    DSCBytes = reader.ReadBytes(dscRecordSize);
 #if DEBUG
                     //string dscName = $"{parentEcu.Qualifier}_{Qualifier}_{dscIndex}.pal";
                     //Console.WriteLine($"Exporting DSC: {dscName}");

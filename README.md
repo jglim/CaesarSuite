@@ -56,6 +56,16 @@ At this point, Diogenes can:
 - Complete a seed-key challenge with a target ECU (✅ : Paired with [UnlockECU](https://github.com/jglim/UnlockECU))
 - Write a new variant-coding string on a target ECU (✅* : Experimental, reuses fingerprints, still needs more testing)
 
+(New2:)
+- Can translate whole CBF files to english or single lines using CTRL + T.
+- Automatically unlock known ECUs, or manually using Unlock ECUs menu. (thanks to https://github.com/jglim/UnlockECU)
+- Inspect DSC function (CBF/PAL) that dissasemble the blob, makes it easier to fully understand. 
+- TX/RX status, lots of informative logs on the connexion.
+- SCAN canbus function.
+
+See  Diogenes Menu Reference.md for details.
+
+
 Diogenes will be "complete" when it can:
 
 - ❌: Test on an ECU that is installed in a vehicle. So far, tests have been made on a real ECU, but only on the bench.

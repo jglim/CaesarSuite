@@ -1,4 +1,4 @@
-﻿namespace Diogenes
+namespace Diogenes
 {
     partial class MainForm
     {
@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblConnectionType = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblTxActivity = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblRxActivity = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadCBFFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +84,9 @@
             this.pbResourcePlaceholder = new System.Windows.Forms.PictureBox();
             this.txtJ2534Input = new System.Windows.Forms.TextBox();
             this.tmrBlinkConnectionMenu = new System.Windows.Forms.Timer(this.components);
+            this.tmrTrafficIndicators = new System.Windows.Forms.Timer(this.components);
             this.fixCBFChecksumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.translateCBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -95,7 +99,9 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblConnectionType});
+            this.lblConnectionType,
+            this.lblTxActivity,
+            this.lblRxActivity});
             this.statusStrip1.Location = new System.Drawing.Point(0, 706);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1123, 22);
@@ -105,8 +111,23 @@
             // lblConnectionType
             // 
             this.lblConnectionType.Name = "lblConnectionType";
+            this.lblConnectionType.Spring = true;
             this.lblConnectionType.Size = new System.Drawing.Size(201, 17);
             this.lblConnectionType.Text = "No interface selected (Disconnected)";
+            // 
+            // lblTxActivity
+            // 
+            this.lblTxActivity.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblTxActivity.Name = "lblTxActivity";
+            this.lblTxActivity.Size = new System.Drawing.Size(30, 17);
+            this.lblTxActivity.Text = "TX ●";
+            // 
+            // lblRxActivity
+            // 
+            this.lblRxActivity.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblRxActivity.Name = "lblRxActivity";
+            this.lblRxActivity.Size = new System.Drawing.Size(31, 17);
+            this.lblRxActivity.Text = "RX ●";
             // 
             // menuStrip1
             // 
@@ -269,7 +290,8 @@
             this.genericDebugToolStripMenuItem,
             this.listVariantIDsToolStripMenuItem,
             this.downloadBlocksToolStripMenuItem,
-            this.fixCBFChecksumToolStripMenuItem});
+            this.fixCBFChecksumToolStripMenuItem,
+            this.translateCBFToolStripMenuItem});
             this.eCUToolStripMenuItem.Name = "eCUToolStripMenuItem";
             this.eCUToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.eCUToolStripMenuItem.Text = "Tools";
@@ -372,8 +394,8 @@
             // 
             this.dSCDebugToolStripMenuItem.Name = "dSCDebugToolStripMenuItem";
             this.dSCDebugToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.dSCDebugToolStripMenuItem.Text = "DSC Debug";
-            this.dSCDebugToolStripMenuItem.Visible = false;
+            this.dSCDebugToolStripMenuItem.Text = "Inspect DSC (PAL/CBF)...";
+            this.dSCDebugToolStripMenuItem.Visible = true;
             this.dSCDebugToolStripMenuItem.Click += new System.EventHandler(this.dSCDebugToolStripMenuItem_Click);
             // 
             // genericDebugToolStripMenuItem
@@ -475,6 +497,7 @@
             this.tvMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.tvMain_DragDrop);
             this.tvMain.DragEnter += new System.Windows.Forms.DragEventHandler(this.tvMain_DragEnter);
             this.tvMain.DoubleClick += new System.EventHandler(this.tvMain_DoubleClick);
+            this.tvMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tvMain_KeyDown);
             // 
             // txtLog
             // 
@@ -536,12 +559,25 @@
             this.tmrBlinkConnectionMenu.Interval = 60;
             this.tmrBlinkConnectionMenu.Tick += new System.EventHandler(this.tmrBlinkConnectionMenu_Tick);
             // 
+            // tmrTrafficIndicators
+            // 
+            this.tmrTrafficIndicators.Enabled = true;
+            this.tmrTrafficIndicators.Interval = 75;
+            this.tmrTrafficIndicators.Tick += new System.EventHandler(this.tmrTrafficIndicators_Tick);
+            // 
             // fixCBFChecksumToolStripMenuItem
             // 
             this.fixCBFChecksumToolStripMenuItem.Name = "fixCBFChecksumToolStripMenuItem";
             this.fixCBFChecksumToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.fixCBFChecksumToolStripMenuItem.Text = "Fix CBF Checksum";
             this.fixCBFChecksumToolStripMenuItem.Click += new System.EventHandler(this.fixCBFChecksumToolStripMenuItem_Click);
+            // 
+            // translateCBFToolStripMenuItem
+            // 
+            this.translateCBFToolStripMenuItem.Name = "translateCBFToolStripMenuItem";
+            this.translateCBFToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.translateCBFToolStripMenuItem.Text = "Translate CBF Strings";
+            this.translateCBFToolStripMenuItem.Click += new System.EventHandler(this.translateCBFToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -577,6 +613,8 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblConnectionType;
+        private System.Windows.Forms.ToolStripStatusLabel lblTxActivity;
+        private System.Windows.Forms.ToolStripStatusLabel lblRxActivity;
         private System.Windows.Forms.TreeView tvMain;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
@@ -602,6 +640,7 @@
         private System.Windows.Forms.ToolStripMenuItem clearConsoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.Timer tmrBlinkConnectionMenu;
+        private System.Windows.Forms.Timer tmrTrafficIndicators;
         private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyConsoleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uDSHexEditorToolStripMenuItem;
@@ -627,6 +666,7 @@
         private System.Windows.Forms.ToolStripMenuItem listVariantIDsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem downloadBlocksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fixCBFChecksumToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem translateCBFToolStripMenuItem;
     }
 }
 

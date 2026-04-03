@@ -101,6 +101,37 @@ namespace Caesar
         [Newtonsoft.Json.JsonIgnore]
         public string ECUDescription { get { return Language.GetString(EcuDescription_CTF); } }
 
+        public List<ECUConnectionProfile> GetConnectionProfiles()
+        {
+            List<ECUConnectionProfile> profiles = new List<ECUConnectionProfile>();
+
+            foreach (ECUInterfaceSubtype subtype in ECUInterfaceSubtypes)
+            {
+                ECUConnectionProfile profile = new ECUConnectionProfile();
+                profile.Qualifier = subtype.Qualifier ?? string.Empty;
+                profile.CommunicationParameters = subtype.GetResolvedCommunicationParameterValues();
+
+                int? parentInterfaceIndex = subtype.GetResolvedParentInterfaceIndex();
+                if (parentInterfaceIndex.HasValue && parentInterfaceIndex.Value >= 0 && parentInterfaceIndex.Value < ECUInterfaces.Count)
+                {
+                    profile.InterfaceQualifier = ECUInterfaces[parentInterfaceIndex.Value].Qualifier ?? string.Empty;
+                }
+                else if (ECUInterfaces.Count == 1)
+                {
+                    profile.InterfaceQualifier = ECUInterfaces[0].Qualifier ?? string.Empty;
+                }
+
+                profiles.Add(profile);
+            }
+
+            return profiles;
+        }
+
+        public ECUConnectionProfile GetConnectionProfileByName(string qualifier)
+        {
+            return GetConnectionProfiles().Find(x => x.Qualifier == qualifier);
+        }
+
 
         public void Restore(CTFLanguage language, CaesarContainer parentContainer) 
         {

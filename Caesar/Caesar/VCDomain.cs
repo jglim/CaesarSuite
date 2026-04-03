@@ -30,9 +30,12 @@ namespace Caesar
 
         public long BaseAddress;
         public int Index;
+        [Newtonsoft.Json.JsonIgnore]
+        private CTFLanguage Language;
 
         public void Restore(CTFLanguage language, ECU parentEcu) 
         {
+            Language = language;
             ParentECU = parentEcu;
             foreach (VCFragment fragment in VCFragments) 
             {
@@ -48,6 +51,7 @@ namespace Caesar
             ParentECU = parentEcu;
             BaseAddress = baseAddress;
             Index = variantCodingDomainEntry;
+            Language = language;
 
             /*
             byte[] variantCodingPool = parentEcu.ReadVarcodingPool(reader);
@@ -143,7 +147,7 @@ namespace Caesar
                     bitCursor++;
                     if (bitCursor > expectedLengthInBits) 
                     {
-                        throw new Exception("wtf");
+                        throw new InvalidOperationException("Variant-coding fragment coverage exceeded the expected payload length.");
                     }
                 }
                 else 
@@ -152,6 +156,16 @@ namespace Caesar
                     fragments.Remove(result);
                 }
             }
+        }
+
+        public string GetDescription()
+        {
+            return Language?.GetString(Description_CTF) ?? string.Empty;
+        }
+
+        public string GetName()
+        {
+            return Language?.GetString(Name_CTF) ?? string.Empty;
         }
 
         public void PrintDebug() 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,6 +11,7 @@ using Caesar;
 using System.IO;
 using Diogenes.Properties;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Diogenes.SecurityAccess;
 
 namespace Diogenes
@@ -28,6 +29,24 @@ namespace Diogenes
         List<CaesarContainer> Containers = new List<CaesarContainer>();
         ImageList treeImages = null;
         TextboxWriter LogTextbox;
+        private int BusyOperationDepth = 0;
+        private string LastConnectionStateDescription = "No interface selected (Disconnected)";
+        private const int TrafficFlashDurationMs = 180;
+        private long LastTxTrafficTicks = 0;
+        private long LastRxTrafficTicks = 0;
+        private ToolStripMenuItem nativeUnlockToolStripMenuItem;
+        private readonly Dictionary<TreeNode, TreeNodeMetadata> treeNodeMetadata = new Dictionary<TreeNode, TreeNodeMetadata>();
+
+        private sealed class TreeNodeMetadata
+        {
+            public string OriginalText;
+            public bool PreferAssociatedDescription;
+            public ECU Ecu;
+            public ECUVariant Variant;
+            public ECUInterfaceSubtype InterfaceSubtype;
+            public VCDomain VCDomain;
+            public DiagService DiagService;
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -38,13 +57,111 @@ namespace Diogenes
             genericDebugToolStripMenuItem.Visible = false;
             downloadBlocksToolStripMenuItem.Visible = false;
 #endif
+            EnsureUnlockMenuItems();
             SetDisconnectedState(false);
+        }
+
+        private void EnsureUnlockMenuItems()
+        {
+            if (nativeUnlockToolStripMenuItem == null)
+            {
+                nativeUnlockToolStripMenuItem = new ToolStripMenuItem("Unlock ECU...");
+                nativeUnlockToolStripMenuItem.Click += nativeUnlockToolStripMenuItem_Click;
+            }
+
+            if (eCUToolStripMenuItem.DropDownItems.Contains(nativeUnlockToolStripMenuItem))
+            {
+                return;
+            }
+
+            int insertIndex = eCUToolStripMenuItem.DropDownItems.IndexOf(setSecurityLevelToolStripMenuItem);
+            if (insertIndex >= 0)
+            {
+                if (!eCUToolStripMenuItem.DropDownItems.Contains(nativeUnlockToolStripMenuItem))
+                {
+                    eCUToolStripMenuItem.DropDownItems.Insert(insertIndex + 1, nativeUnlockToolStripMenuItem);
+                }
+            }
+            else
+            {
+                if (!eCUToolStripMenuItem.DropDownItems.Contains(nativeUnlockToolStripMenuItem))
+                {
+                    eCUToolStripMenuItem.DropDownItems.Insert(0, nativeUnlockToolStripMenuItem);
+                }
+            }
         }
 
         private void RedirectConsole()
         {
             LogTextbox = new TextboxWriter(txtLog);
             Console.SetOut(LogTextbox);
+        }
+
+        private void AttachConnectionEvents(ECUConnection connection)
+        {
+            if (connection == null)
+            {
+                return;
+            }
+
+            connection.ConnectionStateChangeEvent += ConnectionStateChangedHandler;
+            connection.TrafficActivityEvent += ConnectionTrafficActivityHandler;
+        }
+
+        private void DetachConnectionEvents(ECUConnection connection)
+        {
+            if (connection == null)
+            {
+                return;
+            }
+
+            connection.ConnectionStateChangeEvent -= ConnectionStateChangedHandler;
+            connection.TrafficActivityEvent -= ConnectionTrafficActivityHandler;
+        }
+
+        private void SetActiveConnection(ECUConnection newConnection)
+        {
+            DetachConnectionEvents(Connection);
+            Connection = newConnection;
+            AttachConnectionEvents(Connection);
+            ResetTrafficIndicators();
+        }
+
+        private void ResetTrafficIndicators()
+        {
+            Interlocked.Exchange(ref LastTxTrafficTicks, 0);
+            Interlocked.Exchange(ref LastRxTrafficTicks, 0);
+            UpdateTrafficIndicators();
+        }
+
+        private void ConnectionTrafficActivityHandler(ECUConnection.TrafficDirection direction)
+        {
+            long nowTicks = DateTime.UtcNow.Ticks;
+            if (direction == ECUConnection.TrafficDirection.Tx)
+            {
+                Interlocked.Exchange(ref LastTxTrafficTicks, nowTicks);
+            }
+            else
+            {
+                Interlocked.Exchange(ref LastRxTrafficTicks, nowTicks);
+            }
+        }
+
+        private bool IsTrafficIndicatorActive(long lastTrafficTicks)
+        {
+            if (lastTrafficTicks == 0)
+            {
+                return false;
+            }
+
+            double elapsedMs = new TimeSpan(DateTime.UtcNow.Ticks - lastTrafficTicks).TotalMilliseconds;
+            return elapsedMs <= TrafficFlashDurationMs;
+        }
+
+        private void UpdateTrafficIndicators()
+        {
+            lblTxActivity.ForeColor = IsTrafficIndicatorActive(Interlocked.Read(ref LastTxTrafficTicks)) ? Color.OrangeRed : SystemColors.GrayText;
+            lblRxActivity.ForeColor = IsTrafficIndicatorActive(Interlocked.Read(ref LastRxTrafficTicks)) ? Color.ForestGreen : SystemColors.GrayText;
         }
 
         private void LoadContainers()
@@ -109,6 +226,124 @@ namespace Diogenes
             }
         }
 
+        private void RegisterTreeNodeMetadata(TreeNode node, TreeNodeMetadata metadata)
+        {
+            if ((node is null) || (metadata is null))
+            {
+                return;
+            }
+
+            treeNodeMetadata[node] = metadata;
+        }
+
+        private TreeNodeMetadata GetTreeNodeMetadata(TreeNode node)
+        {
+            if ((node != null) && treeNodeMetadata.TryGetValue(node, out TreeNodeMetadata metadata))
+            {
+                return metadata;
+            }
+
+            return null;
+        }
+
+        private static string BuildDiagServiceNodeText(DiagService diagService, string displayText = null)
+        {
+            if (diagService is null)
+            {
+                return displayText ?? string.Empty;
+            }
+
+            string resolvedDisplayText = string.IsNullOrWhiteSpace(displayText) ? diagService.Qualifier : displayText.Trim();
+            return $"{resolvedDisplayText} [CAL {diagService.ClientAccessLevel}, SAL {diagService.SecurityAccessLevel}]";
+        }
+
+        private static string GetFirstMeaningfulText(params string[] candidates)
+        {
+            foreach (string candidate in candidates)
+            {
+                if (!string.IsNullOrWhiteSpace(candidate))
+                {
+                    return candidate.Trim();
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private static string GetNodeLabelWithoutAccessSuffix(TreeNode node, TreeNodeMetadata metadata)
+        {
+            if (!string.IsNullOrWhiteSpace(metadata?.OriginalText))
+            {
+                return metadata.OriginalText;
+            }
+
+            return node?.Text ?? string.Empty;
+        }
+
+        private string GetPreferredNodeTranslationSource(TreeNode node)
+        {
+            TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+            if (metadata?.PreferAssociatedDescription == true && metadata.DiagService != null)
+            {
+                return GetFirstMeaningfulText(
+                    metadata.DiagService.GetDescription(),
+                    metadata.DiagService.GetName(),
+                    metadata.OriginalText,
+                    node?.Text);
+            }
+
+            if (metadata?.PreferAssociatedDescription == true && metadata.VCDomain != null)
+            {
+                return GetFirstMeaningfulText(
+                    metadata.VCDomain.GetDescription(),
+                    metadata.VCDomain.GetName(),
+                    metadata.OriginalText,
+                    node?.Text);
+            }
+
+            if (metadata?.PreferAssociatedDescription == true && metadata.Variant != null)
+            {
+                return GetFirstMeaningfulText(
+                    metadata.Variant.GetDescription(),
+                    metadata.Variant.GetName(),
+                    metadata.OriginalText,
+                    node?.Text);
+            }
+
+            if (metadata?.PreferAssociatedDescription == true && metadata.InterfaceSubtype != null)
+            {
+                return GetFirstMeaningfulText(
+                    metadata.InterfaceSubtype.GetDescription(),
+                    metadata.InterfaceSubtype.GetName(),
+                    metadata.OriginalText,
+                    node?.Text);
+            }
+
+            if (metadata?.PreferAssociatedDescription == true && metadata.Ecu != null)
+            {
+                return GetFirstMeaningfulText(
+                    metadata.Ecu.ECUDescription,
+                    metadata.OriginalText,
+                    node?.Text);
+            }
+
+            return GetFirstMeaningfulText(node?.Text);
+        }
+
+        private void ApplyTranslatedNodeText(TreeNode node, string translatedText)
+        {
+            TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+            string resolvedTranslation = GetFirstMeaningfulText(translatedText, GetNodeLabelWithoutAccessSuffix(node, metadata));
+
+            if (metadata?.DiagService != null)
+            {
+                node.Text = BuildDiagServiceNodeText(metadata.DiagService, resolvedTranslation);
+                return;
+            }
+
+            node.Text = resolvedTranslation;
+        }
+
         private void AddDiagServicesToNode(TreeNode parentNode, ECUVariant variant)
         {
 
@@ -140,8 +375,16 @@ namespace Diogenes
             {
                 DiagService currentDiagService = variant.DiagServices[i];
 
-                TreeNode diagNode = new TreeNode(currentDiagService.Qualifier, 9, 9);
+                TreeNode diagNode = new TreeNode(BuildDiagServiceNodeText(currentDiagService), 9, 9);
                 diagNode.Tag = i.ToString();
+                RegisterTreeNodeMetadata(diagNode, new TreeNodeMetadata()
+                {
+                    OriginalText = currentDiagService.Qualifier,
+                    PreferAssociatedDescription = true,
+                    Ecu = variant.ParentECU,
+                    Variant = variant,
+                    DiagService = currentDiagService,
+                });
 
                 if ((currentDiagService.RequestBytes.Length > 1) && (currentDiagService.RequestBytes[0] == 0x27))
                 {
@@ -224,6 +467,7 @@ namespace Diogenes
         {
             InitializeTree();
             tvMain.Nodes.Clear();
+            treeNodeMetadata.Clear();
 
             foreach (CaesarContainer container in Containers)
             {
@@ -231,9 +475,20 @@ namespace Diogenes
                 {
                     TreeNode ecuNode = new TreeNode(ecu.Qualifier, 1, 1);
                     ecuNode.Tag = nameof(ECU);
+                    RegisterTreeNodeMetadata(ecuNode, new TreeNodeMetadata()
+                    {
+                        OriginalText = ecu.Qualifier,
+                        PreferAssociatedDescription = true,
+                        Ecu = ecu,
+                    });
 
                     TreeNode execDiagAtRoot = new TreeNode("Execute Diagnostic Service (Root)", 21, 21);
                     execDiagAtRoot.Tag = $"{nameof(DiagService)}:{nameof(ECU)}:{ecu.Qualifier}";
+                    RegisterTreeNodeMetadata(execDiagAtRoot, new TreeNodeMetadata()
+                    {
+                        OriginalText = "Execute Diagnostic Service (Root)",
+                        Ecu = ecu,
+                    });
                     ecuNode.Nodes.Add(execDiagAtRoot);
 
                     AddEcuMetadataToNode(ecuNode, container, ecu);
@@ -247,9 +502,22 @@ namespace Diogenes
                         }
                         TreeNode interfaceNode = new TreeNode(subtype.Qualifier, 5, 5);
                         interfaceNode.Tag = "";
+                        RegisterTreeNodeMetadata(interfaceNode, new TreeNodeMetadata()
+                        {
+                            OriginalText = subtype.Qualifier,
+                            PreferAssociatedDescription = true,
+                            Ecu = ecu,
+                            InterfaceSubtype = subtype,
+                        });
 
                         TreeNode initiateContactNode = new TreeNode("Initiate Contact", 18, 18);
                         initiateContactNode.Tag = $"{nameof(ECUInterfaceSubtype)}:{subtype.Qualifier}";
+                        RegisterTreeNodeMetadata(initiateContactNode, new TreeNodeMetadata()
+                        {
+                            OriginalText = "Initiate Contact",
+                            Ecu = ecu,
+                            InterfaceSubtype = subtype,
+                        });
                         interfaceNode.Nodes.Add(initiateContactNode);
 
                         TreeNode comparamParentNode = new TreeNode("Communications Parameters", 6, 6);
@@ -275,8 +543,15 @@ namespace Diogenes
                     {
                         if (ds.DataClass_ServiceType == (ushort)DiagService.ServiceType.Session)
                         {
-                            TreeNode dsNode = new TreeNode(ds.Qualifier, 12, 12);
+                            TreeNode dsNode = new TreeNode(BuildDiagServiceNodeText(ds), 12, 12);
                             dsNode.Tag = ds.Qualifier;
+                            RegisterTreeNodeMetadata(dsNode, new TreeNodeMetadata()
+                            {
+                                OriginalText = ds.Qualifier,
+                                PreferAssociatedDescription = true,
+                                Ecu = ecu,
+                                DiagService = ds,
+                            });
                             sessionContainer.Nodes.Add(dsNode);
                         }
                     }
@@ -286,6 +561,13 @@ namespace Diogenes
                     {
                         TreeNode ecuVariantNode = new TreeNode(variant.Qualifier, 2, 2);
                         ecuVariantNode.Tag = nameof(ECUVariant);
+                        RegisterTreeNodeMetadata(ecuVariantNode, new TreeNodeMetadata()
+                        {
+                            OriginalText = variant.Qualifier,
+                            PreferAssociatedDescription = true,
+                            Ecu = ecu,
+                            Variant = variant,
+                        });
 
                         // check if variant should be filtered
                         if (Connection?.VariantIsAvailable ?? false) 
@@ -312,6 +594,12 @@ namespace Diogenes
                         // exec diag button
                         TreeNode execDiagAtVariant = new TreeNode("Execute Diagnostic Service", 21, 21);
                         execDiagAtVariant.Tag = $"{nameof(DiagService)}:{nameof(ECUVariant)}:{variant.Qualifier}";
+                        RegisterTreeNodeMetadata(execDiagAtVariant, new TreeNodeMetadata()
+                        {
+                            OriginalText = "Execute Diagnostic Service",
+                            Ecu = ecu,
+                            Variant = variant,
+                        });
                         ecuVariantNode.Nodes.Add(execDiagAtVariant);
 
                         // metadata
@@ -334,11 +622,25 @@ namespace Diogenes
                         {
                             TreeNode vcDomainNode = new TreeNode(domain.Qualifier, 3, 3);
                             vcDomainNode.Tag = nameof(VCDomain);
+                            RegisterTreeNodeMetadata(vcDomainNode, new TreeNodeMetadata()
+                            {
+                                OriginalText = domain.Qualifier,
+                                PreferAssociatedDescription = true,
+                                Ecu = ecu,
+                                Variant = variant,
+                                VCDomain = domain,
+                            });
                             ecuVariantNode.Nodes.Add(vcDomainNode);
                         }
 
                         TreeNode backupNode = new TreeNode("Backup Variant Strings", 3, 3);
                         backupNode.Tag = "VCBackup";
+                        RegisterTreeNodeMetadata(backupNode, new TreeNodeMetadata()
+                        {
+                            OriginalText = "Backup Variant Strings",
+                            Ecu = ecu,
+                            Variant = variant,
+                        });
                         ecuVariantNode.Nodes.Add(backupNode);
 
                         ecuNode.Nodes.Add(ecuVariantNode);
@@ -395,6 +697,13 @@ namespace Diogenes
         {
             if (node.Parent != null && node.Parent.Tag.ToString() == "Session")
             {
+                TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+                if (metadata?.DiagService != null)
+                {
+                    PresentRunDiagDialog(metadata.DiagService);
+                    return;
+                }
+
                 string ecuName = node.Parent.Parent.Text;
                 string serviceName = node.Tag.ToString();
 
@@ -424,18 +733,22 @@ namespace Diogenes
             }
             if (node.Parent.Tag.ToString().StartsWith(validNodePrefix))
             {
-                string variantName = node.Parent.Tag.ToString().Substring(validNodePrefix.Length);
-
-                ECUVariant foundVariant = null;
-                foreach (CaesarContainer container in Containers)
+                TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+                ECUVariant foundVariant = metadata?.Variant;
+                if (foundVariant is null)
                 {
-                    foreach (ECU ecu in container.CaesarECUs)
+                    string variantName = node.Parent.Tag.ToString().Substring(validNodePrefix.Length);
+
+                    foreach (CaesarContainer container in Containers)
                     {
-                        foreach (ECUVariant variant in ecu.ECUVariants)
+                        foreach (ECU ecu in container.CaesarECUs)
                         {
-                            if (variant.Qualifier == variantName)
+                            foreach (ECUVariant variant in ecu.ECUVariants)
                             {
-                                foundVariant = variant;
+                                if (variant.Qualifier == variantName)
+                                {
+                                    foundVariant = variant;
+                                }
                             }
                         }
                     }
@@ -443,7 +756,11 @@ namespace Diogenes
                 // variant found, exec the diag service
                 if (foundVariant != null)
                 {
-                    DiagService ds = foundVariant.DiagServices[int.Parse(node.Tag.ToString())];
+                    DiagService ds = metadata?.DiagService;
+                    if (ds is null)
+                    {
+                        ds = foundVariant.DiagServices[int.Parse(node.Tag.ToString())];
+                    }
 
                     bool connectionSupportsUnlocking = Connection?.ConnectionProtocol?.SupportsUnlocking() ?? false;
 
@@ -474,12 +791,126 @@ namespace Diogenes
             }
         }
 
+        private void BeginBusyOperation(string statusText)
+        {
+            BusyOperationDepth++;
+            UseWaitCursor = true;
+            tvMain.Enabled = false;
+            txtJ2534Input.Enabled = false;
+            lblConnectionType.Text = statusText;
+        }
+
+        private void UpdateBusyOperationStatus(string statusText)
+        {
+            if (BusyOperationDepth > 0)
+            {
+                lblConnectionType.Text = statusText;
+            }
+        }
+
+        private void EndBusyOperation()
+        {
+            if (BusyOperationDepth <= 0)
+            {
+                return;
+            }
+
+            BusyOperationDepth--;
+            if (BusyOperationDepth == 0)
+            {
+                UseWaitCursor = false;
+                tvMain.Enabled = true;
+                RestoreConnectionStateDescription();
+            }
+        }
+
+        private void RestoreConnectionStateDescription()
+        {
+            lblConnectionType.Text = LastConnectionStateDescription;
+            txtJ2534Input.Enabled = Connection.State > ECUConnection.ConnectionState.DeviceSelectedPendingChannelConnection;
+        }
+
+        private async Task RunVariantCodingBackupAsync(TreeNode node)
+        {
+            if (Connection?.ConnectionProtocol is null)
+            {
+                MessageBox.Show("Please initiate contact with a target first.");
+                return;
+            }
+
+            if (node?.Parent?.Parent is null)
+            {
+                return;
+            }
+
+            TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+            string variantName = metadata?.Variant?.Qualifier ?? node.Parent.Text;
+            string ecuName = metadata?.Ecu?.Qualifier ?? node.Parent.Parent.Text;
+            Console.WriteLine($"Starting VC backup for {ecuName} ({variantName})");
+
+            IProgress<(int current, int total, string status)> progress = new Progress<(int current, int total, string status)>(update =>
+            {
+                UpdateBusyOperationStatus($"Backing up variant strings ({update.current}/{update.total}): {update.status}");
+            });
+
+            string document = null;
+            bool busyEnded = false;
+
+            BeginBusyOperation($"Backing up variant strings for {variantName}...");
+            try
+            {
+                document = await Task.Run(() =>
+                    VCReport.GenerateVariantCodingBackupDocument(
+                        ecuName,
+                        variantName,
+                        Connection,
+                        Containers,
+                        (current, total, status) => progress.Report((current, total, status))));
+
+                EndBusyOperation();
+                busyEnded = true;
+
+                lblConnectionType.Text = $"Variant string backup ready for {variantName}. Choose where to save it.";
+
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Title = "Specify a location to save your new VC backup";
+                sfd.Filter = "HTML file (*.html)|*.html|All files (*.*)|*.*";
+                sfd.FileName = $"VC_{variantName}_{DateTime.Now:yyyyMMdd_HHmm}.html";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllText(sfd.FileName, document);
+                    Console.WriteLine($"VC backup saved to {sfd.FileName}");
+                    MessageBox.Show($"Backup successfully saved to {sfd.FileName}", "Export complete");
+                }
+                else
+                {
+                    Console.WriteLine("VC backup export was cancelled by the user.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"VC backup failed: {ex.GetType().Name}: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
+                MessageBox.Show($"Variant string backup failed:\r\n\r\n{ex.Message}", "Backup failed");
+            }
+            finally
+            {
+                if (!busyEnded)
+                {
+                    EndBusyOperation();
+                }
+
+                RestoreConnectionStateDescription();
+            }
+        }
+
 
         private void treeViewSelectVariantCoding(TreeNode node) 
         {
-            string domainName = node.Text;
-            string variantName = node.Parent.Text;
-            string ecuName = node.Parent.Parent.Text;
+            TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+            string domainName = metadata?.VCDomain?.Qualifier ?? node.Text;
+            string variantName = metadata?.Variant?.Qualifier ?? node.Parent.Text;
+            string ecuName = metadata?.Ecu?.Qualifier ?? node.Parent.Parent.Text;
 
             Console.WriteLine($"Starting VC Dialog for {ecuName} ({variantName}) with domain as {domainName}");
             CaesarContainer container = Containers.Find(x => x.GetECUVariantByName(variantName) != null);
@@ -492,7 +923,7 @@ namespace Diogenes
             }
         }
 
-        private void tvMain_DoubleClick(object sender, EventArgs e)
+        private async void tvMain_DoubleClick(object sender, EventArgs e)
         {
             TreeNode node = tvMain.SelectedNode;
             if (node is null)
@@ -500,21 +931,22 @@ namespace Diogenes
                 return;
             }
 
-            if (node.Tag.ToString() == nameof(VCDomain))
+            if (node.Tag != null && node.Tag.ToString() == nameof(VCDomain))
             {
                 // variant coding
                 treeViewSelectVariantCoding(node);
             }
-            else if (node.Tag.ToString() == "VCBackup")
+            else if (node.Tag != null && node.Tag.ToString() == "VCBackup")
             {
                 // variant coding backup
-                VCReport.treeViewSelectVariantCodingBackup(node, Connection, Containers);
+                await RunVariantCodingBackupAsync(node);
             }
-            else if (node.Tag.ToString().StartsWith(nameof(ECUInterfaceSubtype)))
+            else if (node.Tag != null && node.Tag.ToString().StartsWith(nameof(ECUInterfaceSubtype)))
             {
                 // initiate contact
-                string connectionProfileName = node.Tag.ToString().Substring(nameof(ECUInterfaceSubtype).Length + 1);
-                string ecuName = node.Parent.Parent.Text;
+                TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+                string connectionProfileName = metadata?.InterfaceSubtype?.Qualifier ?? node.Tag.ToString().Substring(nameof(ECUInterfaceSubtype).Length + 1);
+                string ecuName = metadata?.Ecu?.Qualifier ?? node.Parent.Parent.Text;
 
                 foreach (CaesarContainer container in Containers)
                 {
@@ -538,7 +970,6 @@ namespace Diogenes
                             }
                             else 
                             {
-                                // uhoh
                                 Console.WriteLine($"ECU connection was unsuccessful : {response}");
                             }
                             break;
@@ -546,21 +977,31 @@ namespace Diogenes
                     }
                 }
             }
-            else if (node.Tag.ToString().StartsWith(nameof(DiagService)))
+            else if (node.Tag != null && node.Tag.ToString().StartsWith(nameof(DiagService)))
             {
                 // execute diag service (modal)
                 string diagOrigin = node.Tag.ToString().Substring(nameof(DiagService).Length + 1);
-                string variantName = "";
-                string ecuName = "";
+                TreeNodeMetadata metadata = GetTreeNodeMetadata(node);
+                string variantName = metadata?.Variant?.Qualifier ?? "";
+                string ecuName = metadata?.Ecu?.Qualifier ?? "";
 
                 if (diagOrigin.StartsWith($"{nameof(ECUVariant)}:"))
                 {
-                    variantName = node.Parent.Text;
-                    ecuName = node.Parent.Parent.Text;
+                    if (string.IsNullOrWhiteSpace(variantName))
+                    {
+                        variantName = node.Parent.Text;
+                    }
+                    if (string.IsNullOrWhiteSpace(ecuName))
+                    {
+                        ecuName = node.Parent.Parent.Text;
+                    }
                 }
                 else 
                 {
-                    ecuName = node.Parent.Text;
+                    if (string.IsNullOrWhiteSpace(ecuName))
+                    {
+                        ecuName = node.Parent.Text;
+                    }
                 }
 
                 foreach (CaesarContainer container in Containers)
@@ -680,6 +1121,14 @@ namespace Diogenes
             }
         }
 
+        private void nativeUnlockToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (UnlockEcuForm form = new UnlockEcuForm(Connection))
+            {
+                form.ShowDialog(this);
+            }
+        }
+
         private void debugJ2534ToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -707,8 +1156,7 @@ namespace Diogenes
             {
                 Connection.TryCleanup();
             }
-            Connection = new ECUConnection(caller.Tag.ToString(), caller.Text);
-            Connection.ConnectionStateChangeEvent += ConnectionStateChangedHandler;
+            SetActiveConnection(new ECUConnection(caller.Tag.ToString(), caller.Text));
             Connection.OpenDevice();
             // loadtree should not be necessary if the prior state was disconnected
             // LoadTree();
@@ -726,8 +1174,7 @@ namespace Diogenes
             {
                 Connection.TryCleanup();
             }
-            Connection = new ECUConnection();
-            Connection.ConnectionStateChangeEvent += ConnectionStateChangedHandler;
+            SetActiveConnection(new ECUConnection());
             if (refresh) 
             {
                 LoadTree();
@@ -736,8 +1183,12 @@ namespace Diogenes
 
         private void ConnectionStateChangedHandler(string newStateDescription)
         {
-            lblConnectionType.Text = newStateDescription;
-            txtJ2534Input.Enabled = Connection.State > ECUConnection.ConnectionState.DeviceSelectedPendingChannelConnection;
+            LastConnectionStateDescription = newStateDescription;
+            if (BusyOperationDepth == 0)
+            {
+                lblConnectionType.Text = newStateDescription;
+                txtJ2534Input.Enabled = Connection.State > ECUConnection.ConnectionState.DeviceSelectedPendingChannelConnection;
+            }
         }
 
         private void txtJ2534Input_KeyDown(object sender, KeyEventArgs e)
@@ -850,11 +1301,58 @@ namespace Diogenes
         {
             disconnectToolStripMenuItem.Enabled = Connection?.ConnectionDevice != null;
             j2534InterfacesToolStripMenuItem.Enabled = Connection?.ConnectionDevice == null;
+
+            // Add "Scan CAN Bus" item if not already present
+            const string scanMenuName = "scanCANBusToolStripMenuItem";
+            if (connectionToolStripMenuItem.DropDownItems.Find(scanMenuName, false).Length == 0)
+            {
+                var separator = new ToolStripSeparator();
+                connectionToolStripMenuItem.DropDownItems.Add(separator);
+
+                var scanItem = new ToolStripMenuItem("Scan CAN Bus...");
+                scanItem.Name = scanMenuName;
+                scanItem.Click += scanCANBusToolStripMenuItem_Click;
+                connectionToolStripMenuItem.DropDownItems.Add(scanItem);
+            }
+
+            // Enable scan only when a device is selected
+            var existingScanItem = connectionToolStripMenuItem.DropDownItems.Find(scanMenuName, false);
+            if (existingScanItem.Length > 0)
+            {
+                existingScanItem[0].Enabled = Connection?.ConnectionDevice != null;
+            }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SetDisconnectedState();
+        }
+
+        private void tmrTrafficIndicators_Tick(object sender, EventArgs e)
+        {
+            UpdateTrafficIndicators();
+        }
+
+        private void scanCANBusToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Connection == null || Connection.ConnectionDevice == null)
+            {
+                MessageBox.Show("Please select a J2534 interface from the Connection menu first.", "CAN Scanner");
+                return;
+            }
+
+            // Run on a background thread to keep the UI responsive
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                try
+                {
+                    CanScanner.RunScan(Connection);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Scanner] Unhandled error: {ex.Message}");
+                }
+            });
         }
 
         private void copyConsoleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -943,6 +1441,24 @@ namespace Diogenes
             foreach (string file in files)
             {
                 TryLoadFile(file);
+            }
+        }
+
+        private async void tvMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.T)
+            {
+                if (tvMain.SelectedNode != null)
+                {
+                    TreeNode targetNode = tvMain.SelectedNode;
+                    string translationSource = GetPreferredNodeTranslationSource(targetNode);
+                    string fallbackText = GetNodeLabelWithoutAccessSuffix(targetNode, GetTreeNodeMetadata(targetNode));
+
+                    targetNode.Text = "Translating...";
+                    string translated = await TranslatorService.TranslateTextAsync(translationSource);
+                    ApplyTranslatedNodeText(targetNode, string.IsNullOrWhiteSpace(translated) ? fallbackText : translated);
+                }
+                e.Handled = true;
             }
         }
 
@@ -1079,14 +1595,66 @@ namespace Diogenes
 
         private void dSCDebugToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Title = "Select a PAL File";
-            ofd.Filter = "PAL files (*.pal)|*.pal|All files (*.*)|*.*";
+            ofd.Title = "Select a PAL or CBF File";
+            ofd.Filter = "Supported files (*.pal;*.cbf)|*.pal;*.cbf|All files (*.*)|*.*";
             ofd.Multiselect = false;
+            
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                DSCContext ctx = new DSCContext(File.ReadAllBytes(ofd.FileName));
+                LogTextbox.Clear();
+                string ext = Path.GetExtension(ofd.FileName).ToLower();
+                
+                try 
+                {
+                    if (ext == ".pal")
+                    {
+                        Console.WriteLine($"Parsing Standalone DSC PAL: {Path.GetFileName(ofd.FileName)}");
+                        DSCContext ctx = new DSCContext(File.ReadAllBytes(ofd.FileName), msg => Console.WriteLine(msg));
+                    }
+                    else if (ext == ".cbf")
+                    {
+                        Console.WriteLine($"Scanning CBF for DSC Blobs: {Path.GetFileName(ofd.FileName)}");
+                        CaesarContainer cc = new CaesarContainer(File.ReadAllBytes(ofd.FileName));
+                        int foundDscs = 0;
+                        foreach (var ecu in cc.CaesarECUs)
+                        {
+                            foreach (DiagService ds in ecu.GlobalDiagServices)
+                            {
+                                if (ds.DSCBytes != null && ds.DSCBytes.Length > 0)
+                                {
+                                    Console.WriteLine($"\r\n--- Found Embedded DSC Blob in Service: {ds.Qualifier} ---");
+                                    DSCContext ctx = new DSCContext(ds.DSCBytes, msg => Console.WriteLine(msg));
+                                    
+                                    // Disassemble the DSC bytecode
+                                    Console.WriteLine("\r\n--- DSC Bytecode Disassembly ---");
+                                    try 
+                                    {
+                                        string disassembly = DSCDisassembler.DisassembleBlob(ds.DSCBytes);
+                                        Console.WriteLine(disassembly);
+                                    }
+                                    catch (Exception dex)
+                                    {
+                                        Console.WriteLine($"Disassembly error: {dex.Message}");
+                                    }
+                                    foundDscs++;
+                                }
+                            }
+                        }
+                        if (foundDscs == 0)
+                        {
+                            Console.WriteLine("No embedded DSC pools were found in this CBF file.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"\r\nDone parsing {foundDscs} DSC blobs.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"\r\nError parsing DSC: {ex.Message}");
+                }
             }
         }
 
@@ -1235,6 +1803,52 @@ namespace Diogenes
                 File.WriteAllBytes(ofd.FileName, file);
                 Console.WriteLine($"Fixed CBF file saved at {ofd.FileName}");
             }
+        }
+
+        private async void translateCBFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CaesarContainer targetContainer = PickContainer();
+            if (targetContainer is null)
+            {
+                return;
+            }
+            
+            translateCBFToolStripMenuItem.Enabled = false;
+            string originalLabelText = lblConnectionType.Text;
+            
+            int totalEcus = targetContainer.CaesarECUs.Count;
+            for (int i = 0; i < totalEcus; i++)
+            {
+                ECU ecu = targetContainer.CaesarECUs[i];
+                // Run on a background thread to keep the UI responsive, although async translation does mostly await
+                await Task.Run(async () => {
+                    await TranslatorService.TranslateECUAsync(ecu, (status, count, max) =>
+                    {
+                        this.Invoke((MethodInvoker)delegate {
+                            if (max > 0)
+                            {
+                                lblConnectionType.Text = $"Translating ECU {i + 1}/{totalEcus} ({count}/{max}): {status}";
+                            }
+                        });
+                    });
+                });
+            }
+
+            this.Invoke((MethodInvoker)delegate {
+                translateCBFToolStripMenuItem.Enabled = true;
+                lblConnectionType.Text = "Translation complete. Exporting to JSON...";
+                LoadTree();
+                
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Title = "Specify a location to save your translated JSON file";
+                sfd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                sfd.FileName = targetContainer.CaesarECUs[0].Qualifier + "_English.json";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllBytes(sfd.FileName, Encoding.UTF8.GetBytes(CaesarContainer.SerializeContainer(targetContainer)));
+                }
+                lblConnectionType.Text = "Translation and export complete.";
+            });
         }
     }
 }

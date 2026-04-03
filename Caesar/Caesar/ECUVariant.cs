@@ -154,7 +154,7 @@ namespace Caesar
                     int actualIndex = variantReader.ReadInt32();
                     int xrefStart = variantReader.ReadInt32(); 
                     int xrefCount = variantReader.ReadInt32(); // stitch with table H : int __cdecl DIECUGetNumberOfEnvForAllErrors(DI_ECUINFO *ecuh, int a2, int a3)
-                    //DTCsPoolOffsets.Add(actualIndex); // todo: depreciate this
+                    //DTCsPoolOffsets.Add(actualIndex); // Legacy path retained only for reverse-engineering notes.
                     DTCsPoolOffsetsWithBounds.Add(new Tuple<int, int, int>(actualIndex, xrefStart, xrefCount));
                 }
                 // EnvCtxs
@@ -221,7 +221,7 @@ namespace Caesar
                 // KW2C3PE uses a different parent addressing style
                 int parentIndex = param.ParentInterfaceIndex > 0 ? param.ParentInterfaceIndex : param.SubinterfaceIndex;
 
-                if (param.ParentInterfaceIndex >= parentEcu.ECUInterfaceSubtypes.Count)
+                if (parentIndex < 0 || parentIndex >= parentEcu.ECUInterfaceSubtypes.Count)
                 {
                     throw new Exception("ComParam: tried to assign to nonexistent interface");
                 }
@@ -230,6 +230,16 @@ namespace Caesar
                     parentEcu.ECUInterfaceSubtypes[parentIndex].CommunicationParameters.Add(param);
                 }
             }
+        }
+
+        public string GetDescription()
+        {
+            return Language?.GetString(Description_CTF) ?? string.Empty;
+        }
+
+        public string GetName()
+        {
+            return Language?.GetString(Name_CTF) ?? string.Empty;
         }
 
         public void CreateVariantPatterns(BinaryReader reader) 
@@ -315,7 +325,7 @@ namespace Caesar
                 }
             }
             */
-            // optimization hack
+            // Fast path for the common case where pool offsets line up with the global service index.
             int poolSize = DiagServicesPoolOffsets.Count;
             for (int i = 0; i < poolSize; i++) 
             {

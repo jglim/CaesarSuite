@@ -124,6 +124,41 @@ namespace Caesar
             }
         }
 
+        public Dictionary<string, int> GetResolvedCommunicationParameterValues()
+        {
+            Dictionary<string, int> result = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            foreach (ComParameter param in CommunicationParameters)
+            {
+                result[param.ParamName] = param.ComParamValue;
+            }
+
+            return result;
+        }
+
+        public string GetDescription()
+        {
+            return Language?.GetString(Description_CTF) ?? string.Empty;
+        }
+
+        public string GetName()
+        {
+            return Language?.GetString(Name_CTF) ?? string.Empty;
+        }
+
+        public int? GetResolvedParentInterfaceIndex()
+        {
+            foreach (ComParameter param in CommunicationParameters)
+            {
+                if (param.ParentInterfaceIndex >= 0)
+                {
+                    return param.ParentInterfaceIndex;
+                }
+            }
+
+            return null;
+        }
+
         public void PrintDebug()
         {
             Console.WriteLine($"iface subtype: @ 0x{BaseAddress:X}");

@@ -171,9 +171,9 @@ namespace Caesar
 
             bool isEnumType = (SignBit == 0) && ((Type_1C == 1) || (ScaleCountMaybe > 1));
 
-            // hack: sometimes hybrid types (regularly parsed as an scaled value if within bounds) are misinterpreted as pure enums
-            // this is a temporary fix for kilometerstand until there's a better way to ascertain its type
-            // this also won't work on other similar cases without a unit string e.g. error instance counter (Häufigkeitszähler)
+            // Some hybrid values are classified as enums even though they should be treated as scaled numerics.
+            // The kilometer reading is the known case here until there is a more reliable type discriminator.
+            // Similar unit-less counters may still need additional handling in the future.
             if (DisplayedUnitString == "km") 
             {
                 isEnumType = false;

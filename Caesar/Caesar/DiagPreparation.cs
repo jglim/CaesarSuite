@@ -158,7 +158,7 @@ namespace Caesar
                         {
                             DiagPresentation pres = ParentECU.GlobalInternalPresentations[InfoPoolIndex];
                             /*
-                            // depreciate use of ReadCBFWithOffset
+                            // Prefer direct presentation access over ReadCBFWithOffset.
                             poolReader.BaseStream.Seek(ParentECU.Info_EntrySize * InfoPoolIndex, SeekOrigin.Begin);
 
                             int presentationStructOffset = poolReader.ReadInt32();
@@ -196,7 +196,7 @@ namespace Caesar
                         {
                             DiagPresentation pres = ParentECU.GlobalPresentations[PresPoolIndex];
                             /*
-                            // depreciate use of ReadCBFWithOffset
+                            // Prefer direct presentation access over ReadCBFWithOffset.
                             poolReader.BaseStream.Seek(ParentECU.Presentations_EntrySize * PresPoolIndex, SeekOrigin.Begin);
                             int presentationStructOffset = poolReader.ReadInt32();
                             int presentationStructSize = poolReader.ReadInt32();

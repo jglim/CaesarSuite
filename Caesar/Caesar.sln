@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trafo", "Trafo\Trafo.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diogenes", "Diogenes\Diogenes.csproj", "{2216DB99-EAAC-46A8-B99A-28D659907DE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caesar.Tests", "Caesar.Tests\Caesar.Tests.csproj", "{A3359E9F-460B-4540-8DD5-4D0A134BC034}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2216DB99-EAAC-46A8-B99A-28D659907DE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2216DB99-EAAC-46A8-B99A-28D659907DE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2216DB99-EAAC-46A8-B99A-28D659907DE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3359E9F-460B-4540-8DD5-4D0A134BC034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3359E9F-460B-4540-8DD5-4D0A134BC034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3359E9F-460B-4540-8DD5-4D0A134BC034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3359E9F-460B-4540-8DD5-4D0A134BC034}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

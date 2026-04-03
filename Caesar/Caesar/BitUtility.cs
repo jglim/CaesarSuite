@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -52,6 +53,63 @@ namespace Caesar
         public static string BytesToHex(byte[] inBytes, bool spacedOut = false)
         {
             return BitConverter.ToString(inBytes).Replace("-", spacedOut ? " " : "");
+        }
+
+        public static string BytesToPrintableText(byte[] inBytes)
+        {
+            if (inBytes == null || inBytes.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            bool previousWasSeparator = false;
+
+            foreach (byte value in inBytes)
+            {
+                if (value == 0x00)
+                {
+                    if (sb.Length > 0 && !previousWasSeparator)
+                    {
+                        sb.Append(" | ");
+                        previousWasSeparator = true;
+                    }
+                    continue;
+                }
+
+                char currentChar = (char)value;
+                bool isPrintableAscii = value >= 0x20 && value <= 0x7E;
+                if (isPrintableAscii)
+                {
+                    sb.Append(currentChar);
+                    previousWasSeparator = false;
+                }
+                else
+                {
+                    sb.Append('.');
+                    previousWasSeparator = false;
+                }
+            }
+
+            return sb.ToString().Trim();
+        }
+
+        public static string BytesToHexWithPrintableText(byte[] inBytes, bool spacedOut = false)
+        {
+            string hex = BytesToHex(inBytes, spacedOut);
+            string text = BytesToPrintableText(inBytes);
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return hex;
+            }
+
+            int printableChars = text.Count(ch => ch != '.' && ch != '|' && !char.IsWhiteSpace(ch));
+            if (printableChars < 3)
+            {
+                return hex;
+            }
+
+            return $"{hex} | ASCII: \"{text}\"";
         }
 
         /// <summary>

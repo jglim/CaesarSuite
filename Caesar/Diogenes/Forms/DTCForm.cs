@@ -83,9 +83,9 @@ namespace Diogenes
                     DiagService currentService = dtcEnvs[i];
 
                     StringBuilder presentationOutput = new StringBuilder();
-                    foreach (List<DiagPreparation> wtf in currentService.OutputPreparations)
+                    foreach (List<DiagPreparation> outputPreparationSet in currentService.OutputPreparations)
                     {
-                        foreach (DiagPreparation outputPreparation in wtf)
+                        foreach (DiagPreparation outputPreparation in outputPreparationSet)
                         {
                             /*
                             // crd3: uncomment to find a misbehaving presentation; enum does not have the correct scales, maybe there's something shaped like a scale that needs parsing

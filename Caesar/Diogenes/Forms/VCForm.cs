@@ -95,9 +95,9 @@ namespace Diogenes
         public static DiagPreparation GetLargestPreparation(List<List<DiagPreparation>> presSet)
         {
             int largestField = 0;
-            foreach (List<DiagPreparation> wtf in presSet)
+            foreach (List<DiagPreparation> preparationSet in presSet)
             {
-                foreach (DiagPreparation prep in wtf)
+                foreach (DiagPreparation prep in preparationSet)
                 {
                     if (prep.SizeInBits > largestField)
                     {
@@ -106,9 +106,9 @@ namespace Diogenes
                 }
             }
 
-            foreach (List<DiagPreparation> wtf in presSet)
+            foreach (List<DiagPreparation> preparationSet in presSet)
             {
-                foreach (DiagPreparation prep in wtf)
+                foreach (DiagPreparation prep in preparationSet)
                 {
                     if (prep.SizeInBits == largestField)
                     {

@@ -11,41 +11,51 @@ namespace Diogenes
 {
     public class VCReport
     {
-
-        public static void treeViewSelectVariantCodingBackup(TreeNode node, ECUConnection connection, List<CaesarContainer> containers)
+        public static string GenerateVariantCodingBackupDocument(string ecuName, string variantName, ECUConnection connection, List<CaesarContainer> containers, Action<int, int, string> progressCallback = null)
         {
-
             if (connection is null)
             {
-                return;
+                throw new InvalidOperationException("Please initiate contact with a target first.");
             }
 
-            Cursor.Current = Cursors.WaitCursor;
-
-            string variantName = node.Parent.Text;
-            string ecuName = node.Parent.Parent.Text;
             string reportDate = $"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
 
-            StringBuilder report = new StringBuilder();
-
             CaesarContainer container = containers.Find(x => x.GetECUVariantByName(variantName) != null);
+            if (container is null)
+            {
+                throw new InvalidOperationException($"Could not find a loaded container for variant '{variantName}'.");
+            }
+
             ECU ecu = container.GetECUByName(ecuName);
+            if (ecu is null)
+            {
+                throw new InvalidOperationException($"Could not find ECU '{ecuName}' in the loaded container.");
+            }
+
             ECUVariant variant = container.GetECUVariantByName(variantName);
+            if (variant is null)
+            {
+                throw new InvalidOperationException($"Could not find ECU variant '{variantName}' in the loaded container.");
+            }
 
             string containerChecksum = container.FileChecksum.ToString("X8");
             string dVersion = MainForm.GetVersion();
             string cVersion = CaesarContainer.GetCaesarVersionString();
-            string connectionData = connection is null ? "(Unavailable)" : connection.FriendlyProfileName;
+            string connectionData = connection.FriendlyProfileName;
             string ecuCbfVersion = ecu.EcuXmlVersion;
 
-            report.Append($"ECU Variant: {variant.Qualifier}\r\n");
-
             StringBuilder tableBuilder = new StringBuilder();
+            int totalSteps = variant.VCDomains.Count + 1;
+
+            progressCallback?.Invoke(1, totalSteps, "Reading ECU metadata");
+            string metadataTable = connection.ConnectionProtocol.QueryECUMetadata(connection).GetHtmlTable(connection);
 
             // back up every domain since some have overlaps
-            foreach (VCDomain domain in variant.VCDomains)
+            for (int i = 0; i < variant.VCDomains.Count; i++)
             {
-                report.Append($"\r\nCoding Service: {domain.Qualifier}\r\n");
+                VCDomain domain = variant.VCDomains[i];
+                progressCallback?.Invoke(i + 2, totalSteps, $"Reading {domain.Qualifier}");
+
                 // find the read service, then execute it as-is
                 DiagService readService = variant.GetDiagServiceByName(domain.ReadServiceName);
                 byte[] response = connection.SendDiagRequest(readService);
@@ -57,9 +67,9 @@ namespace Diogenes
                 StringBuilder tableRowBuilder = new StringBuilder();
 
                 // explain the vc string's settings
-                for (int i = 0; i < domain.VCFragments.Count; i++)
+                for (int fragmentIndex = 0; fragmentIndex < domain.VCFragments.Count; fragmentIndex++)
                 {
-                    VCFragment currentFragment = domain.VCFragments[i];
+                    VCFragment currentFragment = domain.VCFragments[fragmentIndex];
                     VCSubfragment subfragment = currentFragment.GetSubfragmentConfiguration(vcValue);
 
                     string fragmentValue = subfragment is null ? "(?)" : subfragment.NameResolved;
@@ -187,7 +197,7 @@ namespace Diogenes
         </tr>
     </table>
 
-    {connection.ConnectionProtocol.QueryECUMetadata(connection).GetHtmlTable(connection)}
+    {metadataTable}
     {tableBuilder}
 
     <hr>
@@ -195,21 +205,7 @@ namespace Diogenes
     <span id=""eof"">End of report</span>
 </body>
 </html>";
-
-
-            Cursor.Current = Cursors.Default;
-
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Title = "Specify a location to save your new VC backup";
-            sfd.Filter = "HTML file (*.html)|*.html|All files (*.*)|*.*";
-            sfd.FileName = $"VC_{variantName}_{DateTime.Now.ToString("yyyyMMdd_HHmm")}.html";
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                File.WriteAllText(sfd.FileName, document.ToString());
-                MessageBox.Show($"Backup successfully saved to {sfd.FileName}", "Export complete");
-            }
-
+            return document;
         }
-
     }
 }

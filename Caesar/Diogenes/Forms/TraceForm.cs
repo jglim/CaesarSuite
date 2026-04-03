@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Diogenes
 {
-    // trace is generally quite hacky since I did not plan for this early
+    // This window mirrors the live high-level trace buffer from MainForm.
     public partial class TraceForm : Form
     {
         MainForm ParentMainForm = new MainForm();

@@ -1,0 +1,7273 @@
+[
+  {
+    "EcuName": "ANC_205M",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ANC_205M_18_33_01_20181616021630",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "A891859C",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ANC_205M",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ANC_205M_18_33_02_20181716021757",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ANC_205M",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ANC_205M_18_33_03_20181816021847",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ANC_205M",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ANC_205M_18_33_07_20182016022011",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BC_213",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "BC_213_18_14_01_20180109110141",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F85BAC89",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BC_MFA2",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "BC_MFA2_17_09_01_20184914104936",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "E845149C",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BCMFA2SAR33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "BCMFA2SAR33_16_33_33_20185214105232",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "5B6D34C8",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BCMFA2SAR35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "BCMFA2SAR35_16_33_35_20185314105307",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E11A6E42",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BMS20PT30",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "BMS20PT30_17_09_01_20193930023908",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F958419A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BMS20PT30",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "BMS20PT30_19_26_01_20191624021620",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F958419A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BMS20PT30",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "BMS20PT30_19_26_01_20191624021620",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "0146ACC0",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BMS298",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "BMS298_19_46_01_20193312033344",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "60243AEE",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "BMS298",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "BMS298_19_46_02_20191912041922",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "3ADE68B3",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kA",
+        "Value": "3C0F6138",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "5E63944B",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "BMS298",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "BMS298_19_46_02_20191912041922",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "896C473E",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kA",
+        "Value": "1C467AEE",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "4CED638A",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "CCGW420",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "CCGW420_20_17_61_20203124093101",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C21BEF94",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CCGW420",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "CCGW420_20_17_61_20203124093101",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "CEF734C3",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CCGW420",
+    "Aliases": [],
+    "AccessLevel": 57,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "CCGW420_20_17_61_20203124093101",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "7E05F957",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CCGW420",
+    "Aliases": [],
+    "AccessLevel": 59,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "CCGW420_20_17_61_20203124093101",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C4BDE9CB",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CCGW420",
+    "Aliases": [],
+    "AccessLevel": 97,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "CCGW420_20_17_61_20203124093101",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "961FAF93",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CEPC",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CEPC_18_19_01_20184303034355",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "9AE4AF83",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CEPC253SA9A",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CEPC253SA9A_16_33_09_20195821105822",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "9AE4AF83",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CGW_Sec_231",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CGW_Sec_231_17_43_01_20173526113526",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "2553F8DA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "COB243_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "COB243_35_18_45_01_20182606022624",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "COM222",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "COM222_17_41_01_20170312120351",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "3DA91FCE",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "COM222",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "COM222_17_41_01_20170312120351",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "17121968",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "COM222",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "COM222_17_41_01_20170312120351",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "5498AF02",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CPC_NG",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CPC_NG9A_14_31_09_20181219031236",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "EF5E7238",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CPC_SAR_SEC_ACCESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CPC_SAR_SEC_ACCESS_33_18_49_01_20183606113608",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BE74FDED",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CPC3",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CPC3_19_06_01_20195906115904",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BE74FDED",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CPC3",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CPC3_19_06_01_20195906115904",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "133E5D6F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CPC3",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CPC3_19_06_01_20195906115904",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "EF5E7238",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CR41",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CR41_19_10_01_20191304021334",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "78B9AC41",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CR43",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CR43_19_06_01_20190804030848",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "78B9AC41",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CR61_sec",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CR61_sec_18_25_01_20182620112649",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "78B9AC41",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CR6NFZ",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CR6NFZ_13_23_01_20190017120041",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "18091976",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CRCM238",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "CRCM238_17_51_01_20174522044514",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "E9519849",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CRD3S2SEC9A",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CRD3S2SEC9A_15_04_09_20191724031706",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "3F9C71A5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "CRR2",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "CRR2_18_52_01_20185426025402",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "40EDCEE2",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DCB167",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "DCB167_18_33_01_20182817102833",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "57FD05E7",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DCDC222PI",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DCDC222PI_19_04_05_20194521114557",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "84535E23",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DCDC298",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DCDC298_19_26_31_20193126113134",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DCDC48_222",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DCDC48_222_18_28_02_20181809121800",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E5CCDF90",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DLM463",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "DLM463_18_07_01_20194804114841",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "A49F591C",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DMFL_1",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "DMFL_1_18_43_01_20183126093155",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C263581B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DMXX222_MOPF_Sec",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "DMXX222_MOPF_Sec_18_05_01_20183601023645",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "E88512E6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DRUV_NG298",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DRUV_NG298_19_26_31_20190725120728",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DRVU_NG_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DRVU_NG_33_19_22_01_20191829031823",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BE74FDED",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DRVU_NG_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DRVU_NG_35_19_22_01_20192029032022",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "133E5D6F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DRVU_NG298",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DRVU_NG298_19_26_33_20191025121013",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DRVU_NG298",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DRVU_NG298_19_26_35_20191225121218",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DSM222",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DSM222_18_15_01_20184817024816",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "130612B1",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DSM222",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DSM222_18_16_01_20181617111621",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "2112170A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "Dummy",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "Dummy_18_08_01_20183521043540",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F0212838",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "Dummy",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "Dummy_18_08_01_20183521043540",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E3922699",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DummyZkb",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DummyZkb_18_08_01_20183821043842",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "701A8F2F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "DummyZkb",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "DummyZkb_18_08_01_20183821043842",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "D4CE66E4",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EARS167",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EARS167_19_23_01_20195706025735",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D8B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EARS167",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EARS167_19_23_01_20195706025735",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D83",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EARS167_F_B_G",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EARS167_F_B_G_19_03_01_20194818114832",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "DEDE947A",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "K_refG",
+        "Value": "DEDE947A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EBB290",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EBB290_20_15_07_20203309053303",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "4BBFF26D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EBB290",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EBB290_20_15_09_20203509053504",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "08839FE8",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EE_DATA_SEC_ACCESS_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EE_DATA_SEC_ACCESS_31_18_24_01_20181614011623",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EE_DATA_SEC_ACCESS_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EE_DATA_SEC_ACCESS_31_18_25_01_20184121044110",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EE_DATA_SEC_ACCESS_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EE_DATA_SEC_ACCESS_31_18_26_01_20185326105309",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "0870913D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EE_DATA_SEC_ACCESS_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EE_DATA_SEC_ACCESS_31_18_30_01_20180324040340",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EE_DATA_SEC_ACCESS_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EE_DATA_SEC_ACCESS_31_19_21_01_20193623033620",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EE_DATA_SEC_ACCESS_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EE_DATA_SEC_ACCESS_31_19_23_01_20190203030248",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EMS719A",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EMS719A_14_30_09_20192930122929",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "23A7D1B5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_167_179",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EPS_167_179_18_43_01_20182526112546",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "76802922",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_167_179",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EPS_167_179_18_43_01_20182526112546",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "64414779",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_167_179",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EPS_167_179_18_43_01_20182526112546",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E1FFE100",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_167_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EPS_167_33_18_43_01_20182826112833",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "19082184",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_167_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EPS_167_35_18_43_01_20183226113208",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "59894C5F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_MFA2",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EPS_MFA2_19_24_31_20192112032116",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_MFA2SA12SA78SA9A",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPS_MFA2SA12SA78SA9A_16_31_01_20195012035055",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "84BAF09C",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_MFA2SA12SA78SA9A",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPS_MFA2SA12SA78SA9A_16_31_01_20195012035055",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "08CC63A7",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS_MFA2SA12SA78SA9A",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPS_MFA2SA12SA78SA9A_16_31_01_20195012035055",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "A7BC2F9D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPS205_ZF",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EPS205_ZF_18_17_02_20182226012224",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15A74609",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "eps222tk",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "eps222tk_12_50_03_20181426101449",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "08300120",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "eps222tk",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "eps222tk_12_50_04_20181526101527",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "FFFFFFFF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPT10EM01",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPT10EM01_17_14_02_20193423013420",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "E8192E85",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPT10EM01",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPT10EM01_18_39_01_20193523013559",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "61763775",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPT10EM03",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPT10EM03_19_06_02_20190208050233",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "1EDEE0F5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPT10EM03",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPT10EM03_19_06_02_20190208050233",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "BC556803",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EPT10EM0x",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EPT10EM0x_18_49_01_20182107052124",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "A8CAD180",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_167_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP_167_33_18_43_01_20182526022533",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "63CB0F4A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_167_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP_167_35_18_43_01_20182626022650",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1AADF7C7",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_177_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP_177_31_18_43_01_20183729123732",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "0870913D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_177_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP_177_33_18_43_01_20180329100304",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "7236D5A1",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_177_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP_177_35_18_43_01_20180329100357",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BAA75254",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_177_9",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP_177_9_18_43_01_20183929013907",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "5FCA7BA3",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_177AMG_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP_177AMG_31_18_44_01_20181530121529",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_MFA2_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "ESP_MFA2_33_19_25_33_20193119023130",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP_MFA2_33",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "ESP_MFA2_33_19_25_33_20193119023130",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP167",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "ESP167_19_02_01_20195610065630",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "C45E230A",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kA",
+        "Value": "25",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "2771",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP17712",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP17712_14_41_01_20194212114225",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "8F8CA340",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP17712",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP17712_14_41_01_20194212114225",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "024F79EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP17712",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP17712_14_41_01_20194212114225",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "5FCA7BA3",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP17712",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP17712_14_41_01_20194212114225",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "0870913D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP190_AMG",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP190_AMG_19_14_01_20195204095231",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "D45D233F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP205",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "ESP205_19_22_01_20192130122149",
+    "Parameters": [
+      {
+        "Key": "kA",
+        "Value": "25",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "2771",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "K",
+        "Value": "C45E230A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP205",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "ESP205_19_22_01_20192130122149",
+    "Parameters": [
+      {
+        "Key": "kA",
+        "Value": "22",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "2648",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "K",
+        "Value": "C45E230A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP205_DGR",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "ESP205_DGR_19_08_01_20192021032047",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "97867564",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kA",
+        "Value": "17",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "8462",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP205_EOL",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "ESP205_EOL_19_08_01_20193321033325",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "13243546",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kA",
+        "Value": "22",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "2648",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP205_SCN",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "ESP205_SCN_19_08_01_20193021033001",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "D45D233F",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kC",
+        "Value": "A6371",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kA",
+        "Value": "B27C85A154",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP213_0x35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP213_0x35_18_25_01_20195214035215",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1AADF7C7",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP290_AMG",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP290_AMG_18_26_03_20183826013840",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "5FCA7BA3",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP461",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP461_19_15_01_20195109105107",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "37AF46CA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESP9_212",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESP9_212_DJ_SCN_Entriegeln",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "D45D233F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC_167_01_37_3D",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC_167_01_37_3D_18_44_01_20185430025424",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "FF459876",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC_167_01_37_3D",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC_167_01_37_3D_18_44_01_20185430025424",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "05071986",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC_167_01_37_3D",
+    "Aliases": [],
+    "AccessLevel": 61,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC_167_01_37_3D_18_44_01_20185430025424",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F546587D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC_167_09_0B",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC_167_09_0B_18_44_01_20182430022442",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "54879632",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC_167_09_0B",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC_167_09_0B_18_44_01_20182430022442",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "CD549876",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC_167_11",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "ESPC_167_11_18_44_01_20185602025602",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "FFFFFFFF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC_167_7",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC_167_7_18_44_01_20182130022156",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1234ABCD",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC167",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC167_17_27_01_20193328113311",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "05071986",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC167",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC167_17_27_01_20193328113311",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "FF459876",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESPC167",
+    "Aliases": [],
+    "AccessLevel": 61,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESPC167_17_27_01_20193328113311",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F546587D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESS205",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESS205_18_33_01_20184416114454",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1F93CE27",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ESS205",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ESS205_18_33_02_20184616114600",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS167",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EZS167_16_12_01_20195612105646",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS167",
+    "Aliases": [],
+    "AccessLevel": 97,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EZS167_18_13_01_20182426032428",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "DFD7B434",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "K_refG",
+        "Value": "DFD7B434",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS167",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EZS167_18_13_01_20182626032655",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "3348550F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS167",
+    "Aliases": [],
+    "AccessLevel": 59,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EZS167_18_19_59_20181830011838",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "A0E43FD1",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS167",
+    "Aliases": [],
+    "AccessLevel": 57,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EZS167_18_31_01_20182130012135",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "3C229A54",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS213",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "EZS213_17_35_01_20175224055217",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E89419C9",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS213",
+    "Aliases": [],
+    "AccessLevel": 57,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EZS213_18_13_01_20182630072649",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "870D2296",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "EZS213",
+    "Aliases": [],
+    "AccessLevel": 59,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "EZS213_18_13_02_20182930072907",
+    "Parameters": [
+      {
+        "Key": "PrivateKey",
+        "Value": "4C0916348C734EF67A53B2610C3F827526679E471115F53A20A7401F8F514D68",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "K_refG",
+        "Value": "7B477309",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW177_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FCW177_33_19_22_01_20192630092612",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "1AE02DB6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW177_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FCW177_35_19_22_01_20193030093004",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "ACFED665",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW177_37_Revg",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FCW177_37_Revg_18_45_01_20192524092514",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C0CDC8C5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW205",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FCW205_17_09_01_20183415023432",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C0CDC8C5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW205",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FCW205_19_31_33_20194402024437",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "1AE02DB6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW205",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FCW205_19_32_35_20192806112836",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "ACFED665",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW213",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FCW213_19_13_02_20192328032320",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "44545232",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW213",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FCW213_19_13_03_20192528032518",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "8E52D61B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FCW213",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FCW213_19_13_04_20192628032646",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "2A8FC037",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FMS253CH2",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FMS253CH2_18_33_02_20184416114451",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "70F33301",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FMS253CH2",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FMS253CH2_18_33_03_20185216115222",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1A9E0FBF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FSCM_EC",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FSCM_EC_17_40_01_20170504040529",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "FA28E9AB",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FSCM_GEN4",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FSCM_GEN4_18_42_01_20183817113843",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "FA28E9AB",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FSCM_GEN4",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "FSCM_GEN4_18_43_01_20185723115759",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "471452EE",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FSCM_GEN5",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FSCM_GEN5_16_14_01_20183524123507",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "9374AFD6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FSCM_GEN5",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FSCM_GEN5_17_12_01_20183324123321",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C8519C9E",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FSCM_GEN5",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FSCM_GEN5_0_@Feezex",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "9057B71A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "FSCM_GEN5",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "FSCM_GEN5_0_@Feezex",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "8B014327",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "HAL290",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "HAL290_17_32_01_20170207060239",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "C0B1CAD7",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "HVAC177",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "HVAC177_18_26_01_20183125053159",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F5A39B44",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "HVAC222",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "HVAC222_18_43_01_20181826021835",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F5A39B44",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC172",
+    "Aliases": [],
+    "AccessLevel": 3,
+    "SeedLength": 8,
+    "KeyLength": 8,
+    "Provider": "IC172Algo1",
+    "Origin": "IC172_@Feezex-@Flo354",
+    "Parameters": []
+  },
+  {
+    "EcuName": "IC172",
+    "Aliases": [],
+    "AccessLevel": 13,
+    "SeedLength": 8,
+    "KeyLength": 8,
+    "Provider": "IC172Algo1",
+    "Origin": "IC172_@Feezex",
+    "Parameters": []
+  },
+  {
+    "EcuName": "IC172",
+    "Aliases": [],
+    "AccessLevel": 113,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "IC172Algo2",
+    "Origin": "IC172_@Feezex",
+    "Parameters": []
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420000_0070_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "5F27851F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420021_0080_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4A7CB6EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420121_0086_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4A81C34F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420221_0081_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "6D78C59F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420321_0093_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3BD1B8DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420421_0089_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2F9C761F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420521_008A_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "724AD68F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420621_00A3_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3151A52F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420721_00A3_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3151A52F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420821_00B2_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "48D0AC0F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514420921_00B2_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "48D0AC0F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421021_0094_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "28F0084F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421121_00A4_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "7929C8DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421221_00A4_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "7929C8DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421321_00C3_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3E4C8D3F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421421_00C3_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3E4C8D3F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421521_00B4_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "6E90082F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421621_00B4_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "6E90082F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421721_00B5_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "30AC27DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2514421821_00B5_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "30AC27DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2519020900_00C5_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "42B7B7DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2519021000_00C5_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "42B7B7DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2519021500_00E1_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "786C769F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI164",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI164_2519021600_00E1_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "786C769F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420000_0052_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "7B7FC59F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420021_0063_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "48A949DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420121_0047_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2C0EA47F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420200_0046_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "37C55E4F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420221_0054_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "16B64D3F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420321_0060_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3A0C660F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420621_0073_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "6377122F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420721_0082_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "6872710F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420821_0083_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "27F5163F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714420921_0093_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4340663F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714450060_C541_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "789ABCDE",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714450160_0043_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3287F43F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI171",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI171_1714450260_0044_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "56F79B2F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_0223_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30BACD45",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_0287_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "27FC2D10",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_0290_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "4902EF27",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_0247_024B_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BADEF289",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_029F_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "62FB90EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_0253_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "3EFA72D6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_029D_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "FFFFFFFF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI203Algo",
+    "Origin": "KI203_203_029E_L7_@Feezex-@rumator-@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "163B6ACF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0003_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "189E370F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0006_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "163B6ACF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0008_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "62FB90EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_000A_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2923C60F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_000B_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "7424CF3F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0014_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "633CB43F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0022_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3D55070F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0023_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "5EDEE43F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0031_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "70B5349F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0043_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2432F83F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI203M",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI203M_0061_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "7707149F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1035_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "CF98760D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1042_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "773E991A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1044_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "9117849F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1045_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "B0CFE70F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1046_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "A53ED43F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1056_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "B913B1FF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1057_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "C532F3EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1063_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "E20CE10F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1072_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "D0AB482F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1082_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "9803DC0F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_1090_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "CBB999EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI209",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI209_10FF_L7_@Feezex",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "CBB999EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_209_1056_L7_@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3913B1FF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_209_1057_L7_@VladLupashevskyi",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4532F3EF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0003_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "189E370F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0006_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "163B6ACF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_000A_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2923C60F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0014_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "633CB43F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0022_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3D55070F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0023_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "5EDEE43F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0031_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4F98760D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0034_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4F98760D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0035_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4F98760D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_003A_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4F98760D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_003C_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4F98760D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0042_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "773E991A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0043_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2432F83F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0044_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "1117849F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0056_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3913B1FF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0063_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "48A949DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0065_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "209731F9",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0066_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "209731F9",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0067_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "A09731F9",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0068_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "209731F9",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0069_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "A09731F9",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_006A_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "A9097BC5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_006B_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0C5762EA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0072_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "50AB482F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0073_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "023EF31A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0074_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "284FEE13",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0075_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "00302CCE",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0076_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "347213FB",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0077_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "12788EEF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0086_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "4A81C34F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0088_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "7664286F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0089_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2F9C761F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_008A_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "724AD68F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0093_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "3BD1B8DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0094_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "70632F3F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_0095_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2A58122F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_00A9_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "6A04B0BF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_00AF_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2241859F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_00B5_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "30AC27DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_00C3_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "58D3E43F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_00D3_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "2F89043F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI211",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KIAlgo1",
+    "Origin": "KI211_211_00D4_L7_@VladLupashevskyi-@WSorban",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "75D77B2F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214420821_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "B16905DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214422021_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "B16905DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214422121_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "B16905DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214422321_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "B16905DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214423621_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "B16905DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214424021_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214424621_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214424721_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2214425021_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2219022402_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2219023000_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2219024702_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2219024902_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2219025301_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2219028901_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 7,
+    "Provider": "KI221Algo1",
+    "Origin": "KI221_2219029600_001_L7",
+    "Parameters": [
+      {
+        "Key": "Level",
+        "Value": "7",
+        "DataType": "Byte"
+      },
+      {
+        "Key": "K",
+        "Value": "0721B2DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI221",
+    "Aliases": [],
+    "AccessLevel": 253,
+    "SeedLength": 4,
+    "KeyLength": 4,
+    "Provider": "KI221Algo2",
+    "Origin": "KI221_Multi",
+    "Parameters": [
+      {
+        "Key": "Xor",
+        "Value": "47392578",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "Add",
+        "Value": "72922483",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC177",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "IC177_IC177_16_12_01_J",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D83",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC177",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "IC177_IC177_17_07_03_J",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "EA85C49B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC177",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "IC177_18_40_03_20185503025525",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "8BCA826F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC177",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "IC177_18_40_04_20183303033327",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C2628D5C",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC213",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC213_IC213_13_30_00_J",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "12345678",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC213",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC213_IC213_15_15_01_J",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "645A65D3",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC213",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC213_IC213_15_15_02_J",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "21B4ABBA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC213",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC213_IC213_17_31_01_J",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "12345678",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC213",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC213_IC213_17_31_02_J",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F04A1023",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC222",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC222_12_16_00_20172406102453",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "12345678",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC222",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC222_12_25_00_20172506102508",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "84A7F399",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC222",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC222_13_10_00_20172506102524",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "AF8A3FE9",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC222",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC222_14_28_01_20172506102540",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "16088F1D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IDC213_37",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IDC213_37_19_04_01_20192622022637",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "B95F985C",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IDC213_SAR_33_104",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IDC213_SAR_33_104_19_01_01_20193604103640",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "97532468",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IDC213_SAR_33_106",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IDC213_SAR_33_106_19_01_01_20195704105743",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "97532468",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IDC213_SAR_33_108",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IDC213_SAR_33_108_19_01_01_20190104100145",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "97532468",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IDC213_SAR_35_104",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IDC213_SAR_35_104_19_01_01_20194404104417",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "68972453",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IDC213_SAR_35_106",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IDC213_SAR_35_106_19_01_01_20195904105949",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "68972453",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IDC213_SAR_35_108",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IDC213_SAR_35_108_19_01_01_20190304100313",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "68972453",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IMMR177",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "IMMR177_18_26_02_20185328125319",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "C0CDC8C5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "inv20em01",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "inv20em01_18_17_01_20185802035813",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "67AB23CD",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "inv20em01",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "inv20em01_18_17_02_20181202041239",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "76BA32DC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "INVDCDC30EM01",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "INVDCDC30EM01_18_18_01_20183104093116",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "FFFFFFFF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "KI906",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "KI906_19_15_01_20191308111359",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "87654321",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC907",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC907_16_08_01_12_47_00_20193211093220_Var8000_VarC700_VarC701_@Feezex",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "12345678",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC907",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "IC907_16_08_01_12_47_00_20193211093220_@Feezex",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "2B972AC5",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC907",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC907_17_50_01_20173913023951_Var4705_@Feezex",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "7C06B37E",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "IC907",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "IC907_17_50_02_20174013024008_Var4905_@Feezex",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "A0595CC2",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LeTubeSec",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LeTubeSec_18_26_01_20184425044450",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F0E1D2C3",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LGM463",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LGM463_19_42_01_20195117105148",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LGM463",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LGM463_19_42_01_20195117105148",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LGM463",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LGM463_19_42_01_20195117105148",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LIB48_177",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LIB48_177_19_26_31_20195326025309",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LIB48_177",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LIB48_177_19_26_33_20195526025519",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LIB48_177",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LIB48_177_19_26_35_20195626025606",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "LRR213",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "LRR213_18_27_01_20183703033751",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "44545232",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ME1778",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ME1778_19_20_01_20192513052540",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "26B379FA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ME309A",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ME309A_14_42_09_20184024024022",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "CDB08E59",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ME31",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ME31_17_02_02_20185224025223",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "AC889792",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "med177",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "med177_14_04_01_20190721030759",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "AE79601B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MED177_HPP",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MED177_HPP_19_03_01_20193115013157",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F12585DE",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "med177_multi",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "med177_multi_14_04_01_20193022103018",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "AE79601B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "med177_multi",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "med177_multi_14_04_01_20193022103018",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "AD679A2F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "med177_multi",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "med177_multi_14_04_01_20193022103018",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "3FB60474",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MED1775",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MED1775_12_42_01_20174206104207",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "35A9C476",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MED40",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MED40_18_43_01_20180226080202",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "CAE2941A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MED40",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MED40_18_43_01_20180226080202",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "EEAD873F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MED40",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MED40_18_43_01_20180226080202",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BE93AC2D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MED40ab",
+    "Aliases": [
+      "MED41"
+    ],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MED40ab_14_47_05_20184710034702",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BE93AC2D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MED419A",
+    "Aliases": [
+      "MED41"
+    ],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MED419A_14_30_09_20181309051359",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "AE5B3C6F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MMPC213",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MMPC213_18_19_01_20181909041944",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "4B783117",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MMPC213",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MMPC213_19_26_33_20193326023336",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1B3BF2AA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MMPC213",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MMPC213_19_26_35_20193526023507",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F854B4A6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MMR213_SecAccess",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MMR213_SecAccess_18_19_01_20180709040755",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "11022014",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MMR213XX",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "MMR213XX_17_50_01_20170015030039",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "8279B7BB",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "K_refG",
+        "Value": "8279B7BB",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MPU167Fx",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "MPU167Fx_17_07_02_20182817112857",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D87",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MPU167Fx",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "MPU167Fx_17_07_03_20182917112933",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D89",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MPU167Fx",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "MPU167Fx_17_07_04_20183017113016",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D8B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MPU167Fx",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "MPU167Fx_17_07_04_20183017113016",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D83",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MPU167Fx",
+    "Aliases": [],
+    "AccessLevel": 97,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "MPU167Fx_17_07_05_20183117113110",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D8D",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MPU167Fx",
+    "Aliases": [],
+    "AccessLevel": 101,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "MPU167Fx_17_07_05_20183117113110",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "B3687D8F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MRD19A",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MRD19A_18_27_01_20185104115117",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "40EDCEE2",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MRG19A",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MRG19A_16_18_09_20184526044504",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "688AE250",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "MRG1AMGR4",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "MRG1AMGR4_18_12_02_20184319034320",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "52D5496B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "OBL222",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "OBL222_18_19_01_20180509050513",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "01061979",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "OBL222",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "OBL222_18_19_01_20180609050607",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "14122011",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "OBL222_7KW",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "OBL222_7KW_18_19_01_20183410113438",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "14122011",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "OCM177",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "OCM177_18_29_01_20182018042035",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "E16D5F34",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ORC_172",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ORC_172_18_25_01_20180020120031",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "CF7563BC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ORC177",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "ORC177_18_29_01_20180520030506",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "09137453",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "ORC213Sec",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "ORC213Sec_18_21_01_20181225121213",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "CF7563BC",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "PARKMAN213",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "PARKMAN213_19_27_01_20195005105028",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1C0207D6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "PARKMAN213",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "PARKMAN213_19_27_33_20195105105136",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "D517F04A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "PARKMAN213",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "PARKMAN213_19_27_35_20195305105328",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "CA6207B8",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "PXL177",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "PXL177_18_32_02_20181207021205",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "08071990",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "PXL213",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "PXL213_19_49_01_20195702015703",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "08071990",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "RBS222",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "RBS222_19_35_02_20192329022344",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "13243546",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kA",
+        "Value": "22",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "2648",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "RBS222",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoMod",
+    "Origin": "RBS222_19_35_12_20193329023317",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "D45D238E",
+        "DataType": "ByteArray"
+      },
+      {
+        "Key": "kA",
+        "Value": "B27C85A154",
+        "DataType": "Int64"
+      },
+      {
+        "Key": "kC",
+        "Value": "A6371",
+        "DataType": "Int64"
+      }
+    ]
+  },
+  {
+    "EcuName": "READSAR33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "READSAR33_18_14_01_20181209111212",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "D569C20A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "REMOVESAR35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "REMOVESAR35_18_14_01_20182309112323",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "7E33532E",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "RVC177",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "RVC177_19_26_01_20194226054236",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "018DFAB0",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "RVC222",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "RVC222_12_40_00_20171506111522",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "C821B08B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAMF_172_sec",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAMF_172_sec_17_41_01_20175813115817",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E4CFB448",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_33_18_24_01_20182614012604",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_33_18_25_02_20184321044312",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "63CB0F4A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_33_18_26_05_20184326014320",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "7236D5A1",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_33_19_21_01_20194323034319",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_33_19_23_01_20191403031445",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_35_18_24_01_20182814012847",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_35_18_25_03_20184421044455",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1AADF7C7",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_35_18_26_05_20182726032750",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "BAA75254",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_35_19_22_01_20190027110032",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACCESS_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACCESS_35_19_23_01_20191603031626",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SAR_SEC_ACESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SAR_SEC_ACESS_33_18_25_01_20194914034934",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "63CB0F4A",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "scrcm3",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "scrcm3_18_43_01_20182425122417",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "A017E167",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SCU_TSSRM_31",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SCU_TSSRM_31_18_45_01_20183406113425",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SCU_TSSRM_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SCU_TSSRM_33_18_45_01_20182206012234",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SCU_TSSRM_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SCU_TSSRM_35_18_45_01_20183306113321",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SDTR213",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SDTR213_18_27_01_20185310105344",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E986FB73",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SDTR213",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SDTR213_18_27_01_20185310105344",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "44545232",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SDTR213",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SDTR213_18_27_01_20185806105852",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "E986FB73",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SDTR213_SAR_SEC_ACCESS_33",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SDTR213_SAR_SEC_ACCESS_33_18_26_01_20185228025231",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "8E52D61B",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SDTR213_SAR_SEC_ACCESS_35",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SDTR213_SAR_SEC_ACCESS_35_18_26_01_20185428025407",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "2A8FC037",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SMPC213",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SMPC213_14_20_01_20193826023825",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "4B7D3117",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SMPC213",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SMPC213_19_26_33_20193926023925",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "1B3BF2AA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SMPC213",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SMPC213_19_26_35_20194026024004",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "F854B4A6",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "SPC213",
+    "Aliases": [],
+    "AccessLevel": 61,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "SPC213_17_38_01_20173521043520",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "87341645",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TCM7DCT300",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TCM7DCT300_50_01_37_20191904091912",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "4A695168",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TCM7DCT300_48",
+    "Aliases": [],
+    "AccessLevel": 55,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TCM7DCT300_48_19_24_01_20192111112147",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "4A695168",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TCM7FDCT",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TCM7FDCT_DCT_8101_13_47_02",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "45766544",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TCM7FDCT",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TCM7FDCT_DCT_0101_0A01_13_47_03",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "A35E67DF",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TCU252CH2",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TCU252CH2_14_50_11_20183915033921",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "B3687D83",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TCU252CH2",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TCU252CH2_14_50_11_20183915033921",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "70324196",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TCU252CH2",
+    "Aliases": [],
+    "AccessLevel": 7,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TCU252CH2_14_50_11_20183915033921",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "3164AE28",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TEL55",
+    "Aliases": [],
+    "AccessLevel": 49,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TEL55_19_22_01_20194930054939",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "15011961",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TEL55",
+    "Aliases": [],
+    "AccessLevel": 51,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TEL55_19_22_02_20195330055350",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "07041977",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TEL55",
+    "Aliases": [],
+    "AccessLevel": 53,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TEL55_19_22_03_20190030060009",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "30071997",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TM205",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "TM205_18_02_01_20184908034939",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "A080B2FA",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TM205",
+    "Aliases": [],
+    "AccessLevel": 1,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TM205_18_27_03_20183204113248",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "79EAB480",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "TPM222",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "TPM222_12_13_00_20173606113636",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "6F6F6F6F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "UDCM",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "UDCM_14_08_01_20182722022700",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "9A7BEA35",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "UDCM2",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "UDCM2_19_29_01_20191516041502",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "79753819",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "UDCM2",
+    "Aliases": [],
+    "AccessLevel": 11,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgoRefG",
+    "Origin": "UDCM2_19_29_05_20191616041647",
+    "Parameters": [
+      {
+        "Key": "K_refG",
+        "Value": "9C7EA44F",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "VGSNAG3",
+    "Aliases": [],
+    "AccessLevel": 17,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "VGSNAG3_VGSNAG3_13_16_00",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "26791543",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "VGSNAG3",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "VGSNAG3_VGSNAG3_13_16_00",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "33582589",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "VGS4NAG2",
+    "Aliases": [],
+    "AccessLevel": 9,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "VGS4NAG2_vgs4nag2_sec_12_06_01",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "26791543",
+        "DataType": "ByteArray"
+      }
+    ]
+  },
+  {
+    "EcuName": "VGS4NAG2",
+    "Aliases": [],
+    "AccessLevel": 5,
+    "SeedLength": 8,
+    "KeyLength": 4,
+    "Provider": "DaimlerStandardSecurityAlgo",
+    "Origin": "VGS4NAG2_vgs4nag2_2_12_06_01",
+    "Parameters": [
+      {
+        "Key": "K",
+        "Value": "33582589",
+        "DataType": "ByteArray"
+      }
+    ]
+  }
+]

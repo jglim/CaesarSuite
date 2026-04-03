@@ -1,12 +1,9 @@
-﻿using Caesar;
+using Caesar;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Diogenes.SecurityAccess.NativeUnlock;
 
 namespace Diogenes.SecurityAccess
 {
@@ -60,76 +57,17 @@ namespace Diogenes.SecurityAccess
 
         public static bool QueryUnlockEcu(byte[] seed, string ecuName, int level, out byte[] key)
         {
-            string unlockEcuFolder = $"{Application.StartupPath}{Path.DirectorySeparatorChar}UnlockECU{Path.DirectorySeparatorChar}";
-            string binaryPath = $"{unlockEcuFolder}ConsoleUnlockECU.exe";
-            string dbPath = $"{unlockEcuFolder}db.json";
-
             key = new byte[] { };
 
-            if (!(File.Exists(binaryPath) && File.Exists(dbPath)))
+            if (NativeUnlockService.TryGeneratePayload(ecuName, level, seed, out byte[] nativePayload, out UnlockDefinition nativeDefinition, out string nativeError))
             {
-                Console.WriteLine("Automatic unlock is unavailable (executable or database could not be found)");
-                return false;
+                key = nativePayload;
+                Console.WriteLine($"Native unlock returns {BitUtility.BytesToHex(key)} for seed {BitUtility.BytesToHex(seed)} (ECU: {ecuName}, Level: {level}, Provider: {nativeDefinition.Provider}, Origin: {nativeDefinition.Origin})");
+                return true;
             }
 
-            string successIdentifier = "DIOGENES";
-
-            string args = $"-d \"{dbPath}\" -n {ecuName} -l {level} -s {BitUtility.BytesToHex(seed)} -p {successIdentifier}";
-            string result = RunProcessCaptureOutput(binaryPath, args);
-            if (!result.StartsWith(successIdentifier)) 
-            {
-                return false;
-            }
-            string responseAsString = result.Substring(successIdentifier.Length);
-            Console.WriteLine($"UnlockECU (automatic) returns {responseAsString} for seed {BitUtility.BytesToHex(seed)} (ECU: {ecuName}, Level: {level})");
-
-            key = BitUtility.BytesFromHex(responseAsString);
-            return true;
-        }
-
-
-        private static string RunProcessCaptureOutput(string filePath, string args) 
-        {
-            // see https://stackoverflow.com/questions/285760/how-to-spawn-a-process-and-capture-its-stdout-in-net
-
-            StringBuilder outputBuilder;
-            ProcessStartInfo processStartInfo;
-            Process process;
-
-            outputBuilder = new StringBuilder();
-
-            processStartInfo = new ProcessStartInfo();
-            processStartInfo.CreateNoWindow = true;
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.RedirectStandardInput = true;
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.Arguments = args;
-            processStartInfo.FileName = filePath;
-
-            process = new Process();
-            process.StartInfo = processStartInfo;
-            // enable raising events because Process does not raise events by default
-            process.EnableRaisingEvents = true;
-            // attach the event handler for OutputDataReceived before starting the process
-            process.OutputDataReceived += new DataReceivedEventHandler
-            (
-                delegate (object sender, DataReceivedEventArgs e)
-                {
-                    // append the new data to the data already read-in
-                    outputBuilder.Append(e.Data);
-                }
-            );
-            // start the process
-            // then begin asynchronously reading the output
-            // then wait for the process to exit
-            // then cancel asynchronously reading the output
-            process.Start();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-            process.CancelOutputRead();
-
-            // use the output
-            return outputBuilder.ToString();
+            Console.WriteLine($"Automatic unlock is unavailable (native match: {nativeError})");
+            return false;
         }
 
         private static void PromptClipboardCopyOfSeed(string seed)

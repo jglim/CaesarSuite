@@ -1,4 +1,4 @@
-﻿using Caesar;
+using Caesar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +24,11 @@ namespace Diogenes.DiagnosticProtocol
         }
 
         public virtual bool IsResponseToTesterPresent(byte[] inBuffer) 
+        {
+            return false;
+        }
+
+        public virtual bool CanSendTesterPresentWhileBusy(ECUConnection connection)
         {
             return false;
         }
@@ -56,14 +61,18 @@ namespace Diogenes.DiagnosticProtocol
         public static BaseProtocol GetProtocol(string profileName)
         {
             // fixme: this depends on the cbf author's consistency and so far it's been reliable BUT there should be a better way of specifying the protocol?
+            Console.WriteLine($"[LOG] BaseProtocol.GetProtocol: Resolving protocol for profile '{profileName}'");
             if (profileName.Contains("_UDS_"))
             {
+                Console.WriteLine($"[LOG] BaseProtocol.GetProtocol: Matched '_UDS_' -> selecting UDS protocol");
                 return new UDS();
             }
             else if (profileName.Contains("_KW2C3PE_"))
             {
+                Console.WriteLine($"[LOG] BaseProtocol.GetProtocol: Matched '_KW2C3PE_' -> selecting KW2C3PE protocol");
                 return new KW2C3PE();
             }
+            Console.WriteLine($"[LOG] BaseProtocol.GetProtocol: No match found -> selecting UnsupportedProtocol (WARNING: this means session switching and variant ID won't work!)");
             return new UnsupportedProtocol();
         }
     }

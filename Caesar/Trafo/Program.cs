@@ -113,19 +113,25 @@ namespace Trafo
                 foreach (VCFragment fragment in domain.VCFragments)
                 {
                     List<object> PresList = new List<object>();
-                    DiagPresentation Presentation = container.CaesarECUs[0].GlobalPresentations[fragment.MeaningB];
+                    DiagPresentation Presentation = null;
                     List<object> ScalesList = new List<object>();
-                    ReadScales(container, Presentation, ScalesList);
+                    object FragmentInfo = null;
 
-                    var FragmentInfo = new
+                    if (fragment.MeaningB >= 0 && fragment.MeaningB < container.CaesarECUs[0].GlobalPresentations.Count)
                     {
-                        Qualifier = Presentation.Qualifier,
-                        Desc = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.Description_CTF),
-                        Units = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.DisplayedUnit_CTF),
-                        EnumMaxVal = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.EnumMaxValue),
-                        Desc2 = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.Description2_CTF),
-                        Scales = ScalesList
-                    };
+                        Presentation = container.CaesarECUs[0].GlobalPresentations[fragment.MeaningB];
+                        ReadScales(container, Presentation, ScalesList);
+
+                        FragmentInfo = new
+                        {
+                            Qualifier = Presentation.Qualifier,
+                            Desc = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.Description_CTF),
+                            Units = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.DisplayedUnit_CTF),
+                            EnumMaxVal = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.EnumMaxValue),
+                            Desc2 = container.CaesarCTFHeader.CtfLanguages[0].GetString(Presentation.Description2_CTF),
+                            Scales = ScalesList
+                        };
+                    }
 
                     var fragmentRow = new
                     {
@@ -201,9 +207,6 @@ namespace Trafo
         static void Main(string[] args)
         {
 
-#if DEBUG
-            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\temp.CBF";
-#else
             if ((args.Length == 0) || (args.Length > 2))
             {
                 Console.WriteLine("Usage:");
@@ -222,7 +225,14 @@ namespace Trafo
             }
 
             string path = args[0];
-#endif
+
+            CaesarFileFormat fileFormat = FileFormatUtility.DetermineFormat(path);
+            if (fileFormat != CaesarFileFormat.CBF)
+            {
+                Console.WriteLine($"Error: Trafo only supports converting .CBF diagnostic files. The provided file appears to be: {fileFormat}");
+                return;
+            }
+
             byte[] cbfBytes = File.ReadAllBytes(path);
             
             CaesarContainer container = new CaesarContainer(cbfBytes);

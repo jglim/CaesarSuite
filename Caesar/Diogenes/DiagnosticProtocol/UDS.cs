@@ -1,4 +1,4 @@
-﻿using Caesar;
+using Caesar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,38 +156,43 @@ namespace Diogenes.DiagnosticProtocol
 
         private static bool EnterDiagnosticSession(ECUConnection connection)
         {
-            Console.WriteLine("UDS: Switching session states");
+            Console.WriteLine("[LOG] UDS: Entering Extended Diagnostic Session (10 03)");
             byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x03 });
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x03 };
             if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
             {
-                Console.WriteLine($"Failed to switch session : target responded with [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
+                Console.WriteLine($"[LOG] UDS: Session switch FAILED: expected [50 03], got [{BitUtility.BytesToHex(sessionSwitchResponse, true)}] (len={sessionSwitchResponse.Length})");
                 return false;
             }
+            Console.WriteLine($"[LOG] UDS: Session switch OK: [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
             return true;
         }
         
         private static bool ExitDiagnosticSession(ECUConnection connection)
         {
-            Console.WriteLine("UDS: Switching session states");
+            Console.WriteLine("[LOG] UDS: Exiting Diagnostic Session (10 01)");
             byte[] sessionSwitchResponse = connection.SendMessage(new byte[] { 0x10, 0x01 });
             byte[] sessionExpectedResponse = new byte[] { 0x50, 0x01 };
             if (!sessionSwitchResponse.Take(2).SequenceEqual(sessionExpectedResponse))
             {
-                Console.WriteLine($"Failed to switch session : target responded with [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
+                Console.WriteLine($"[LOG] UDS: Exit session FAILED: expected [50 01], got [{BitUtility.BytesToHex(sessionSwitchResponse, true)}]");
                 return false;
             }
+            Console.WriteLine($"[LOG] UDS: Exit session OK");
             return true;
         }
 
         private static bool GetVariantID(ECUConnection connection, out int variantId) 
         {
+            Console.WriteLine("[LOG] UDS: Querying Variant ID (22 F1 00)");
             byte[] variantQueryResponse = connection.SendMessage(new byte[] { 0x22, 0xF1, 0x00 });
             byte[] variantExpectedResponse = new byte[] { 0x62, 0xF1 };
 
+            Console.WriteLine($"[LOG] UDS: Variant query response: [{BitUtility.BytesToHex(variantQueryResponse, true)}] (len={variantQueryResponse.Length})");
+
             if (!variantQueryResponse.Take(2).SequenceEqual(variantExpectedResponse))
             {
-                Console.WriteLine($"Failed to identify variant (unexpected response) : target responded with [{BitUtility.BytesToHex(variantQueryResponse, true)}]");
+                Console.WriteLine($"[LOG] UDS: Variant ID query FAILED: expected response starting with [62 F1], got [{BitUtility.BytesToHex(variantQueryResponse.Take(2).ToArray(), true)}]");
                 variantId = 0;
                 return false;
             }
@@ -195,6 +200,7 @@ namespace Diogenes.DiagnosticProtocol
             {
                 // found a variant id, check loaded ecus if any of them have a match
                 variantId = (variantQueryResponse[3] << 16) | (variantQueryResponse[4] << 8) | variantQueryResponse[5];
+                Console.WriteLine($"[LOG] UDS: Variant ID = 0x{variantId:X6} ({variantId})");
                 return true;
             }
         }
@@ -373,20 +379,24 @@ namespace Diogenes.DiagnosticProtocol
 
         public override void ConnectionEstablishedHandler(ECUConnection connection)
         {
+            Console.WriteLine("[LOG] UDS: ConnectionEstablishedHandler starting");
             if (!EnterDiagnosticSession(connection))
             {
+                Console.WriteLine("[LOG] UDS: ConnectionEstablishedHandler aborting - session switch failed");
                 return;
             }
             if (GetVariantID(connection, out int variantId))
             {
                 connection.VariantIsAvailable = true;
                 connection.ECUVariantID = variantId;
-                Console.WriteLine($"Variant has been successfully configured as {(variantId & 0xFFFF):X4}");
+                Console.WriteLine($"[LOG] UDS: Variant has been successfully configured as {(variantId & 0xFFFF):X4}");
             }
             else 
             {
+                Console.WriteLine("[LOG] UDS: ConnectionEstablishedHandler aborting - variant ID query failed");
                 return;
             }
+            Console.WriteLine("[LOG] UDS: ConnectionEstablishedHandler completed successfully");
         }
 
         public override void SendTesterPresent(ECUConnection connection)
@@ -396,7 +406,8 @@ namespace Diogenes.DiagnosticProtocol
 
         public override bool IsResponseToTesterPresent(byte[] inBuffer)
         {
-            return inBuffer.SequenceEqual(new byte[] { 0x7E, 0x00 });
+            return inBuffer.SequenceEqual(new byte[] { 0x7E, 0x00 }) ||
+                (inBuffer.Length >= 3 && inBuffer[0] == 0x7F && inBuffer[1] == 0x3E);
         }
 
         public override void ConnectionClosingHandler(ECUConnection connection)
